@@ -1,0 +1,723 @@
+/* ── Booking wizard ──
+   Palette sources:
+   - --maui-* custom properties are injected inline by Book.tsx from
+     src/styles/mauiPalette.ts (the NavGradient shader's five stops).
+   - The --bw-* card/canvas treatment mirrors StackedServicesDeck.css so the
+     booking page reads as part of the same family as the home services deck. */
+
+.bw {
+  /* Canvas + card faces sourced from StackedServicesDeck.css */
+  --bw-canvas-grad: linear-gradient(160deg, #17392c 0%, #0c211a 100%);
+  --bw-glow-amber: rgba(214, 170, 105, 0.26);
+  --bw-glow-teal: rgba(30, 74, 76, 0.5);
+  --bw-face: #fbf7ee;
+  --bw-ink: #1f1d18;
+  --bw-cream: #f2ead9;
+  --bw-accent-green-a: #1c4432;
+  --bw-accent-green-b: #0d2018;
+  --bw-accent-amber-a: #b98a4e;
+  --bw-accent-amber-b: #77552a;
+  --bw-accent-teal-a: #1e4a4c;
+  --bw-accent-teal-b: #0d2426;
+
+  width: min(100%, 1080px);
+  margin: 0 auto;
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.bw-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Entrance hero ── */
+
+.bw-hero {
+  margin-bottom: clamp(2.5rem, 5.5vw, 4.5rem);
+  will-change: transform;
+}
+
+.bw-hero-headline {
+  margin: 0;
+  color: rgba(31, 29, 24, 0.86);
+  font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(3.4rem, 9vw, 7.6rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+}
+
+.bw-hero-words {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.28em;
+}
+
+/* Overflow-hidden word masks so the entrance can slide each word up from
+   below its own baseline (OpeningScene tagline spirit). */
+.bw-hero-word {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.bw-hero-word-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ── Dark canvas (services-deck treatment) ── */
+
+.bw-canvas {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: clamp(560px, 68svh, 760px);
+  will-change: transform, opacity;
+  padding:
+    clamp(24px, 4svh, 48px)
+    clamp(20px, 4vw, 64px)
+    clamp(36px, 6svh, 72px);
+  border: 1px solid rgba(255, 250, 240, 0.08);
+  border-radius: clamp(24px, 3vw, 40px);
+  background:
+    radial-gradient(90% 75% at 8% 104%, var(--bw-glow-teal) 0%, rgba(30, 74, 76, 0) 60%),
+    var(--bw-canvas-grad);
+  box-shadow:
+    0 40px 90px -48px rgba(13, 32, 24, 0.55),
+    inset 0 1px 0 rgba(255, 250, 240, 0.08);
+}
+
+/* Scroll-linked amber swell lives on its own layer so GSAP can scrub its
+   opacity without repainting the whole canvas background. */
+.bw-canvas-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(110% 90% at 82% -12%, var(--bw-glow-amber) 0%, rgba(214, 170, 105, 0) 55%);
+  pointer-events: none;
+}
+
+.bw-canvas > *:not(.bw-canvas-glow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Progress (on dark canvas) ── */
+
+.bw-progress {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.5rem;
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+  padding: 0;
+  list-style: none;
+}
+
+.bw-progress-step {
+  flex: 1;
+  padding-top: 0.7rem;
+  border-top: 2px solid rgba(242, 234, 217, 0.16);
+  color: rgba(242, 234, 217, 0.38);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.bw-progress-step.is-active {
+  border-top-color: var(--maui-amber, #b87d2c);
+  color: var(--bw-cream);
+}
+
+.bw-progress-step.is-done {
+  border-top-color: rgba(242, 234, 217, 0.45);
+  color: rgba(242, 234, 217, 0.62);
+}
+
+.bw-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  will-change: transform, opacity;
+}
+
+.bw-step-heading {
+  margin: 0 0 clamp(1.25rem, 2.5vw, 2rem);
+  color: var(--bw-cream);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.bw-step-heading:focus {
+  outline: none;
+}
+
+/* ── Type-step title card (Fraunces display, OpeningScene tagline spirit) ── */
+
+.bw-step-title {
+  margin-bottom: clamp(2rem, 4.5vw, 3.4rem);
+}
+
+.bw-step-title-lines {
+  display: block;
+}
+
+/* Overflow-hidden line masks: each line slides up from below its own
+   baseline during the reveal. */
+.bw-step-title-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.bw-step-title-line-inner {
+  display: inline-block;
+  color: rgba(242, 234, 217, 0.88);
+  font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  line-height: 1.04;
+  will-change: transform;
+}
+
+.bw-step-title-line-inner--display {
+  color: transparent;
+  background: linear-gradient(115deg, var(--bw-cream) 30%, #dfb476 85%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  font-size: clamp(3.1rem, 7vw, 5.6rem);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* ── Choice cards (deck card faces: warm off-white + accent media strip) ── */
+
+.bw-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.85rem, 1.8vw, 1.25rem);
+}
+
+.bw-choice-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.bw-choice {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  background: var(--bw-face);
+  border: 1px solid rgba(31, 29, 24, 0.1);
+  border-radius: 20px;
+  color: var(--bw-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow:
+    0 1px 2px rgba(6, 18, 13, 0.2),
+    0 30px 60px -28px rgba(6, 18, 13, 0.6);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.28s ease;
+}
+
+.bw-choice:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 1px 2px rgba(6, 18, 13, 0.2),
+    0 38px 70px -26px rgba(6, 18, 13, 0.72);
+}
+
+.bw-choice:focus-visible {
+  outline: 1px solid rgba(214, 170, 105, 0.7);
+  outline-offset: 0.35rem;
+}
+
+.bw-choice.is-selected {
+  outline: 2px solid var(--maui-amber, #b87d2c);
+  outline-offset: 0;
+}
+
+/* Accent gradients per StackedServicesDeck card media treatments. */
+.bw-choice-media {
+  display: block;
+  height: clamp(4.5rem, 9vw, 7rem);
+  flex-shrink: 0;
+}
+
+.bw-choice-media--thin {
+  height: 0.5rem;
+}
+
+.bw-choice[data-accent='green'] .bw-choice-media {
+  background: linear-gradient(135deg, var(--bw-accent-green-a) 0%, var(--bw-accent-green-b) 100%);
+}
+
+.bw-choice[data-accent='amber'] .bw-choice-media {
+  background: linear-gradient(135deg, var(--bw-accent-amber-a) 0%, var(--bw-accent-amber-b) 100%);
+}
+
+.bw-choice[data-accent='teal'] .bw-choice-media {
+  background: linear-gradient(135deg, var(--bw-accent-teal-a) 0%, var(--bw-accent-teal-b) 100%);
+}
+
+.bw-choice-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: clamp(1.1rem, 2vw, 1.6rem);
+}
+
+.bw-choice-title {
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 1.9vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.bw-choice-sub {
+  color: rgba(31, 29, 24, 0.55);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* ── Warm surface (shared card face for datetime / review / form) ── */
+
+.bw-surface {
+  padding: clamp(1.25rem, 2.4vw, 2rem);
+  background: var(--bw-face);
+  border: 1px solid rgba(31, 29, 24, 0.1);
+  border-radius: 20px;
+  color: var(--bw-ink);
+  box-shadow:
+    0 1px 2px rgba(6, 18, 13, 0.2),
+    0 30px 60px -28px rgba(6, 18, 13, 0.6);
+}
+
+.bw-surface-label {
+  margin: 0 0 0.9rem;
+  color: #7c5b2e;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.bw-review-summary {
+  margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+  will-change: transform;
+}
+
+/* ── Date & time: one composed surface ── */
+
+.bw-datetime {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+  align-items: start;
+}
+
+.bw-datetime-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: 0.35rem;
+}
+
+.bw-datetime-chosen {
+  margin: 0;
+  min-height: 2.2em;
+  color: rgba(31, 29, 24, 0.78);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.15rem, 1.8vw, 1.5rem);
+  font-style: italic;
+  line-height: 1.1;
+}
+
+.bw-datetime-label {
+  margin: 0;
+  color: #7c5b2e;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* ── Calendar ── */
+
+.bwc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.bwc-month {
+  margin: 0;
+  color: rgba(31, 29, 24, 0.8);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.bwc-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  background: rgba(31, 29, 24, 0.05);
+  border: 1px solid rgba(31, 29, 24, 0.14);
+  border-radius: 999px;
+  color: rgba(31, 29, 24, 0.7);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.bwc-nav:hover:not(:disabled) {
+  background: rgba(31, 29, 24, 0.1);
+  border-color: rgba(31, 29, 24, 0.3);
+}
+
+.bwc-nav:focus-visible {
+  outline: 1px solid rgba(31, 29, 24, 0.42);
+  outline-offset: 0.25rem;
+}
+
+.bwc-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.bwc-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.35rem;
+  color: rgba(31, 29, 24, 0.38);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.bwc-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.2rem;
+  will-change: transform, opacity;
+}
+
+.bwc-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: rgba(31, 29, 24, 0.74);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.bwc-day:hover:not(:disabled) {
+  background: var(--maui-amber-faint, rgba(184, 125, 45, 0.14));
+  border-color: var(--maui-amber-soft, rgba(184, 125, 45, 0.32));
+}
+
+.bwc-day:focus-visible {
+  outline: 1px solid rgba(31, 29, 24, 0.42);
+  outline-offset: 0.15rem;
+}
+
+.bwc-day.is-today {
+  border-color: rgba(31, 29, 24, 0.28);
+}
+
+.bwc-day.is-selected {
+  background: var(--maui-amber, #b87d2c);
+  border-color: var(--maui-amber, #b87d2c);
+  color: #fbf7ee;
+  font-weight: 600;
+}
+
+.bwc-day:disabled {
+  color: rgba(31, 29, 24, 0.22);
+  cursor: default;
+}
+
+/* ── Time slots (on the warm surface) ── */
+
+.bw-slot-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.bw-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.85rem 1rem;
+  background: rgba(31, 29, 24, 0.035);
+  border: 1px solid rgba(31, 29, 24, 0.14);
+  border-radius: 12px;
+  color: rgba(31, 29, 24, 0.74);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 0.24s cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 0.24s ease,
+    background-color 0.24s ease;
+}
+
+.bw-slot:hover {
+  transform: translateY(-2px);
+  background: var(--maui-amber-faint, rgba(184, 125, 45, 0.14));
+  border-color: var(--maui-amber-soft, rgba(184, 125, 45, 0.32));
+}
+
+.bw-slot:focus-visible {
+  outline: 1px solid rgba(31, 29, 24, 0.42);
+  outline-offset: 0.3rem;
+}
+
+.bw-slot.is-selected {
+  background: var(--maui-amber-faint, rgba(184, 125, 45, 0.14));
+  border-color: var(--maui-amber, #b87d2c);
+}
+
+.bw-slot-sub {
+  color: rgba(31, 29, 24, 0.42);
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+/* ── Review summary ── */
+
+.bw-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.bw-summary-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.bw-summary-row dt {
+  flex: 0 0 7.5rem;
+  color: rgba(31, 29, 24, 0.42);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.bw-summary-row dd {
+  margin: 0;
+  color: rgba(31, 29, 24, 0.78);
+  font-size: 0.9rem;
+}
+
+.bw-change-link {
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #7c5b2e;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.bw-change-link:hover {
+  color: var(--bw-ink);
+}
+
+.bw-change-link:focus-visible {
+  outline: 1px solid rgba(31, 29, 24, 0.42);
+  outline-offset: 0.25rem;
+}
+
+/* ── Footer nav ── */
+
+.bw-footer {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
+.bw-footer--in-surface {
+  margin-top: 1.5rem;
+}
+
+/* Back sits on the dark canvas by default → cream; inside a warm surface → ink. */
+.bw-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgba(242, 234, 217, 0.6);
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.bw-back:hover {
+  color: var(--bw-cream);
+}
+
+.bw-back:focus-visible {
+  outline: 1px solid rgba(214, 170, 105, 0.7);
+  outline-offset: 0.35rem;
+}
+
+.bw-surface .bw-back {
+  color: rgba(31, 29, 24, 0.52);
+}
+
+.bw-surface .bw-back:hover {
+  color: var(--bw-ink);
+}
+
+.bw-surface .bw-back:focus-visible {
+  outline-color: rgba(31, 29, 24, 0.42);
+}
+
+/* cp-button (dark ink pill) is invisible against the dark canvas — swap to
+   the cream face with ink text when used inside the wizard. */
+.bw-cta {
+  background: var(--bw-face);
+  color: var(--bw-ink);
+}
+
+.bw-cta:focus-visible {
+  outline: 1px solid rgba(214, 170, 105, 0.7);
+  outline-offset: 0.35rem;
+}
+
+.bw-surface .bw-cta {
+  background: rgba(31, 29, 24, 0.88);
+  color: #f5f0e7;
+}
+
+.bw-surface .bw-cta:focus-visible {
+  outline-color: rgba(31, 29, 24, 0.42);
+}
+
+/* ── Confirmation ── */
+
+.bw-confirm-lede {
+  margin: 0 0 1.75rem;
+  max-width: 34rem;
+  color: rgba(242, 234, 217, 0.66);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+  .bw-choice-grid,
+  .bw-choice-grid--4,
+  .bw-datetime {
+    grid-template-columns: 1fr;
+  }
+
+  .bw-canvas {
+    padding:
+      clamp(24px, 4.5svh, 40px)
+      16px
+      clamp(32px, 5.5svh, 52px);
+    border-radius: 22px;
+  }
+
+  .bw-hero-headline {
+    font-size: clamp(2.6rem, 13.5vw, 4.2rem);
+  }
+
+  .bw-step-title-line-inner {
+    font-size: clamp(1.5rem, 6.5vw, 2rem);
+  }
+
+  .bw-step-title-line-inner--display {
+    font-size: clamp(2.5rem, 12vw, 3.6rem);
+  }
+
+  .bw-progress-step {
+    font-size: 0.56rem;
+    letter-spacing: 0.08em;
+  }
+
+  .bw-choice-media {
+    height: 3.2rem;
+  }
+
+  .bw-summary-row {
+    flex-wrap: wrap;
+  }
+
+  .bw-summary-row dt {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bw-hero,
+  .bw-hero-word-inner,
+  .bw-step-title-line-inner,
+  .bw-panel,
+  .bw-review-summary,
+  .bw-canvas,
+  .bwc-grid {
+    will-change: auto;
+  }
+
+  .bw-choice,
+  .bw-slot,
+  .bw-progress-step,
+  .bwc-day,
+  .bwc-nav {
+    transition: none;
+  }
+
+  .bw-choice:hover,
+  .bw-slot:hover {
+    transform: none;
+  }
+}

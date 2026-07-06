@@ -1,0 +1,638 @@
+import { useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import BookingCalendar from '../components/booking/BookingCalendar'
+import useDocumentTitle from '../hooks/useDocumentTitle'
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion'
+import { MAUI_PALETTE_CSS_VARS } from '../styles/mauiPalette'
+import './Book.css'
+
+gsap.registerPlugin(ScrollTrigger)
+
+type StepId = 'type' | 'participants' | 'datetime' | 'contact' | 'confirm'
+
+type LessonType = 'vacation' | 'ongoing'
+
+type BookingData = {
+  lessonType: LessonType | null
+  participants: string | null
+  date: string
+  timeSlot: string | null
+  name: string
+  email: string
+  phone: string
+  message: string
+}
+
+const PARTICIPANT_OPTIONS = ['Solo', '2-3 people', '4-5 people', '6-8 people']
+
+const TIME_SLOTS = [
+  { id: 'morning', label: 'Morning', sub: '[Exact times TBD]' },
+  { id: 'afternoon', label: 'Afternoon', sub: '[Exact times TBD]' },
+  { id: 'late-afternoon', label: 'Late afternoon', sub: '[Exact times TBD]' },
+]
+
+const LESSON_TYPE_LABELS: Record<LessonType, string> = {
+  vacation: 'Vacation Lessons / Ukulele Experience',
+  ongoing: 'Ongoing Lessons',
+}
+
+const STEP_LABELS: Record<StepId, string> = {
+  type: 'Lesson',
+  participants: 'Group',
+  datetime: 'Date & Time',
+  contact: 'Details',
+  confirm: 'Done',
+}
+
+// Placeholder-friendly line only — real business voice TBD.
+const ENTRANCE_HEADLINE = "let's set up your lesson"
+
+function stepsFor(lessonType: LessonType | null): StepId[] {
+  return lessonType === 'ongoing'
+    ? ['type', 'datetime', 'contact', 'confirm']
+    : ['type', 'participants', 'datetime', 'contact', 'confirm']
+}
+
+function formatDate(iso: string) {
+  if (!iso) {
+    return '[No date chosen]'
+  }
+  return new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+const INITIAL_DATA: BookingData = {
+  lessonType: null,
+  participants: null,
+  date: '',
+  timeSlot: null,
+  name: '',
+  email: '',
+  phone: '',
+  message: '',
+}
+
+export default function Book() {
+  useDocumentTitle('Book | Maui Lessons')
+
+  const prefersReducedMotion = usePrefersReducedMotion()
+  const [step, setStep] = useState<StepId>('type')
+  const [data, setData] = useState<BookingData>(INITIAL_DATA)
+  const sceneRef = useRef<HTMLElement>(null)
+  const heroRef = useRef<HTMLElement>(null)
+  const canvasRef = useRef<HTMLDivElement>(null)
+  const glowRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+  const summaryCardRef = useRef<HTMLDivElement>(null)
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const transitionRef = useRef<gsap.core.Tween | null>(null)
+  const directionRef = useRef(1)
+  const hasMountedRef = useRef(false)
+
+  const steps = stepsFor(data.lessonType)
+  const stepIndex = steps.indexOf(step)
+
+  /*
+    Entrance: word-by-word headline reveal (OpeningScene tagline spirit) at
+    arrival scale, then the dark canvas grows in from a small centered point
+    to its full footprint. Runs once on arrival; reduced-motion users get the
+    fully-visible static layout (CSS defaults) with no scroll/tween work.
+  */
+  useLayoutEffect(() => {
+    if (prefersReducedMotion) {
+      return
+    }
+    const words = heroRef.current?.querySelectorAll('.bw-hero-word-inner')
+    const canvas = canvasRef.current
+    if (!words || words.length === 0 || !canvas) {
+      return
+    }
+
+    const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
+    timeline
+      .set(canvas, { autoAlpha: 0, scale: 0.05, transformOrigin: '50% 50%' })
+      .fromTo(
+        words,
+        { yPercent: 112 },
+        { yPercent: 0, duration: 0.9, stagger: 0.1 },
+      )
+      .to(canvas, { autoAlpha: 1, scale: 1, duration: 0.95, ease: 'expo.out' }, '-=0.2')
+
+    return () => {
+      timeline.kill()
+    }
+  }, [prefersReducedMotion])
+
+  /*
+    Type-step title card: the display title rises line-by-line out of overflow
+    masks before the choice cards arrive, so the step opens on its own beat.
+    On first arrival the timeline waits out the page entrance (hero words +
+    canvas growth) and holds the cards back until the title has landed; on
+    returns to this step it plays immediately alongside the panel fade, and
+    the shared step-change effect below keeps ownership of the cards.
+  */
+  useLayoutEffect(() => {
+    if (step !== 'type' || prefersReducedMotion) {
+      return
+    }
+    const panel = panelRef.current
+    const lines = panel?.querySelectorAll('.bw-step-title-line-inner')
+    if (!panel || !lines || lines.length === 0) {
+      return
+    }
+
+    const firstArrival = !hasMountedRef.current
+    const cards = firstArrival ? panel.querySelectorAll('.bw-choice-grid [data-bw-item]') : null
+
+    // Pre-hide before the delayed timeline's first tick so nothing flashes
+    // while the entrance canvas is still growing.
+    gsap.set(lines, { yPercent: 112 })
+    if (cards) {
+      gsap.set(cards, { autoAlpha: 0, y: 26 })
+    }
+
+    const timeline = gsap.timeline({ delay: firstArrival ? 1.35 : 0.1 })
+    timeline.to(lines, { yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.13 })
+    if (cards) {
+      timeline.to(
+        cards,
+        { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.09 },
+        '-=0.3',
+      )
+    }
+
+    return () => {
+      timeline.kill()
+    }
+  }, [step, prefersReducedMotion])
+
+  /*
+    Scroll-linked chrome only (Apple-style polish): headline parallax drift and
+    ambient amber glow intensity. The wizard itself stays click-driven — these
+    scrub tweens never touch step state or interactive elements.
+  */
+  useLayoutEffect(() => {
+    if (prefersReducedMotion) {
+      return
+    }
+    const scene = sceneRef.current
+    const hero = heroRef.current
+    const canvas = canvasRef.current
+    const glow = glowRef.current
+    if (!scene || !hero || !canvas || !glow) {
+      return
+    }
+
+    const heroDrift = gsap.to(hero, {
+      yPercent: -16,
+      ease: 'none',
+      scrollTrigger: { trigger: scene, start: 'top top', end: '+=70%', scrub: true },
+    })
+    const glowSwell = gsap.fromTo(
+      glow,
+      { opacity: 0.45 },
+      {
+        opacity: 1,
+        ease: 'none',
+        scrollTrigger: { trigger: canvas, start: 'top 90%', end: 'top 15%', scrub: true },
+      },
+    )
+
+    return () => {
+      heroDrift.scrollTrigger?.kill()
+      heroDrift.kill()
+      glowSwell.scrollTrigger?.kill()
+      glowSwell.kill()
+    }
+  }, [prefersReducedMotion])
+
+  // Subtle scroll drift on the review summary card while the contact step is up.
+  useLayoutEffect(() => {
+    const card = summaryCardRef.current
+    if (prefersReducedMotion || step !== 'contact' || !card) {
+      return
+    }
+    const drift = gsap.to(card, {
+      y: -12,
+      ease: 'none',
+      scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true },
+    })
+    return () => {
+      drift.scrollTrigger?.kill()
+      drift.kill()
+    }
+  }, [step, prefersReducedMotion])
+
+  function goTo(next: StepId, updated?: Partial<BookingData>) {
+    if (updated) {
+      setData((prev) => ({ ...prev, ...updated }))
+    }
+    if (next === step) {
+      return
+    }
+
+    const nextSteps = stepsFor(updated?.lessonType ?? data.lessonType)
+    directionRef.current = nextSteps.indexOf(next) >= nextSteps.indexOf(step) ? 1 : -1
+
+    const panel = panelRef.current
+    if (prefersReducedMotion || !panel) {
+      setStep(next)
+      return
+    }
+
+    transitionRef.current?.kill()
+    transitionRef.current = gsap.to(panel, {
+      autoAlpha: 0,
+      y: -22 * directionRef.current,
+      duration: 0.26,
+      ease: 'power2.in',
+      onComplete: () => setStep(next),
+    })
+  }
+
+  useLayoutEffect(() => {
+    const panel = panelRef.current
+    if (!panel) {
+      return
+    }
+
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      return
+    }
+
+    headingRef.current?.focus({ preventScroll: true })
+
+    if (prefersReducedMotion) {
+      gsap.set(panel, { clearProps: 'opacity,visibility,transform' })
+      return
+    }
+
+    transitionRef.current?.kill()
+    transitionRef.current = gsap.fromTo(
+      panel,
+      { autoAlpha: 0, y: 28 * directionRef.current },
+      { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' },
+    )
+
+    const items = panel.querySelectorAll('[data-bw-item]')
+    if (items.length > 0) {
+      gsap.fromTo(
+        items,
+        { autoAlpha: 0, y: 16 },
+        { autoAlpha: 1, y: 0, duration: 0.38, ease: 'power2.out', stagger: 0.055, delay: 0.08 },
+      )
+    }
+
+    return () => {
+      transitionRef.current?.kill()
+    }
+  }, [step, prefersReducedMotion])
+
+  function selectLessonType(lessonType: LessonType) {
+    // Switching type invalidates a vacation-only participants choice.
+    const participants = lessonType === 'ongoing' ? null : data.participants
+    goTo(lessonType === 'ongoing' ? 'datetime' : 'participants', { lessonType, participants })
+  }
+
+  function goBack() {
+    if (stepIndex > 0) {
+      goTo(steps[stepIndex - 1])
+    }
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    /*
+      Formspree attach point — structure-only for now. When real submission is
+      wired up, POST this form here (action="https://formspree.io/f/{form_id}"
+      or a fetch() with new FormData(event.currentTarget)); the hidden
+      booking-context fields are already part of the form payload. Keep
+      goTo('confirm') as the success path once the request succeeds.
+    */
+    goTo('confirm')
+  }
+
+  const summaryRows: Array<{ label: string; value: string; editStep: StepId }> = [
+    {
+      label: 'Lesson',
+      value: data.lessonType ? LESSON_TYPE_LABELS[data.lessonType] : '—',
+      editStep: 'type',
+    },
+    ...(data.lessonType === 'vacation'
+      ? [{ label: 'Group size', value: data.participants ?? '—', editStep: 'participants' as StepId }]
+      : []),
+    {
+      label: 'Date',
+      value: formatDate(data.date),
+      editStep: 'datetime',
+    },
+    {
+      label: 'Time',
+      value: TIME_SLOTS.find((slot) => slot.id === data.timeSlot)?.label ?? '[No time chosen]',
+      editStep: 'datetime',
+    },
+  ]
+
+  return (
+    <section
+      ref={sceneRef}
+      className="bw"
+      style={MAUI_PALETTE_CSS_VARS as CSSProperties}
+      aria-label="Booking wizard"
+    >
+      <header ref={heroRef} className="bw-hero">
+        <p className="cp-section-label">Book a Lesson</p>
+        <h1 className="bw-hero-headline">
+          <span className="bw-sr-only">{ENTRANCE_HEADLINE}</span>
+          <span aria-hidden="true" className="bw-hero-words">
+            {ENTRANCE_HEADLINE.split(' ').map((word, index) => (
+              <span key={index} className="bw-hero-word">
+                <span className="bw-hero-word-inner">{word}</span>
+              </span>
+            ))}
+          </span>
+        </h1>
+      </header>
+
+      <div ref={canvasRef} className="bw-canvas">
+        <div ref={glowRef} className="bw-canvas-glow" aria-hidden="true" />
+
+        <ol className="bw-progress" aria-label="Booking progress">
+          {steps.map((id, index) => (
+            <li
+              key={id}
+              className={`bw-progress-step${index === stepIndex ? ' is-active' : ''}${
+                index < stepIndex ? ' is-done' : ''
+              }`}
+              aria-current={index === stepIndex ? 'step' : undefined}
+            >
+              {index + 1}. {STEP_LABELS[id]}
+            </li>
+          ))}
+        </ol>
+
+        <div ref={panelRef} className="bw-panel">
+          {step === 'type' && (
+            <>
+              <h2 ref={headingRef} className="bw-step-heading bw-step-title" tabIndex={-1}>
+                <span className="bw-sr-only">Choose your experience</span>
+                <span className="bw-step-title-lines" aria-hidden="true">
+                  <span className="bw-step-title-line">
+                    <span className="bw-step-title-line-inner">Choose your</span>
+                  </span>
+                  <span className="bw-step-title-line">
+                    <span className="bw-step-title-line-inner bw-step-title-line-inner--display">
+                      experience
+                    </span>
+                  </span>
+                </span>
+              </h2>
+              <div className="bw-choice-grid">
+                <button
+                  type="button"
+                  data-bw-item
+                  data-accent="green"
+                  className={`bw-choice bw-choice--large${data.lessonType === 'vacation' ? ' is-selected' : ''}`}
+                  onClick={() => selectLessonType('vacation')}
+                >
+                  <span className="bw-choice-media" aria-hidden="true" />
+                  <span className="bw-choice-body">
+                    <span className="bw-choice-title">Vacation Lessons / Ukulele Experience</span>
+                    <span className="bw-choice-sub">[Short description of the visitor experience]</span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  data-bw-item
+                  data-accent="amber"
+                  className={`bw-choice bw-choice--large${data.lessonType === 'ongoing' ? ' is-selected' : ''}`}
+                  onClick={() => selectLessonType('ongoing')}
+                >
+                  <span className="bw-choice-media" aria-hidden="true" />
+                  <span className="bw-choice-body">
+                    <span className="bw-choice-title">Ongoing Lessons</span>
+                    <span className="bw-choice-sub">[Short description of recurring lessons]</span>
+                  </span>
+                </button>
+              </div>
+            </>
+          )}
+
+          {step === 'participants' && (
+            <>
+              <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
+                How many people are joining?
+              </h2>
+              <div className="bw-choice-grid bw-choice-grid--4">
+                {PARTICIPANT_OPTIONS.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    data-bw-item
+                    data-accent="teal"
+                    className={`bw-choice${data.participants === option ? ' is-selected' : ''}`}
+                    onClick={() => goTo('datetime', { participants: option })}
+                  >
+                    <span className="bw-choice-media bw-choice-media--thin" aria-hidden="true" />
+                    <span className="bw-choice-body">
+                      <span className="bw-choice-title">{option}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <div className="bw-footer">
+                <button type="button" className="bw-back" onClick={goBack}>
+                  ← Back
+                </button>
+              </div>
+            </>
+          )}
+
+          {step === 'datetime' && (
+            <>
+              <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
+                When would you like to play?
+              </h2>
+              {/* Calendar + slots share one warm card face so the step reads
+                  as a single composed moment, not two stacked widgets. */}
+              <div className="bw-surface bw-datetime" data-bw-item>
+                <BookingCalendar
+                  value={data.date}
+                  onChange={(iso) => setData((prev) => ({ ...prev, date: iso }))}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+                <div className="bw-datetime-side">
+                  <p className="bw-datetime-chosen">{formatDate(data.date)}</p>
+                  <p className="bw-datetime-label">Preferred time of day</p>
+                  <div className="bw-slot-list">
+                    {TIME_SLOTS.map((slot) => (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        className={`bw-slot${data.timeSlot === slot.id ? ' is-selected' : ''}`}
+                        aria-pressed={data.timeSlot === slot.id}
+                        onClick={() => setData((prev) => ({ ...prev, timeSlot: slot.id }))}
+                      >
+                        {slot.label}
+                        <span className="bw-slot-sub">{slot.sub}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="bw-footer">
+                <button type="button" className="bw-back" onClick={goBack}>
+                  ← Back
+                </button>
+                <button type="button" className="cp-button bw-cta" onClick={() => goTo('contact')}>
+                  Continue
+                </button>
+              </div>
+            </>
+          )}
+
+          {step === 'contact' && (
+            <>
+              <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
+                Almost there — your details
+              </h2>
+              <div ref={summaryCardRef} className="bw-surface bw-review-summary" data-bw-item>
+                <p className="bw-surface-label">Your request</p>
+                <dl className="bw-summary">
+                  {summaryRows.map((row) => (
+                    <div key={row.label} className="bw-summary-row">
+                      <dt>{row.label}</dt>
+                      <dd>{row.value}</dd>
+                      <button type="button" className="bw-change-link" onClick={() => goTo(row.editStep)}>
+                        Change
+                      </button>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              <form
+                id="booking-request-form"
+                name="booking-request-form"
+                className="bw-surface"
+                aria-label="Contact details"
+                onSubmit={handleSubmit}
+                data-bw-item
+              >
+                {/* Full booking context rides along as hidden fields so a
+                    future Formspree POST includes more than the raw contact
+                    inputs. Names are stable — do not rename casually. */}
+                <input type="hidden" name="lessonType" value={data.lessonType ?? ''} />
+                <input type="hidden" name="participants" value={data.participants ?? ''} />
+                <input type="hidden" name="date" value={data.date} />
+                <input type="hidden" name="timeSlot" value={data.timeSlot ?? ''} />
+                <div className="cp-form-row">
+                  <div className="cp-form-field">
+                    <label className="cp-form-label" htmlFor="bw-name">
+                      Name
+                    </label>
+                    <input
+                      id="bw-name"
+                      name="name"
+                      className="cp-form-control"
+                      required
+                      autoComplete="name"
+                      value={data.name}
+                      onChange={(event) => setData((prev) => ({ ...prev, name: event.target.value }))}
+                    />
+                  </div>
+                  <div className="cp-form-field">
+                    <label className="cp-form-label" htmlFor="bw-email">
+                      Email
+                    </label>
+                    <input
+                      id="bw-email"
+                      name="email"
+                      type="email"
+                      className="cp-form-control"
+                      required
+                      autoComplete="email"
+                      value={data.email}
+                      onChange={(event) => setData((prev) => ({ ...prev, email: event.target.value }))}
+                    />
+                  </div>
+                </div>
+                <div className="cp-form-field">
+                  <label className="cp-form-label" htmlFor="bw-phone">
+                    Phone
+                  </label>
+                  <input
+                    id="bw-phone"
+                    name="phone"
+                    type="tel"
+                    className="cp-form-control"
+                    autoComplete="tel"
+                    value={data.phone}
+                    onChange={(event) => setData((prev) => ({ ...prev, phone: event.target.value }))}
+                  />
+                </div>
+                <div className="cp-form-field">
+                  <label className="cp-form-label" htmlFor="bw-message">
+                    Message
+                  </label>
+                  <textarea
+                    id="bw-message"
+                    name="message"
+                    className="cp-form-control cp-form-control--textarea"
+                    placeholder="[Anything else we should know?]"
+                    value={data.message}
+                    onChange={(event) => setData((prev) => ({ ...prev, message: event.target.value }))}
+                  />
+                </div>
+                <div className="bw-footer bw-footer--in-surface">
+                  <button type="button" className="bw-back" onClick={goBack}>
+                    ← Back
+                  </button>
+                  <button type="submit" className="cp-button bw-cta">
+                    Send booking request
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+
+          {step === 'confirm' && (
+            <>
+              <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
+                Request received
+              </h2>
+              <p className="bw-confirm-lede" data-bw-item>
+                [Placeholder confirmation copy — no request was actually sent. Real submission and
+                response-time details go here once the booking flow is wired up.]
+              </p>
+              <div className="bw-surface" data-bw-item>
+                <p className="bw-surface-label">Your request</p>
+                <dl className="bw-summary">
+                  {summaryRows.map((row) => (
+                    <div key={row.label} className="bw-summary-row">
+                      <dt>{row.label}</dt>
+                      <dd>{row.value}</dd>
+                    </div>
+                  ))}
+                  <div className="bw-summary-row">
+                    <dt>Name</dt>
+                    <dd>{data.name || '—'}</dd>
+                  </div>
+                  <div className="bw-summary-row">
+                    <dt>Email</dt>
+                    <dd>{data.email || '—'}</dd>
+                  </div>
+                </dl>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}

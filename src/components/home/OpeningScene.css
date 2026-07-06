@@ -1,0 +1,187 @@
+/* Backgrounds stay transparent so the fixed ambient WebGL layer shows
+   through while the landscape loads and again as it dissolves at handoff. */
+.opening-scene {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  background: transparent;
+}
+
+.opening-scene__pin {
+  position: relative;
+  height: 100svh;
+  overflow: hidden;
+  background: transparent;
+}
+
+.opening-scene__media {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: transparent;
+}
+
+.opening-scene__landscape {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  opacity: 0;
+}
+
+.opening-scene__frame {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  z-index: 2;
+  width: min(66vw, calc(62svh * 16 / 9));
+  height: 62vh;
+  overflow: hidden;
+  cursor: zoom-in;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+}
+
+.opening-scene.is-focus-mode .opening-scene__frame {
+  cursor: zoom-out;
+}
+
+.opening-scene:not(.is-focus-available):not(.is-focus-mode) .opening-scene__frame {
+  cursor: default;
+}
+
+.opening-scene__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.opening-scene__video:focus-visible,
+.opening-scene__mute-button:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.78);
+  outline-offset: 0.28rem;
+}
+
+.opening-scene__focus-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  padding: 0;
+  border: 0;
+  background: rgba(31, 29, 24, 0.32);
+  cursor: default;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.opening-scene__mute-button {
+  position: absolute;
+  right: clamp(0.75rem, 1.45vw, 1.1rem);
+  bottom: clamp(0.75rem, 1.45vw, 1.1rem);
+  z-index: 3;
+  display: inline-grid;
+  place-items: center;
+  width: clamp(2.25rem, 3.5vw, 2.5rem);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  filter: drop-shadow(0 1px 4px rgba(31, 29, 24, 0.56));
+}
+
+.opening-scene__mute-button svg {
+  display: block;
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.opening-scene__tagline {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.opening-scene__tagline-text {
+  margin: 0;
+  padding: 0 clamp(22px, 5.5vw, 88px);
+  color: rgb(250, 245, 238);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.8rem, 3.5vw, 3.6rem);
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.tagline-word {
+  display: inline;
+  margin-right: 0.25em;
+  will-change: color;
+  transition: none;
+}
+
+.opening-scene.is-reduced-motion .opening-scene__pin {
+  height: auto;
+  min-height: 100svh;
+  overflow: visible;
+}
+
+.opening-scene.is-reduced-motion .opening-scene__media {
+  position: relative;
+  height: 100svh;
+}
+
+.opening-scene.is-reduced-motion .opening-scene__landscape,
+.opening-scene.is-reduced-motion .opening-scene__frame,
+.opening-scene.is-reduced-motion .opening-scene__video {
+  opacity: 1;
+}
+
+.opening-scene.is-reduced-motion .opening-scene__tagline {
+  position: relative;
+  inset: auto;
+  padding: clamp(2.5rem, 5vw, 4rem) 0;
+}
+
+/* Reduced motion places the tagline in flow on the light ambient canvas,
+   so it needs ink-dark type instead of the over-video cream. */
+.opening-scene.is-reduced-motion .opening-scene__tagline-text,
+.opening-scene.is-reduced-motion .tagline-word {
+  color: #1f1d18;
+}
+
+@media (max-width: 760px) {
+  .opening-scene__landscape {
+    object-position: 54% 38%;
+  }
+
+  .opening-scene__frame {
+    width: min(90vw, calc(64svh * 16 / 9));
+    height: 64vh;
+  }
+
+  .opening-scene__tagline-text {
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+  }
+}

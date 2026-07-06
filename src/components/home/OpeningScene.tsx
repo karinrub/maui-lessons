@@ -630,7 +630,6 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
     const scene = sceneRef.current
     const pin = pinRef.current
     const media = mediaRef.current
-    const landscape = landscapeRef.current
     const frame = frameRef.current
     const video = videoRef.current
     const tagline = taglineRef.current
@@ -678,12 +677,11 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
           .to(frame, { opacity: 0, duration: 0.14, ease: 'none' }, '<+=0.10')
           .to(tagline, { opacity: 1, duration: 0.06, ease: 'none' })
           .to(words, { color: 'rgb(250,245,238)', duration: 0.04, stagger: 0.028, ease: 'none' })
-          .to({}, { duration: 0.08 })
-          // Handoff: tagline and beach dissolve to the shared cream
-          // background right as the pin releases, so the services deck
-          // rises out of the same canvas instead of after a hard cut.
-          .to(tagline, { opacity: 0, duration: 0.08, ease: 'none' })
-          .to(landscape, { opacity: 0, duration: 0.12, ease: 'none' }, '<+=0.02')
+          .to({}, { duration: 0.06 })
+          // Handoff: the tagline dissolves right as the pin releases, so the
+          // services deck heading can crossfade in underneath it — the beach
+          // backdrop itself lives outside this timeline and persists.
+          .to(tagline, { opacity: 0, duration: 0.22, ease: 'none' })
           .set(media, { visibility: 'hidden' })
           .call(() => setFocusAvailableState(false))
 
@@ -926,18 +924,20 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
       className={sceneClassName}
       aria-label="Homepage opening scene"
     >
+      <div className="opening-scene__backdrop">
+        <img
+          ref={landscapeRef}
+          className="opening-scene__landscape"
+          src={landscapeImage}
+          alt=""
+          decoding="async"
+          fetchPriority="high"
+          onLoad={() => setLandscapeReady(true)}
+        />
+      </div>
+
       <div ref={pinRef} className="opening-scene__pin">
         <div ref={mediaRef} className="opening-scene__media">
-          <img
-            ref={landscapeRef}
-            className="opening-scene__landscape"
-            src={landscapeImage}
-            alt=""
-            decoding="async"
-            fetchPriority="high"
-            onLoad={() => setLandscapeReady(true)}
-          />
-
           <div
             ref={focusBackdropRef}
             className="opening-scene__focus-backdrop"

@@ -22,6 +22,17 @@
   background: transparent;
 }
 
+/* Persistent backdrop: fixed to the viewport, independent of the hero's
+   pinned media container, so it survives the pin's teardown and only ever
+   gets covered by the deck canvas rising above it (z-index, not lifecycle). */
+.opening-scene__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
 .opening-scene__landscape {
   position: absolute;
   inset: 0;
@@ -149,6 +160,18 @@
 
 .opening-scene.is-reduced-motion .opening-scene__media {
   position: relative;
+  height: 100svh;
+}
+
+/* Reduced motion drops the fixed/persistent backdrop treatment (that's a
+   parallax-like effect). The photo is pinned to just the hero's own 100svh
+   slot instead of the whole section, so it doesn't bleed behind the tagline,
+   which sits further down in flow on the light ambient canvas. */
+.opening-scene.is-reduced-motion .opening-scene__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 100svh;
 }
 

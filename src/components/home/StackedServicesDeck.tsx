@@ -39,8 +39,7 @@ const services = [
 // Back cards peek out centered below the front card, receding with scale,
 // so the resting stack stays inside the canvas padding at every breakpoint.
 const headingText = 'Choose your experience'
-// Non-breaking spaces keep word gaps from collapsing between SVG tspans.
-const headingChars = headingText.split('').map((char) => (char === ' ' ? ' ' : char))
+const headingLines = ['Choose your', 'experience']
 
 const stackPositions = {
   front: { x: 0, y: 0, scale: 1, opacity: 1 },
@@ -59,6 +58,7 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
   const pinRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
+  const cardsShellRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<HTMLElement[]>([])
 
   useLayoutEffect(() => {
@@ -66,9 +66,10 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
     const pin = pinRef.current
     const canvas = canvasRef.current
     const heading = headingRef.current
+    const cardsShell = cardsShellRef.current
     const cards = cardsRef.current
 
-    if (!section || !pin || !canvas || !heading || cards.length !== services.length) {
+    if (!section || !pin || !canvas || !heading || !cardsShell || cards.length !== services.length) {
       return
     }
 
@@ -77,7 +78,8 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
     const pinElement = pin
     const canvasElement = canvas
     const headingElement = heading
-    const headingLetters = heading.querySelectorAll<SVGTSpanElement>('.stacked-services-deck__heading-letter')
+    const cardsShellElement = cardsShell
+    const headingLineElements = heading.querySelectorAll<HTMLElement>('.stacked-services-deck__heading-line')
 
     let stackContext: gsap.Context | null = null
     let entranceContext: gsap.Context | null = null
@@ -100,21 +102,30 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
       })
 
       gsap.set(headingElement, {
-        y: prefersReducedMotion ? 0 : 36,
         opacity: prefersReducedMotion ? 1 : 0,
+        scale: prefersReducedMotion ? 1 : 0.9,
+        y: prefersReducedMotion ? 0 : 68,
+        transformOrigin: 'center center',
       })
 
-      gsap.set(headingLetters, {
+      gsap.set(headingLineElements, {
         opacity: prefersReducedMotion ? 1 : 0,
+        yPercent: prefersReducedMotion ? 0 : 118,
+        rotateX: prefersReducedMotion ? 0 : -16,
+        transformOrigin: 'center bottom',
       })
 
-      // The gradient canvas stays fully opaque and rises up from below the
-      // viewport edge — it reads as a surface sliding over the hero's
-      // dissolving beach rather than fading in out of a blank gap.
+      // The canvas arrives as the transition surface, with the section title
+      // leading the cards inside that same surface.
       gsap.set(canvasElement, {
         y: prefersReducedMotion ? 0 : 130,
         scale: prefersReducedMotion ? 1 : 0.94,
         transformOrigin: 'center bottom',
+      })
+
+      gsap.set(cardsShellElement, {
+        y: prefersReducedMotion ? 0 : 48,
+        opacity: prefersReducedMotion ? 1 : 0,
       })
     }, sectionElement)
 
@@ -135,14 +146,23 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
             },
           })
           .to(canvasElement, { y: 0, scale: 1, duration: 1, ease: 'power2.out' }, 0)
-          .to(headingElement, { y: 0, opacity: 1, duration: 0.5, ease: 'power1.out' }, 0.15)
           .to(
-            headingLetters,
-            { opacity: 1, duration: 0.05, stagger: 0.018, ease: 'none' },
-            0.22,
+            headingElement,
+            { y: 0, scale: 1, opacity: 0.86, duration: 0.9, ease: 'power2.out' },
+            0,
           )
-          .to(secondCard, { ...stackPositions.second, duration: 0.5, ease: 'power2.out' }, 0.45)
-          .to(thirdCard, { ...stackPositions.third, duration: 0.5, ease: 'power2.out' }, 0.55)
+          .to(
+            headingLineElements,
+            {
+              yPercent: 8,
+              rotateX: -2,
+              opacity: 0.92,
+              duration: 0.9,
+              stagger: 0.1,
+              ease: 'power3.out',
+            },
+            0,
+          )
       }, sectionElement)
     }
 
@@ -152,10 +172,33 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
       unregisterDeck = scrollSequence.registerDeck({
         sectionEl: sectionElement,
         pinEl: pinElement,
-        end: '+=234%',
+        end: '+=320%',
         buildTimeline: () =>
           gsap
             .timeline({ paused: true })
+            .addLabel('title')
+            .to(
+              headingElement,
+              { y: 0, scale: 1, opacity: 1, duration: 0.26, ease: 'power2.out' },
+              'title',
+            )
+            .to(
+              headingLineElements,
+              {
+                yPercent: 0,
+                rotateX: 0,
+                opacity: 1,
+                duration: 0.32,
+                stagger: 0.08,
+                ease: 'power3.out',
+              },
+              'title+=0.04',
+            )
+            .to(cardsShellElement, { y: 0, opacity: 1, duration: 0.44, ease: 'power2.out' }, 'title+=0.28')
+            .to(secondCard, { ...stackPositions.second, duration: 0.58, ease: 'power2.out' }, 'title+=0.36')
+            .to(thirdCard, { ...stackPositions.third, duration: 0.58, ease: 'power2.out' }, 'title+=0.44')
+            .to(headingElement, { y: -18, scale: 0.78, opacity: 0.9, duration: 0.42, ease: 'power2.inOut' }, 'title+=0.58')
+            .to({}, { duration: 0.14 })
             // The leaving card slides out fully opaque — the canvas edge
             // masks it — and only fades in the last stretch of its travel,
             // so its text never double-exposes over the card underneath.
@@ -208,32 +251,22 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
     >
       <div ref={pinRef} className="stacked-services-deck__pin">
         <div className="stacked-services-deck__stage">
+          <div ref={headingRef} className="stacked-services-deck__heading">
+            <h2 className="stacked-services-deck__heading-text" aria-label={headingText}>
+              {headingLines.map((line) => (
+                <span key={line} className="stacked-services-deck__heading-mask" aria-hidden="true">
+                  <span className="stacked-services-deck__heading-line">{line}</span>
+                </span>
+              ))}
+            </h2>
+          </div>
           <div ref={canvasRef} className="stacked-services-deck__canvas">
-            <div ref={headingRef} className="stacked-services-deck__heading">
-              <h2 className="stacked-services-deck__heading-sr-only">{headingText}</h2>
-              <svg
-                className="stacked-services-deck__heading-svg"
-                viewBox="0 0 800 200"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path
-                  id="stacked-services-deck-arch-path"
-                  d="M 40 172 Q 400 32 760 172"
-                  fill="none"
-                />
-                <text className="stacked-services-deck__heading-text" textAnchor="middle">
-                  <textPath href="#stacked-services-deck-arch-path" startOffset="50%">
-                    {headingChars.map((char, index) => (
-                      <tspan key={index} className="stacked-services-deck__heading-letter">
-                        {char}
-                      </tspan>
-                    ))}
-                  </textPath>
-                </text>
-              </svg>
-            </div>
-            <div className="stacked-services-deck__cards" role="list" aria-label="Lesson experiences">
+            <div
+              ref={cardsShellRef}
+              className="stacked-services-deck__cards"
+              role="list"
+              aria-label="Lesson experiences"
+            >
               {services.map((service, index) => (
                 <article
                   key={service.title}

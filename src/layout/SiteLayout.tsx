@@ -49,7 +49,7 @@ export default function SiteLayout() {
           </main>
         </PageTransition>
       </div>
-      <SiteFooter />
+      {isHome ? null : <SiteFooter />}
     </div>
   )
 }

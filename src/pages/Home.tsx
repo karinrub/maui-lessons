@@ -1,4 +1,5 @@
 import HomeAmbientBackground from '../components/home/HomeAmbientBackground'
+import HomeFinale from '../components/home/HomeFinale'
 import MeetAaron from '../components/home/MeetAaron'
 import OpeningScene from '../components/home/OpeningScene'
 import StackedServicesDeck from '../components/home/StackedServicesDeck'
@@ -15,6 +16,7 @@ export default function Home() {
       <OpeningScene scrollSequence={scrollSequence} />
       <StackedServicesDeck scrollSequence={scrollSequence} />
       <MeetAaron />
+      <HomeFinale />
     </>
   )
 }

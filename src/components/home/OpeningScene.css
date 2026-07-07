@@ -176,6 +176,20 @@
   will-change: transform, opacity;
 }
 
+/* Same grain as the services band below (see --grain-url in index.css), so
+   the arch and the deck read as one continuous material, not two flat fills. */
+.opening-scene__arch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
 /* The title rides a curve matching the arch's own dome shape, so it's set
    as SVG text-on-a-path (one line, no wrap) instead of block-level HTML
    type — CSS alone can't bend a text baseline. */

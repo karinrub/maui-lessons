@@ -1,9 +1,15 @@
+/* Opaque at the section level (not just the pin): the section sits in normal
+   flow for ~1 viewport before its pin engages, and a transparent background
+   there let the cream ambient canvas show through as a visible gap between
+   the hero arch and the sage band. The -2px pull-up kills the sub-pixel
+   hairline where the arch's bottom edge meets this section's top edge. */
 .stacked-services-deck {
   position: relative;
   z-index: 2;
   width: 100%;
+  margin-top: -2px;
   overflow-x: clip;
-  background: transparent;
+  background: var(--home-sage);
 }
 
 .stacked-services-deck__pin {
@@ -14,7 +20,24 @@
   /* Same color as the hero's closing arch (OpeningScene.css) so the two
      flow together with zero seam — this is the page background from the
      bottom of the arch onward, not a boxed section of its own. */
-  background: var(--home-sage);
+  /* Pool of light behind the card stack — sage lifted ~6% at center, easing
+     back to the flat section sage well before the edges so the pin still
+     meets the arch above and the section below with zero seam. */
+  background: radial-gradient(90% 70% at 50% 46%, #c6d4b0 0%, var(--home-sage) 62%);
+}
+
+/* Static paper grain over the whole pinned band (cards included) — texture,
+   zero runtime cost. Painted by a pseudo-element so no DOM/markup change. */
+.stacked-services-deck__pin::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 .stacked-services-deck__stage {

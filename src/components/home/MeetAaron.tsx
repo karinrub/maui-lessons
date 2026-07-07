@@ -9,19 +9,28 @@ gsap.registerPlugin(ScrollTrigger)
 
 const portraitImage = new URL('../../../assets/images/aaron-playing-close-2.jpg', import.meta.url).href
 
-// Gentle hand-drawn double wave running left to right, touching both
-// viewBox edges (x=0 and x=viewBox width) so the curve spans the section
-// edge-to-edge with the svg stretched via preserveAspectRatio="none" —
-// no inset margin, no letterboxed dead space on either side.
+// True staircase: each cycle is a flat horizontal "tread" (a straight line,
+// zero curvature — the previous design curved everywhere, which read as a
+// wave) followed by a short "riser" drop between levels. The riser is a
+// symmetric cubic-bezier whose control points sit at the riser's own
+// horizontal midpoint (one level with its start, one level with its end),
+// which flattens the slope to near-zero right where it meets each tread
+// (no visible corner) and is steepest only in the riser's own middle — so
+// it still reads as eased, not a sharp mechanical corner, but the flat
+// treads are what make it read as stairs rather than a wave. The riser
+// spans a minority of each cycle's width (treads dominate) and the
+// amplitude is kept modest, both to keep curvature gentle enough that
+// large glyphs riding the path don't overlap at the steepest point. Four
+// treads alternate top/bottom and land back on the starting level, so the
+// path tiles seamlessly for the infinite marquee loop.
 const RIBBON_PATH_DESKTOP =
-  'M 0,150 C 192,60 364,40 557,90 C 750,140 878,170 1028,110 C 1114,80 1168,65 1200,55'
+  'M 0,55 L 165,55 C 232.5,55 232.5,165 300,165 L 465,165 C 532.5,165 532.5,55 600,55 L 765,55 C 832.5,55 832.5,165 900,165 L 1065,165 C 1132.5,165 1132.5,55 1200,55'
 
-// Same shape, hand-tuned into a narrower viewBox so the wave ratio holds up
-// at mobile widths instead of flattening into a straight line.
+// Same construction, two tread/riser cycles across the narrower mobile viewBox.
 const RIBBON_PATH_MOBILE =
-  'M 0,130 C 77,70 144,50 210,80 C 276,110 321,140 365,110 C 398,90 420,75 420,55'
+  'M 0,40 L 115,40 C 162.5,40 162.5,160 210,160 L 325,160 C 372.5,160 372.5,40 420,40'
 
-const RIBBON_UNIT = 'meet Aaron  '
+const RIBBON_UNIT = 'MEET AARON  '
 const RIBBON_SPEED_PX_PER_SEC = 60
 
 type RibbonRefs = {
@@ -58,10 +67,18 @@ export default function MeetAaron() {
       return
     }
 
-    // Center-out horizontal reveal: the image starts clipped to a sliver at
-    // its own center and the clip expands outward to both edges at once.
-    gsap.set(image, { clipPath: 'inset(0% 50% 0% 50%)' })
-
+    // Center-expanding reveal: the image starts clipped to a single point
+    // at its own center and the mask grows outward on all four sides at
+    // once, so it reads as expanding from the middle rather than sliding
+    // open left-right. Using a single fromTo() (not a separate set() + to())
+    // matters here: equal-valued inset() sides collapse to a single-token
+    // computed value ("inset(50%)") once applied to the DOM, and a plain
+    // .to() with no explicit `from` reads that collapsed computed style back
+    // as its start value — a 1-token start against a 4-token end breaks
+    // GSAP's per-token interpolation, so it silently snaps instead of
+    // animating. fromTo() parses the `from` string literally (4 tokens),
+    // sidestepping the DOM readback entirely.
+    //
     // The hero's own pin-spacers don't exist yet at mount (they wait on
     // image/video load), so this section briefly sits much closer to the
     // top of a shorter document than it will once those land. A plain
@@ -72,16 +89,20 @@ export default function MeetAaron() {
     // above the (correct) start and reverses the tween back to its hidden
     // state, so it can play forward for real when the user actually
     // scrolls here.
-    const tween = gsap.to(image, {
-      clipPath: 'inset(0% 0% 0% 0%)',
-      duration: 1.1,
-      ease: 'power3.inOut',
-      scrollTrigger: {
-        trigger: media,
-        start: 'top 85%',
-        toggleActions: 'play none none reverse',
+    const tween = gsap.fromTo(
+      image,
+      { clipPath: 'inset(50% 50% 50% 50%)' },
+      {
+        clipPath: 'inset(0% 0% 0% 0%)',
+        duration: 1.1,
+        ease: 'power3.inOut',
+        scrollTrigger: {
+          trigger: media,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
       },
-    })
+    )
 
     return () => {
       tween.scrollTrigger?.kill()
@@ -141,9 +162,21 @@ export default function MeetAaron() {
         return
       }
 
+      // The wrap point must land exactly one repeating "loop" cycle further
+      // along the path — not an arbitrary 50% of the path length — or the
+      // text pattern won't line back up with itself on repeat and the loop
+      // visibly snaps/jumps every cycle. Measure the actual rendered width
+      // of one loop cycle and convert it to a percentage of the path length
+      // so the reset is imperceptible, then size the duration off that same
+      // real distance so playback speed stays constant regardless of path
+      // or text length.
+      measureTextEl.textContent = loop
+      const loopWidth = measureTextEl.getComputedTextLength() || unitWidth * repeatCount
+      const wrapOffsetPercent = (loopWidth / pathLength) * 100
+
       const tween = gsap.to(textPathEl, {
-        attr: { startOffset: '50%' },
-        duration: pathLength / RIBBON_SPEED_PX_PER_SEC,
+        attr: { startOffset: `${wrapOffsetPercent}%` },
+        duration: loopWidth / RIBBON_SPEED_PX_PER_SEC,
         ease: 'none',
         repeat: -1,
         paused: true,
@@ -247,8 +280,10 @@ export default function MeetAaron() {
 
         <Link to="/about" className="meet-aaron__content">
           <p className="meet-aaron__description">
-            [Placeholder] A few warm sentences introducing Aaron — his story, his teaching
-            style, and why he loves sharing music on Maui — will live here.
+            Aaron teaches with patience, warmth, and a genuine love for helping people learn.
+            With more than 20 years of playing and teaching experience, he creates relaxed
+            lessons where students of any age can feel comfortable, capable, and connected
+            through music.
           </p>
           <span className="meet-aaron__cta">
             Learn more about Aaron

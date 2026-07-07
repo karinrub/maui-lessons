@@ -733,6 +733,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
   useEffect(() => {
     const focusBackdrop = focusBackdropRef.current
     const frame = frameRef.current
+    const video = videoRef.current
 
     return () => {
       landscapeFadeRef.current?.kill()
@@ -741,6 +742,11 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
       gsap.set(frame, { clearProps: 'position,top,left,width,height,zIndex,transform' })
       setHeaderSuppressed(false)
       restoreFocusScroll()
+
+      if (video) {
+        video.pause()
+        video.currentTime = 0
+      }
     }
   }, [restoreFocusScroll, setHeaderSuppressed])
 

@@ -4,6 +4,10 @@
      flows into the page with zero seam. */
   --home-sage: #b8c8a0;
   --home-sage-ink: #17352a;
+  /* Warm tan/gold handoff color for the "meet Aaron" section — a
+     deliberate hue shift off the sage above it, blended in via a gradient
+     at the section's own top edge rather than a hard color cut. */
+  --home-tan: #dcb877;
   color: #1f1d18;
   background: #f5f0e7;
   font-family:

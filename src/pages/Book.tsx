@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import BookingCalendar from '../components/booking/BookingCalendar'
@@ -93,6 +93,7 @@ export default function Book() {
   const transitionRef = useRef<gsap.core.Tween | null>(null)
   const directionRef = useRef(1)
   const hasMountedRef = useRef(false)
+  const lastAdvancedDatetimeRef = useRef<string | null>(null)
 
   const steps = stepsFor(data.lessonType)
   const stepIndex = steps.indexOf(step)
@@ -294,6 +295,37 @@ export default function Book() {
     }
   }, [step, prefersReducedMotion])
 
+  // Datetime is the one step with two required selections (date + time
+  // slot), so it can't auto-advance on a single onClick like the other
+  // steps do. Wait for both, then hold briefly so the user sees both
+  // selections highlighted before the panel transitions. Guarded by
+  // lastAdvancedDatetimeRef so arriving here via a "Change" link with the
+  // same date/timeSlot as before doesn't immediately re-fire.
+  useEffect(() => {
+    if (step !== 'datetime' || !data.date || !data.timeSlot) {
+      return
+    }
+
+    const key = `${data.date}|${data.timeSlot}`
+
+    if (lastAdvancedDatetimeRef.current === key) {
+      return
+    }
+
+    const timeout = window.setTimeout(() => {
+      lastAdvancedDatetimeRef.current = key
+      goTo('contact')
+    }, 500)
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+    // goTo is a plain function recreated every render; including it would
+    // re-arm this effect (and the timeout) on every render instead of only
+    // when step/date/timeSlot actually change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, data.date, data.timeSlot])
+
   function selectLessonType(lessonType: LessonType) {
     // Switching type invalidates a vacation-only participants choice.
     const participants = lessonType === 'ongoing' ? null : data.participants
@@ -489,9 +521,6 @@ export default function Book() {
               <div className="bw-footer">
                 <button type="button" className="bw-back" onClick={goBack}>
                   ← Back
-                </button>
-                <button type="button" className="cp-button bw-cta" onClick={() => goTo('contact')}>
-                  Continue
                 </button>
               </div>
             </>

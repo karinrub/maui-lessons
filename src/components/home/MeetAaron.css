@@ -4,7 +4,12 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  background: var(--home-sage);
+  min-height: clamp(560px, 62vw, 760px);
+  /* Matches the incoming sage exactly at the very top edge (zero seam
+     with the services deck above), then shifts into the section's own
+     warm tan hue within the first quarter of its height — an obvious
+     color change that still reads as a smooth blend, not a hard cut. */
+  background: linear-gradient(180deg, var(--home-sage) 0%, var(--home-tan) 26%, var(--home-tan) 100%);
   padding: clamp(48px, 8svh, 96px) clamp(16px, 4vw, 56px);
 }
 
@@ -19,7 +24,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: clamp(120px, 16vw, 200px);
+  height: clamp(200px, 26vw, 340px);
   overflow: visible;
   pointer-events: none;
 }
@@ -38,11 +43,16 @@
 }
 
 .meet-aaron__ribbon-text {
-  font-family: "Fraunces", "Cormorant Garamond", Georgia, serif;
+  font-family: "Bowlby One", "Fraunces", Georgia, serif;
   font-style: normal;
-  font-weight: 900;
-  font-size: clamp(2.1rem, 4.6vw, 3.6rem);
-  fill: rgba(23, 53, 42, 0.45);
+  font-weight: 400;
+  font-size: clamp(3.2rem, 7vw, 6rem);
+  /* Extra breathing room between glyphs riding the curved path — the path
+     itself is now gentle enough not to need this, but a little letter
+     spacing is a cheap second line of defense against overlap at the
+     riser's steepest point. */
+  letter-spacing: 0.04em;
+  fill: rgba(58, 90, 63, 0.62);
 }
 
 .meet-aaron__ribbon-measure {
@@ -52,17 +62,23 @@
 .meet-aaron__inner {
   position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  align-items: center;
-  gap: clamp(28px, 5vw, 72px);
   width: min(94vw, 1080px);
+  height: clamp(420px, 46vw, 600px);
   margin: 0 auto;
-  margin-top: clamp(24px, 5vw, 56px);
+  /* Deliberately less than the ribbon's own height — the ribbon is a
+     layered texture behind the content (see .meet-aaron__ribbon comment),
+     not a separate block the content needs to fully clear, so a close gap
+     here lets the card/portrait connect visually with the ribbon above
+     instead of leaving a dead band of flat background between them. */
+  margin-top: clamp(40px, 6vw, 72px);
 }
 
 .meet-aaron__media {
-  position: relative;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  width: clamp(240px, 34vw, 400px);
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 20px;
@@ -79,9 +95,14 @@
 }
 
 .meet-aaron__content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: clamp(0.75rem, 1.8svh, 1.1rem);
+  width: min(90vw, 420px);
   padding: clamp(28px, 4vw, 44px);
   border: 1px solid rgba(31, 29, 24, 0.1);
   border-radius: 20px;
@@ -147,15 +168,28 @@
 
 @media (max-width: 760px) {
   .meet-aaron__inner {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin-top: clamp(60px, 12vw, 100px);
+  }
+
+  .meet-aaron__content {
+    position: static;
+    width: 100%;
   }
 
   .meet-aaron__media {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: 100%;
     aspect-ratio: 16 / 10;
+    margin-top: clamp(20px, 5vw, 32px);
   }
 
   .meet-aaron__ribbon {
-    height: clamp(90px, 26vw, 150px);
+    height: clamp(150px, 40vw, 260px);
   }
 
   .meet-aaron__ribbon-svg--desktop {
@@ -167,6 +201,6 @@
   }
 
   .meet-aaron__ribbon-text {
-    font-size: clamp(1.5rem, 8vw, 2.4rem);
+    font-size: clamp(2.2rem, 11vw, 3.6rem);
   }
 }

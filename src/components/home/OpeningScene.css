@@ -130,6 +130,7 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  opacity: 0;
 }
 
 .opening-scene__tagline-text {
@@ -169,7 +170,9 @@
   padding-bottom: clamp(12px, 2svh, 28px);
   border-radius: 50% 50% 0 0 / 100% 100% 0 0;
   background: var(--home-sage);
-  transform: translateX(-50%);
+  transform: translateX(-50%) scaleY(0.32);
+  transform-origin: center bottom;
+  opacity: 0;
   will-change: transform, opacity;
 }
 
@@ -229,6 +232,7 @@
   position: relative;
   inset: auto;
   padding: clamp(2.5rem, 5vw, 4rem) 0;
+  opacity: 1;
 }
 
 /* Reduced motion places the tagline in flow on the light ambient canvas,

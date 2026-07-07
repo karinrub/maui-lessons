@@ -1,4 +1,9 @@
 :root {
+  /* Shared handoff color between the hero's closing arch and the services
+     deck page background — must stay identical in both places so the arch
+     flows into the page with zero seam. */
+  --home-sage: #b8c8a0;
+  --home-sage-ink: #17352a;
   color: #1f1d18;
   background: #f5f0e7;
   font-family:
@@ -516,6 +521,14 @@ select {
       20px
       clamp(16px, 5vw, 28px)
       28px;
+  }
+
+  /* The home page's full-bleed opening sequence must stay edge-to-edge at
+     every breakpoint — without this, the rule above (equal specificity,
+     later in source) wins over .home-hero--opening's padding: 0 and the
+     hero/deck/meet-aaron sections all pick up a side inset on mobile. */
+  .home-hero--opening {
+    padding: 0;
   }
 
   .site-header {

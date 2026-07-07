@@ -1,4 +1,5 @@
 import HomeAmbientBackground from '../components/home/HomeAmbientBackground'
+import MeetAaron from '../components/home/MeetAaron'
 import OpeningScene from '../components/home/OpeningScene'
 import StackedServicesDeck from '../components/home/StackedServicesDeck'
 import useDocumentTitle from '../hooks/useDocumentTitle'
@@ -13,6 +14,7 @@ export default function Home() {
       <HomeAmbientBackground />
       <OpeningScene scrollSequence={scrollSequence} />
       <StackedServicesDeck scrollSequence={scrollSequence} />
+      <MeetAaron />
     </>
   )
 }

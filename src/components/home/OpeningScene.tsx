@@ -23,6 +23,12 @@ const landscapeImage = new URL('../../../assets/images/aaron-beach-1.jpg', impor
 const heroVideo = new URL('../../../assets/videos/aaron-ukelele-vid.MP4', import.meta.url).href
 
 const TAGLINE_WORDS = "Learn your first ukulele song on one of the world's most beautiful beaches.".split(' ')
+const ARCH_TITLE_TEXT = 'Choose your experience'
+// Shallow smile arc echoing the dome's own curvature (a wide, flat ellipse
+// arc), so the title's baseline follows the same line the arch's top edge
+// traces across the hero photo.
+const ARCH_TITLE_CURVE_ID = 'opening-scene-arch-curve'
+const ARCH_TITLE_CURVE_PATH = 'M 40 230 Q 600 40 1160 230'
 
 type FrameRect = {
   top: number
@@ -78,6 +84,8 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
   const frameRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const taglineRef = useRef<HTMLDivElement>(null)
+  const archRef = useRef<HTMLDivElement>(null)
+  const archTitleRef = useRef<SVGTextElement>(null)
 
   const lenisRef = useRef<Lenis | null>(null)
   const unregisterHeroRef = useRef<(() => void) | null>(null)
@@ -511,10 +519,10 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
 
     const header = document.querySelector<HTMLElement>('.site-header')
 
-    gsap.set([landscapeRef.current, frameRef.current, videoRef.current, header], {
-      autoAlpha: 1,
-      clearProps: 'transform',
-    })
+    gsap.set(
+      [landscapeRef.current, frameRef.current, videoRef.current, header, archRef.current, archTitleRef.current],
+      { autoAlpha: 1, clearProps: 'transform' },
+    )
     restartHeroVideo()
     lenisRef.current?.start()
     setHeaderSuppressed(false)
@@ -622,7 +630,9 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
       !landscapeRef.current ||
       !frameRef.current ||
       !videoRef.current ||
-      !taglineRef.current
+      !taglineRef.current ||
+      !archRef.current ||
+      !archTitleRef.current
     ) {
       return
     }
@@ -634,10 +644,16 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
     const video = videoRef.current
     const tagline = taglineRef.current
     const words = tagline.querySelectorAll<HTMLElement>('.tagline-word')
+    const arch = archRef.current
+    const archTitle = archTitleRef.current
 
     gsap.set(media, { visibility: 'visible' })
     gsap.set(tagline, { opacity: 0 })
     gsap.set(words, { color: 'rgba(250,245,238,0.12)' })
+    gsap.set(arch, { scaleY: 0.32, opacity: 0, transformOrigin: 'center bottom' })
+    // Dramatic entrance: the title starts well below full size and drops
+    // in with a punchy overshoot past 100%, instead of a modest fade-up.
+    gsap.set(archTitle, { scale: 0.5, y: 50, opacity: 0, transformOrigin: '50% 50%' })
 
     // Registered outside gsap.context: the hook owns this ScrollTrigger's
     // lifecycle (see useHomeScrollSequence), not this component's context revert.
@@ -678,10 +694,19 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
           .to(tagline, { opacity: 1, duration: 0.06, ease: 'none' })
           .to(words, { color: 'rgb(250,245,238)', duration: 0.04, stagger: 0.028, ease: 'none' })
           .to({}, { duration: 0.06 })
-          // Handoff: the tagline dissolves right as the pin releases, so the
-          // services deck heading can crossfade in underneath it — the beach
-          // backdrop itself lives outside this timeline and persists.
+          // Handoff: the tagline dissolves as the sage arch grows in from the
+          // hero's bottom edge, its title dropping in with a big, punchy
+          // overshoot — the beach backdrop itself lives outside this
+          // timeline and persists, getting covered by the arch and the flat
+          // sage page background beneath it instead of fading to nothing.
           .to(tagline, { opacity: 0, duration: 0.22, ease: 'none' })
+          .addLabel('arch')
+          .to(arch, { scaleY: 1, opacity: 1, duration: 0.4, ease: 'power2.out' }, 'arch')
+          .to(
+            archTitle,
+            { scale: 1, y: 0, opacity: 1, duration: 0.46, ease: 'back.out(1.7)' },
+            'arch+=0.14',
+          )
           .set(media, { visibility: 'hidden' })
           .call(() => setFocusAvailableState(false))
 
@@ -1003,6 +1028,24 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
               <span key={i} className="tagline-word">{word}</span>
             ))}
           </p>
+        </div>
+
+        <div ref={archRef} className="opening-scene__arch">
+          <svg
+            className="opening-scene__arch-title"
+            viewBox="0 0 1200 260"
+            role="img"
+            aria-label={ARCH_TITLE_TEXT}
+          >
+            <defs>
+              <path id={ARCH_TITLE_CURVE_ID} d={ARCH_TITLE_CURVE_PATH} fill="none" />
+            </defs>
+            <text ref={archTitleRef}>
+              <textPath href={`#${ARCH_TITLE_CURVE_ID}`} startOffset="50%" textAnchor="middle">
+                {ARCH_TITLE_TEXT}
+              </textPath>
+            </text>
+          </svg>
         </div>
       </div>
     </section>

@@ -152,6 +152,50 @@
   transition: none;
 }
 
+/* Marks the end of the hero photo: a wide, shallow dome overlapping the
+   image's bottom edge. Same color as the services deck's page background
+   (StackedServicesDeck.css), so the arch flows into the rest of the page
+   with zero seam once the pin releases. */
+.opening-scene__arch {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 4;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: 145vw;
+  height: clamp(240px, 36svh, 460px);
+  padding-bottom: clamp(12px, 2svh, 28px);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: var(--home-sage);
+  transform: translateX(-50%);
+  will-change: transform, opacity;
+}
+
+/* The title rides a curve matching the arch's own dome shape, so it's set
+   as SVG text-on-a-path (one line, no wrap) instead of block-level HTML
+   type — CSS alone can't bend a text baseline. */
+.opening-scene__arch-title {
+  display: block;
+  overflow: visible;
+  width: min(94vw, 1200px);
+  max-width: 100%;
+}
+
+.opening-scene__arch-title text {
+  fill: var(--home-sage-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  /* Sized so "Choose your experience" fits the curve's ~1140-unit arc
+     length in one line, with a small margin so it never clips at the
+     ends of the path. */
+  font-size: 112px;
+  font-weight: 700;
+  transform-box: fill-box;
+  transform-origin: center;
+  will-change: transform, opacity;
+}
+
 .opening-scene.is-reduced-motion .opening-scene__pin {
   height: auto;
   min-height: 100svh;
@@ -194,6 +238,21 @@
   color: #1f1d18;
 }
 
+/* Reduced motion drops the fixed dome treatment (that's a scroll-driven
+   reveal) and instead places the arch as a full-width flat sage band in
+   normal flow, directly below the tagline — same color, same handoff to
+   the page background beneath it, just without the pinned/scaled motion. */
+.opening-scene.is-reduced-motion .opening-scene__arch {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  width: 100%;
+  height: auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(22px, 5.5vw, 88px);
+  border-radius: 0;
+  transform: none;
+}
+
 @media (max-width: 760px) {
   .opening-scene__landscape {
     object-position: 54% 38%;
@@ -206,5 +265,13 @@
 
   .opening-scene__tagline-text {
     font-size: clamp(1.2rem, 5vw, 1.8rem);
+  }
+
+  /* Narrower viewports need a much wider-than-tall dome so the curve stays
+     shallow instead of reading as an arched doorway. */
+  .opening-scene__arch {
+    width: 260vw;
+    height: clamp(180px, 26svh, 320px);
+    padding-bottom: clamp(8px, 1.5svh, 20px);
   }
 }

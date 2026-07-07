@@ -3,9 +3,6 @@
   z-index: 2;
   width: 100%;
   overflow-x: clip;
-  /* Pull the section up over the hero's tail so the canvas starts rising
-     while the beach is still dissolving — no dead gap between the pins. */
-  margin-top: -32svh;
   background: transparent;
 }
 
@@ -14,92 +11,31 @@
   display: grid;
   min-height: 100svh;
   overflow: hidden;
-  background: transparent;
+  /* Same color as the hero's closing arch (OpeningScene.css) so the two
+     flow together with zero seam — this is the page background from the
+     bottom of the arch onward, not a boxed section of its own. */
+  background: var(--home-sage);
 }
 
 .stacked-services-deck__stage {
   position: relative;
   display: grid;
   place-items: center;
-  gap: clamp(8px, 1.8svh, 18px);
   min-height: 100svh;
   padding:
-    clamp(20px, 3.5svh, 40px)
-    clamp(16px, 4vw, 56px);
+    clamp(16px, 2.6svh, 32px)
+    clamp(16px, 4vw, 56px)
+    clamp(20px, 3.5svh, 40px);
 }
 
 .stacked-services-deck__canvas {
-  --scallop-r: clamp(10px, 1.4vw, 18px);
   position: relative;
   z-index: 2;
   display: grid;
   place-items: center;
   width: min(94vw, 1080px);
-  overflow: hidden;
-  padding:
-    clamp(18px, 3.2svh, 34px)
-    clamp(20px, 4vw, 64px)
-    clamp(30px, 5svh, 60px);
-  border: 1px solid rgba(255, 250, 240, 0.08);
-  border-radius: 0 0 clamp(24px, 3vw, 40px) clamp(24px, 3vw, 40px);
-  /* Scalloped top edge: each repeating tile is full canvas height, opaque
-     everywhere except a circular cutout centered on y=0, so the top edge
-     reads as a row of notches while the rest of the shape stays solid. */
-  mask-image: radial-gradient(circle var(--scallop-r) at calc(var(--scallop-r) * 2) 0, #0000 99%, #000 101%);
-  mask-size: calc(var(--scallop-r) * 4) 100%;
-  mask-position: center top;
-  mask-repeat: repeat-x;
-  -webkit-mask-image: radial-gradient(circle var(--scallop-r) at calc(var(--scallop-r) * 2) 0, #0000 99%, #000 101%);
-  -webkit-mask-size: calc(var(--scallop-r) * 4) 100%;
-  -webkit-mask-position: center top;
-  -webkit-mask-repeat: repeat-x;
-  background:
-    radial-gradient(110% 90% at 82% -12%, rgba(214, 170, 105, 0.26) 0%, rgba(214, 170, 105, 0) 55%),
-    radial-gradient(90% 75% at 8% 104%, rgba(30, 74, 76, 0.5) 0%, rgba(30, 74, 76, 0) 60%),
-    linear-gradient(160deg, #17392c 0%, #0c211a 100%);
-  box-shadow:
-    0 40px 90px -48px rgba(13, 32, 24, 0.55),
-    inset 0 1px 0 rgba(255, 250, 240, 0.08);
-  will-change: transform, opacity;
-}
-
-.stacked-services-deck__heading {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  place-items: center;
-  width: min(90vw, 920px);
-  max-width: 100%;
-  perspective: 900px;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-.stacked-services-deck__heading-text {
-  display: grid;
-  gap: clamp(0.02em, 0.35svh, 0.08em);
-  width: min(100%, 980px);
-  margin: 0;
-  color: #17352a;
-  font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: clamp(3.8rem, 8.8vw, 7.8rem);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 0.82;
-  text-align: center;
-  text-wrap: balance;
-  text-shadow: 0 1px 0 rgba(255, 250, 240, 0.38);
-}
-
-.stacked-services-deck__heading-mask {
-  display: block;
-  overflow: hidden;
-  padding-block: 0.05em 0.12em;
-}
-
-.stacked-services-deck__heading-line {
-  display: block;
+  overflow: visible;
+  background: transparent;
   will-change: transform, opacity;
 }
 
@@ -287,10 +223,6 @@
   transform: translateX(0.25rem);
 }
 
-.stacked-services-deck.is-reduced-motion {
-  margin-top: 0;
-}
-
 .stacked-services-deck.is-reduced-motion .stacked-services-deck__pin {
   min-height: auto;
   overflow: visible;
@@ -301,18 +233,7 @@
   min-height: 100svh;
 }
 
-.stacked-services-deck.is-reduced-motion .stacked-services-deck__canvas {
-  gap: 0;
-}
-
-.stacked-services-deck.is-reduced-motion .stacked-services-deck__heading {
-  position: relative;
-  width: min(90vw, 920px);
-}
-
 .stacked-services-deck.is-reduced-motion .stacked-services-deck__canvas,
-.stacked-services-deck.is-reduced-motion .stacked-services-deck__heading,
-.stacked-services-deck.is-reduced-motion .stacked-services-deck__heading-line,
 .stacked-services-deck.is-reduced-motion .stacked-services-deck__cards,
 .stacked-services-deck.is-reduced-motion .stacked-services-deck__card {
   will-change: auto;
@@ -325,19 +246,6 @@
 
   .stacked-services-deck__canvas {
     width: 100%;
-    padding:
-      clamp(18px, 3.8svh, 30px)
-      16px
-      clamp(28px, 5svh, 44px);
-    border-radius: 22px;
-  }
-
-  .stacked-services-deck__heading {
-    width: min(88vw, 460px);
-  }
-
-  .stacked-services-deck__heading-text {
-    font-size: clamp(3.2rem, 13.2vw, 4.6rem);
   }
 
   .stacked-services-deck__cards {

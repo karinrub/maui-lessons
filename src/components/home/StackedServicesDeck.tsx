@@ -56,6 +56,10 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
   const canvasRef = useRef<HTMLDivElement>(null)
   const cardsShellRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<HTMLElement[]>([])
+  const ghostRef = useRef<HTMLDivElement>(null)
+  const blobOneRef = useRef<HTMLDivElement>(null)
+  const blobTwoRef = useRef<HTMLDivElement>(null)
+  const progressNumsRef = useRef<HTMLSpanElement[]>([])
 
   useLayoutEffect(() => {
     const section = sectionRef.current
@@ -125,8 +129,8 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
         sectionEl: sectionElement,
         pinEl: pinElement,
         end: '+=320%',
-        buildTimeline: () =>
-          gsap
+        buildTimeline: () => {
+          const tl = gsap
             .timeline({ paused: true })
             .addLabel('start')
             .to(secondCard, { ...stackPositions.second, duration: 0.58, ease: 'power2.out' }, 'start')
@@ -160,7 +164,32 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
               'swap2',
             )
             .to(secondCard, { opacity: 0, duration: 0.3, ease: 'none' }, 'swap2+=0.7')
-            .to(thirdCard, { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'none' }, 'swap2'),
+            .to(thirdCard, { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'none' }, 'swap2')
+
+          // Progress counter: crossfade 01→02 and 02→03 halfway through each
+          // card swap, riding the same scrubbed timeline as the cards.
+          const nums = progressNumsRef.current
+          if (nums.length === 3) {
+            tl.to(nums[0], { autoAlpha: 0, duration: 0.2, ease: 'none' }, 'swap1+=0.5')
+              .to(nums[1], { autoAlpha: 1, duration: 0.2, ease: 'none' }, 'swap1+=0.5')
+              .to(nums[1], { autoAlpha: 0, duration: 0.2, ease: 'none' }, 'swap2+=0.5')
+              .to(nums[2], { autoAlpha: 1, duration: 0.2, ease: 'none' }, 'swap2+=0.5')
+          }
+
+          // Ghost word parallax spanning the full pin: added last, with the
+          // timeline's already-final duration, so it never extends the scrub.
+          const ghost = ghostRef.current
+          if (ghost) {
+            tl.fromTo(
+              ghost,
+              { yPercent: 10 },
+              { yPercent: -10, duration: tl.duration(), ease: 'none' },
+              0,
+            )
+          }
+
+          return tl
+        },
       })
     }
 
@@ -170,6 +199,61 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
       stackContext?.revert()
     }
   }, [prefersReducedMotion, scrollSequence])
+
+  // Ambient drifting washes: two blurred-gradient blobs on slow yoyo loops.
+  // Gated by IntersectionObserver (same reasoning as MeetAaron's gating:
+  // pin-spacer geometry above keeps shifting, so visibility observation is
+  // more robust than scroll-position triggers) so they cost nothing while
+  // the section is off-screen. Reduced motion: blobs stay static.
+  useLayoutEffect(() => {
+    const section = sectionRef.current
+    const blobOne = blobOneRef.current
+    const blobTwo = blobTwoRef.current
+
+    if (!section || !blobOne || !blobTwo || prefersReducedMotion) {
+      return
+    }
+
+    const tweens = [
+      gsap.to(blobOne, {
+        xPercent: 14,
+        yPercent: -10,
+        duration: 34,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        paused: true,
+      }),
+      gsap.to(blobTwo, {
+        xPercent: -12,
+        yPercent: 12,
+        duration: 40,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        paused: true,
+      }),
+    ]
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        tweens.forEach((tween) => {
+          if (entry.isIntersecting) {
+            tween.play()
+          } else {
+            tween.pause()
+          }
+        })
+      },
+      { threshold: 0 },
+    )
+    observer.observe(section)
+
+    return () => {
+      observer.disconnect()
+      tweens.forEach((tween) => tween.kill())
+    }
+  }, [prefersReducedMotion])
 
   return (
     <section
@@ -184,6 +268,19 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
     >
       <div ref={pinRef} className="stacked-services-deck__pin">
         <div className="stacked-services-deck__stage">
+          <div
+            ref={blobOneRef}
+            className="stacked-services-deck__blob stacked-services-deck__blob--jungle"
+            aria-hidden="true"
+          />
+          <div
+            ref={blobTwoRef}
+            className="stacked-services-deck__blob stacked-services-deck__blob--amber"
+            aria-hidden="true"
+          />
+          <div ref={ghostRef} className="stacked-services-deck__ghost" aria-hidden="true">
+            experiences
+          </div>
           <div ref={canvasRef} className="stacked-services-deck__canvas">
             <div
               ref={cardsShellRef}
@@ -232,6 +329,25 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
                 </article>
               ))}
             </div>
+          </div>
+          <div className="stacked-services-deck__progress" aria-hidden="true">
+            <span className="stacked-services-deck__progress-line" />
+            <span className="stacked-services-deck__progress-count">
+              {['01', '02', '03'].map((num, index) => (
+                <span
+                  key={num}
+                  ref={(element) => {
+                    if (element) {
+                      progressNumsRef.current[index] = element
+                    }
+                  }}
+                  className="stacked-services-deck__progress-num"
+                >
+                  {num}
+                </span>
+              ))}
+              <span className="stacked-services-deck__progress-total">/ 03</span>
+            </span>
           </div>
         </div>
       </div>

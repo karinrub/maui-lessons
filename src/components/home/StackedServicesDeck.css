@@ -51,6 +51,97 @@
     clamp(20px, 3.5svh, 40px);
 }
 
+/* Ambient washes: pure radial-gradients (no blur filter — cheap), animated
+   by transform only, clipped by the pin's overflow. */
+.stacked-services-deck__blob {
+  position: absolute;
+  z-index: 0;
+  width: clamp(320px, 46vw, 720px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0.12;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.stacked-services-deck__blob--jungle {
+  top: -12%;
+  left: -10%;
+  background: radial-gradient(circle, rgba(23, 53, 42, 0.5) 0%, rgba(23, 53, 42, 0) 68%);
+}
+
+.stacked-services-deck__blob--amber {
+  right: -12%;
+  bottom: -14%;
+  background: radial-gradient(circle, rgba(220, 184, 119, 0.65) 0%, rgba(220, 184, 119, 0) 68%);
+}
+
+/* Oversized ghost word behind the cards; CSS `translate` centers it so the
+   GSAP transform (yPercent parallax) composes with it instead of clobbering. */
+.stacked-services-deck__ghost {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  color: rgba(23, 53, 42, 0.06);
+  font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(8rem, 20vw, 20rem);
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+/* Stage progress rail: thin line + 01/03 counter. Nums stack absolutely and
+   crossfade via the scrubbed deck timeline; first is visible by default so
+   reduced motion shows a correct static "01 / 03". */
+.stacked-services-deck__progress {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  right: clamp(18px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  translate: 0 -50%;
+  pointer-events: none;
+}
+
+.stacked-services-deck__progress-line {
+  width: 1px;
+  height: clamp(72px, 12svh, 120px);
+  background: rgba(23, 53, 42, 0.35);
+}
+
+.stacked-services-deck__progress-count {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  color: rgba(23, 53, 42, 0.6);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
+
+.stacked-services-deck__progress-num {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+}
+
+.stacked-services-deck__progress-num:first-child {
+  opacity: 1;
+}
+
+.stacked-services-deck__progress-total {
+  margin-left: 1.6em;
+}
+
 .stacked-services-deck__canvas {
   position: relative;
   z-index: 2;
@@ -265,6 +356,10 @@
 @media (max-width: 760px) {
   .stacked-services-deck__stage {
     padding: clamp(20px, 4svh, 36px) 14px;
+  }
+
+  .stacked-services-deck__progress {
+    display: none;
   }
 
   .stacked-services-deck__canvas {

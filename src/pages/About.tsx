@@ -1,13 +1,19 @@
 import { Link } from 'react-router-dom'
 import useDocumentTitle from '../hooks/useDocumentTitle'
+import './About.css'
 
 const gallerySlots = ['Gallery image 1', 'Gallery image 2', 'Gallery image 3'] as const
+const topBushImage = new URL('../../assets/images/no_bacground_bush_2.png', import.meta.url).href
 
 export default function About() {
   useDocumentTitle('About Aaron | Maui Lessons')
 
   return (
     <>
+      <div className="about-top-bush" aria-hidden="true">
+        <img src={topBushImage} alt="" />
+      </div>
+
       <section className="cp-section">
         <p className="cp-section-label">About</p>
         <div className="cp-two-col cp-two-col--wide-right">

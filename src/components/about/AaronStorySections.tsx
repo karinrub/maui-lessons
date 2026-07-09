@@ -219,7 +219,7 @@ export default function AaronStorySections() {
           <div className="aaron-story__panel-media">
             <img
               src={onlyMeImage}
-              alt="Aaron Grzanich on Maui"
+              alt="Aaron teaching a ukulele lesson on Maui"
               width={900}
               height={1125}
               loading="lazy"

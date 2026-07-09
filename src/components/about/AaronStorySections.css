@@ -1,0 +1,202 @@
+/* ── Aaron story: horizontal-scroll chapter sequence ──
+   Track holds 4 full-viewport panels side by side. On desktop with motion
+   allowed, the section pins and the track scrubs horizontally as the user
+   scrolls vertically. Panel text starts blurred/scaled and sharpens into
+   focus as it approaches center — reveal is scrub-tied, not play-once. */
+
+.aaron-story {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #f7f3ea;
+}
+
+.aaron-story__track {
+  display: flex;
+  width: max-content;
+  height: 100vh;
+  will-change: transform;
+}
+
+.aaron-story__panel {
+  flex: 0 0 100vw;
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: clamp(2rem, 5vw, 4rem);
+  padding: clamp(2rem, 6vw, 5rem);
+  box-sizing: border-box;
+  background: #f7f3ea;
+}
+
+.aaron-story__panel--sage {
+  background: linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
+  color: var(--home-sage-ink);
+}
+
+/* Panel 2 has no media column — copy spans full width. */
+.aaron-story__panel[data-panel-index='1'] {
+  grid-template-columns: 1fr;
+}
+
+.aaron-story__panel-media {
+  width: 100%;
+  height: min(70vh, 640px);
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.aaron-story__panel-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.08);
+}
+
+.aaron-story__panel-copy {
+  max-width: 34rem;
+}
+
+.aaron-story__panel-copy--wide {
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.aaron-story__eyebrow {
+  font: 500 0.85rem/1.4 'Inter', system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+  margin: 0 0 0.75rem;
+}
+
+.aaron-story__heading {
+  font: 500 clamp(2rem, 4vw, 3.25rem)/1.1 'Fraunces', serif;
+  font-style: italic;
+  margin: 0 0 1.25rem;
+}
+
+.aaron-story__body {
+  font: 400 1.05rem/1.6 'Inter', system-ui, sans-serif;
+  margin: 0 0 1rem;
+}
+
+.aaron-story__pull-line {
+  font: 400 1.25rem/1.4 'Cormorant Garamond', serif;
+  font-style: italic;
+  margin: 1.5rem 0 0;
+}
+
+.aaron-story__beats {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.aaron-story__beat {
+  display: flex;
+  flex-direction: column;
+}
+
+.aaron-story__beat-numeral {
+  font: 400 0.9rem/1 'Inter', system-ui, sans-serif;
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+
+.aaron-story__beat-title {
+  font: 500 1.15rem/1.3 'Fraunces', serif;
+  margin: 0 0 0.5rem;
+}
+
+.aaron-story__beat-body {
+  font: 400 0.95rem/1.55 'Inter', system-ui, sans-serif;
+  margin: 0;
+}
+
+.aaron-story__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  background: var(--home-sage-ink);
+  color: #f7f3ea;
+  font: 500 1rem/1 'Inter', system-ui, sans-serif;
+  text-decoration: none;
+}
+
+.aaron-story__cta-arrow {
+  transition: transform 0.2s ease;
+}
+
+.aaron-story__cta:hover .aaron-story__cta-arrow {
+  transform: translateX(4px);
+}
+
+/* ── Blur-to-focus reveal targets ── */
+.aaron-story__reveal {
+  filter: blur(14px);
+  opacity: 0;
+  transform: scale(1.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aaron-story__reveal {
+    filter: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .aaron-story__panel-media img {
+    transform: none;
+  }
+}
+
+/* ── Mobile: vertical stack, no horizontal scroll ── */
+@media (max-width: 760px) {
+  .aaron-story {
+    height: auto;
+    overflow: visible;
+  }
+
+  .aaron-story__track {
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+  }
+
+  .aaron-story__panel {
+    flex-basis: auto;
+    width: 100%;
+    height: auto;
+    min-height: 100vh;
+    grid-template-columns: 1fr;
+    padding: 3rem 1.5rem;
+  }
+
+  .aaron-story__panel[data-panel-index='1'] {
+    grid-template-columns: 1fr;
+  }
+
+  .aaron-story__beats {
+    grid-template-columns: 1fr;
+  }
+
+  .aaron-story__panel-media {
+    height: 50vh;
+  }
+
+  .aaron-story__panel-copy,
+  .aaron-story__panel-copy--wide {
+    max-width: none;
+  }
+}

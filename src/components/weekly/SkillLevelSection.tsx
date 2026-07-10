@@ -173,7 +173,7 @@ export default function SkillLevelSection() {
                   if (el) titleLineRefs.current[0] = el
                 }}
               >
-                [Dramatic title line one — TODO]
+                Twenty-two years of music,
               </span>
               <span
                 className="skill-intro__title-line"
@@ -181,13 +181,16 @@ export default function SkillLevelSection() {
                   if (el) titleLineRefs.current[1] = el
                 }}
               >
-                [Dramatic title line two — TODO]
+                taught with patience.
               </span>
             </h1>
           </div>
         </div>
         <p ref={textRef} className="skill-intro__text">
-          [Background paragraph about Aaron's teaching — TODO]
+          Aaron has spent over twenty years teaching music, and the ukulele has been his focus
+          for the last eight. Whether you're picking one up for the first time or refining songs
+          you've played for years, lessons move at your pace — patient, unhurried, and built
+          around real progress.
         </p>
       </div>
 

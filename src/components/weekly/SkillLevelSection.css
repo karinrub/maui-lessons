@@ -156,13 +156,11 @@
 
 .skill-panel {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: clamp(1.75rem, 3.5vw, 3rem);
-  min-height: clamp(240px, 26vw, 300px);
 }
 
-/* Intermediate mirrors the row so the tabs don't feel identical, while the
-   panel's own box (and therefore its height) never changes between tabs. */
+/* Intermediate mirrors the row so the tabs don't feel identical. */
 .skill-panel__layout--intermediate {
   flex-direction: row-reverse;
 }
@@ -173,7 +171,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: clamp(240px, 26vw, 300px);
+  width: clamp(180px, 20vw, 240px);
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: rgba(23, 53, 42, 0.08);
   border: 1px solid rgba(23, 53, 42, 0.16);
@@ -194,6 +193,14 @@
   min-width: 0;
 }
 
+.skill-panel__question {
+  margin: 0 0 0.4rem;
+  color: rgba(23, 53, 42, 0.55);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  font-style: italic;
+}
+
 .skill-panel__heading {
   margin: 0 0 0.85rem;
   color: var(--home-sage-ink);
@@ -209,6 +216,34 @@
   line-height: 1.6;
 }
 
+.skill-panel__bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skill-panel__bullet {
+  position: relative;
+  padding-left: 1.15rem;
+  color: rgba(23, 53, 42, 0.78);
+  font-size: clamp(0.88rem, 1vw, 0.95rem);
+  line-height: 1.5;
+}
+
+.skill-panel__bullet::before {
+  content: '';
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--home-sage-ink);
+  border-radius: 50%;
+}
+
 @media (max-width: 760px) {
   .skill-panel,
   .skill-panel__layout--intermediate {
@@ -220,7 +255,7 @@
   .skill-panel__image {
     flex: 0 0 auto;
     width: 100%;
-    height: clamp(200px, 56vw, 260px);
+    aspect-ratio: 16 / 10;
   }
 
   .skill-tabs {

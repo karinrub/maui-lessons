@@ -15,32 +15,52 @@ type SkillLevel = 'beginner' | 'intermediate' | 'advanced'
 const levels: {
   id: SkillLevel
   label: string
+  question: string
   heading: string
   body: string
+  bullets: string[]
   image?: string
   imageAlt?: string
 }[] = [
   {
     id: 'beginner',
     label: 'Beginner',
+    question: 'Never picked up a ukulele before?',
     heading: 'Just starting out',
     body: 'No experience, no problem. Lessons start with your first chords and basic strumming, at a pace that feels comfortable — no pressure, just steady progress.',
+    bullets: [
+      'First chords and basic strumming, from zero',
+      'A patient, no-pressure pace built around you',
+      'Real songs, not just exercises',
+    ],
     image: beginnerImage,
     imageAlt: 'Aaron helping a young student strum his first chords on the ukulele',
   },
   {
     id: 'intermediate',
     label: 'Intermediate',
+    question: 'Already comfortable with a few chords?',
     heading: 'Building real skill',
     body: 'Already know a few chords? Lessons move into reading music, new strumming patterns, and songs that stretch what you can already do.',
+    bullets: [
+      'Reading music and chord charts with confidence',
+      'New strumming and picking patterns',
+      'Songs that stretch what you can already play',
+    ],
     image: intermediateImage,
     imageAlt: 'Aaron reviewing a chord chart with a student outdoors',
   },
   {
     id: 'advanced',
     label: 'Advanced',
+    question: 'Ready to take your playing further?',
     heading: 'Refining your sound',
     body: 'For players ready to go deeper — technique, style, and the kind of playing that comes from years at it. Aaron draws on his own varied musical background to help push your playing further.',
+    bullets: [
+      'Refined technique and your own playing style',
+      'Hawaiian and other ukulele traditions',
+      'Guidance shaped by twenty-two years in music',
+    ],
   },
 ]
 
@@ -300,8 +320,16 @@ export default function SkillLevelSection() {
             </div>
           )}
           <div className="skill-panel__body">
+            <p className="skill-panel__question">{activeLevel.question}</p>
             <h2 className="skill-panel__heading">{activeLevel.heading}</h2>
             <p className="skill-panel__text">{activeLevel.body}</p>
+            <ul className="skill-panel__bullets">
+              {activeLevel.bullets.map((bullet) => (
+                <li key={bullet} className="skill-panel__bullet">
+                  {bullet}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

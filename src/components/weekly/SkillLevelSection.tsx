@@ -4,6 +4,9 @@ import gsap from 'gsap'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
 import './SkillLevelSection.css'
 
+const weeklyVideo = new URL('../../../assets/videos/aaron-weekly-section.mp4', import.meta.url)
+  .href
+
 type SkillLevel = 'beginner' | 'intermediate' | 'advanced'
 
 const levels: { id: SkillLevel; label: string; heading: string; body: string }[] = [
@@ -33,7 +36,10 @@ export default function SkillLevelSection() {
   const activeLevel = levels.find((level) => level.id === active) ?? levels[0]
 
   const introRef = useRef<HTMLDivElement>(null)
-  const lineRefs = useRef<HTMLElement[]>([])
+  const labelRef = useRef<HTMLParagraphElement>(null)
+  const clipRef = useRef<HTMLDivElement>(null)
+  const titleLineRefs = useRef<HTMLElement[]>([])
+  const textRef = useRef<HTMLParagraphElement>(null)
 
   const tabsRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<Record<SkillLevel, HTMLButtonElement | null>>({
@@ -48,31 +54,37 @@ export default function SkillLevelSection() {
 
   useLayoutEffect(() => {
     const intro = introRef.current
-    const lines = lineRefs.current
-    if (!intro || lines.length === 0) return
+    const clip = clipRef.current
+    const label = labelRef.current
+    const titleLines = titleLineRefs.current
+    const text = textRef.current
+    if (!intro || !clip || !label || !text || titleLines.length === 0) return
 
     if (prefersReducedMotion) {
-      gsap.set(lines, { opacity: 1, y: 0 })
+      gsap.set([clip, label, ...titleLines, text], { opacity: 1, y: 0, scale: 1 })
       return
     }
 
-    gsap.set(lines, { opacity: 0, y: 24 })
+    gsap.set(clip, { opacity: 0, scale: 0.92 })
+    gsap.set([label, ...titleLines, text], { opacity: 0, y: 24 })
 
     let played = false
-    const tween = gsap.to(lines, {
-      opacity: 1,
-      y: 0,
-      duration: 0.7,
-      ease: 'power2.out',
-      stagger: 0.12,
-      paused: true,
-    })
+    const timeline = gsap
+      .timeline({ paused: true })
+      .to(clip, { opacity: 1, scale: 1, duration: 0.7, ease: 'power2.out' }, 0)
+      .to(label, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.1)
+      .to(
+        titleLines,
+        { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12 },
+        0.5,
+      )
+      .to(text, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 1.3)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !played) {
           played = true
-          tween.play()
+          timeline.play()
           observer.disconnect()
         }
       },
@@ -82,7 +94,7 @@ export default function SkillLevelSection() {
 
     return () => {
       observer.disconnect()
-      tween.kill()
+      timeline.kill()
     }
   }, [prefersReducedMotion])
 
@@ -139,38 +151,42 @@ export default function SkillLevelSection() {
   return (
     <>
       <div ref={introRef} className="skill-intro">
-        <p
-          className="skill-intro__label"
-          ref={(el) => {
-            if (el) lineRefs.current[0] = el
-          }}
-        >
-          Ongoing Lessons
-        </p>
-        <h1 className="skill-intro__title">
-          <span
-            className="skill-intro__title-line"
-            ref={(el) => {
-              if (el) lineRefs.current[1] = el
-            }}
-          >
-            [Dramatic title line one — TODO]
-          </span>
-          <span
-            className="skill-intro__title-line"
-            ref={(el) => {
-              if (el) lineRefs.current[2] = el
-            }}
-          >
-            [Dramatic title line two — TODO]
-          </span>
-        </h1>
-        <p
-          className="skill-intro__text"
-          ref={(el) => {
-            if (el) lineRefs.current[3] = el
-          }}
-        >
+        <div className="skill-intro__top">
+          <div ref={clipRef} className="skill-intro__clip" aria-hidden="true">
+            <video
+              className="skill-intro__clip-video"
+              src={weeklyVideo}
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          </div>
+          <div className="skill-intro__heading">
+            <p ref={labelRef} className="skill-intro__label">
+              Ongoing Lessons
+            </p>
+            <h1 className="skill-intro__title">
+              <span
+                className="skill-intro__title-line"
+                ref={(el) => {
+                  if (el) titleLineRefs.current[0] = el
+                }}
+              >
+                [Dramatic title line one — TODO]
+              </span>
+              <span
+                className="skill-intro__title-line"
+                ref={(el) => {
+                  if (el) titleLineRefs.current[1] = el
+                }}
+              >
+                [Dramatic title line two — TODO]
+              </span>
+            </h1>
+          </div>
+        </div>
+        <p ref={textRef} className="skill-intro__text">
           [Background paragraph about Aaron's teaching — TODO]
         </p>
       </div>

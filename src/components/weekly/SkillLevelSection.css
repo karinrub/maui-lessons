@@ -64,8 +64,21 @@
 }
 
 .skill-section {
-  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2.5rem, 5vw, 4.5rem);
-  border-top: 1px solid rgba(45, 39, 29, 0.09);
+  position: relative;
+  isolation: isolate;
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0 clamp(3rem, 6vw, 5.5rem);
+}
+
+.skill-section::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
 }
 
 .skill-tabs {
@@ -73,7 +86,7 @@
   display: flex;
   gap: clamp(1.5rem, 3vw, 2.75rem);
   margin-bottom: clamp(2rem, 4vw, 3rem);
-  border-bottom: 1px solid rgba(45, 39, 29, 0.12);
+  border-bottom: 1px solid rgba(23, 53, 42, 0.18);
 }
 
 .skill-tab {
@@ -81,7 +94,7 @@
   padding: 0 0 0.9rem;
   background: none;
   border: none;
-  color: rgba(31, 29, 24, 0.42);
+  color: rgba(23, 53, 42, 0.52);
   font: inherit;
   font-size: clamp(0.95rem, 1.3vw, 1.1rem);
   font-weight: 500;
@@ -89,7 +102,7 @@
 }
 
 .skill-tab.is-active {
-  color: rgba(31, 29, 24, 0.9);
+  color: var(--home-sage-ink);
 }
 
 .skill-tab-underline {
@@ -98,7 +111,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: rgba(31, 29, 24, 0.78);
+  background: var(--home-sage-ink);
   border-radius: 2px;
 }
 
@@ -109,12 +122,15 @@
 
 .skill-panel__image {
   min-height: 220px;
+  background: rgba(23, 53, 42, 0.1);
+  border: 1px solid rgba(23, 53, 42, 0.16);
   border-radius: clamp(10px, 1.2vw, 18px);
+  color: rgba(23, 53, 42, 0.34);
 }
 
 .skill-panel__heading {
   margin: 0 0 0.85rem;
-  color: rgba(31, 29, 24, 0.8);
+  color: var(--home-sage-ink);
   font-size: clamp(1.3rem, 2.2vw, 1.9rem);
   font-weight: 400;
   line-height: 1.15;
@@ -122,7 +138,7 @@
 
 .skill-panel__text {
   margin: 0;
-  color: rgba(31, 29, 24, 0.6);
+  color: rgba(23, 53, 42, 0.72);
   font-size: clamp(0.95rem, 1.1vw, 1.05rem);
   line-height: 1.6;
 }

@@ -6,21 +6,35 @@ import './SkillLevelSection.css'
 
 const weeklyVideo = new URL('../../../assets/videos/aaron-weekly-section.mp4', import.meta.url)
   .href
+const beginnerImage = new URL('../../../assets/images/aaron-weekly-1.jpg', import.meta.url).href
+const intermediateImage = new URL('../../../assets/images/aaron-weekly-2.jpg', import.meta.url)
+  .href
 
 type SkillLevel = 'beginner' | 'intermediate' | 'advanced'
 
-const levels: { id: SkillLevel; label: string; heading: string; body: string }[] = [
+const levels: {
+  id: SkillLevel
+  label: string
+  heading: string
+  body: string
+  image?: string
+  imageAlt?: string
+}[] = [
   {
     id: 'beginner',
     label: 'Beginner',
     heading: '[Beginner headline — TODO]',
     body: '[Short description of what beginner students focus on — TODO]',
+    image: beginnerImage,
+    imageAlt: 'Aaron helping a young student strum his first chords on the ukulele',
   },
   {
     id: 'intermediate',
     label: 'Intermediate',
     heading: '[Intermediate headline — TODO]',
     body: '[Short description of what intermediate students focus on — TODO]',
+    image: intermediateImage,
+    imageAlt: 'Aaron reviewing a chord chart with a student outdoors',
   },
   {
     id: 'advanced',
@@ -221,9 +235,20 @@ export default function SkillLevelSection() {
           id={`skill-panel-${activeLevel.id}`}
           aria-labelledby={`skill-tab-${activeLevel.id}`}
         >
-          <div className="skill-panel__image ph-block" aria-hidden="true">
-            Image placeholder
-          </div>
+          {activeLevel.image ? (
+            <div className="skill-panel__image">
+              <img
+                className="skill-panel__image-img"
+                src={activeLevel.image}
+                alt={activeLevel.imageAlt}
+                loading="lazy"
+              />
+            </div>
+          ) : (
+            <div className="skill-panel__image ph-block" aria-hidden="true">
+              Image placeholder
+            </div>
+          )}
           <div className="skill-panel__body">
             <h2 className="skill-panel__heading">{activeLevel.heading}</h2>
             <p className="skill-panel__text">{activeLevel.body}</p>

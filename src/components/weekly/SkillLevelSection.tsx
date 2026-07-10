@@ -1,11 +1,8 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
 import './SkillLevelSection.css'
-
-gsap.registerPlugin(ScrollTrigger)
 
 type SkillLevel = 'beginner' | 'intermediate' | 'advanced'
 
@@ -61,21 +58,32 @@ export default function SkillLevelSection() {
 
     gsap.set(lines, { opacity: 0, y: 24 })
 
-    const context = gsap.context(() => {
-      gsap.to(lines, {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        ease: 'power2.out',
-        stagger: 0.12,
-        scrollTrigger: {
-          trigger: intro,
-          start: 'top 80%',
-        },
-      })
-    }, intro)
+    let played = false
+    const tween = gsap.to(lines, {
+      opacity: 1,
+      y: 0,
+      duration: 0.7,
+      ease: 'power2.out',
+      stagger: 0.12,
+      paused: true,
+    })
 
-    return () => context.revert()
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !played) {
+          played = true
+          tween.play()
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.2 },
+    )
+    observer.observe(intro)
+
+    return () => {
+      observer.disconnect()
+      tween.kill()
+    }
   }, [prefersReducedMotion])
 
   useLayoutEffect(() => {

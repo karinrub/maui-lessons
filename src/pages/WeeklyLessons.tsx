@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import useDocumentTitle from '../hooks/useDocumentTitle'
+import SkillLevelSection from '../components/weekly/SkillLevelSection'
 
-const skillLevels = ['Beginner', 'Intermediate', 'Advanced'] as const
+const weeklyVideo = new URL('../../assets/videos/aaron-weekly-section.mp4', import.meta.url).href
 const howItWorksSteps = ['Step 1', 'Step 2', 'Step 3'] as const
 
 export default function WeeklyLessons() {
@@ -9,30 +10,7 @@ export default function WeeklyLessons() {
 
   return (
     <>
-      <section className="cp-section">
-        <p className="cp-section-label">Ongoing Lessons</p>
-        <h1 className="page-title" style={{ marginBottom: '1.5rem' }}>[Page heading]</h1>
-        <div className="ph-lines" style={{ maxWidth: 540 }}>
-          <div className="ph-line ph-line--long" />
-          <div className="ph-line ph-line--med" />
-        </div>
-      </section>
-
-      <section className="cp-section">
-        <p className="cp-section-label">Skill Levels</p>
-        <div className="cp-grid cp-grid--3">
-          {skillLevels.map((label) => (
-            <div key={label} className="cp-card">
-              <p className="cp-card-label">{label}</p>
-              <div className="ph-lines">
-                <div className="ph-line ph-line--long" />
-                <div className="ph-line ph-line--med" />
-                <div className="ph-line ph-line--short" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      <SkillLevelSection />
 
       <section className="cp-section">
         <p className="cp-section-label">How It Works</p>
@@ -52,7 +30,15 @@ export default function WeeklyLessons() {
 
       <section className="cp-section">
         <p className="cp-section-label">Video</p>
-        <div className="ph-block" style={{ height: 360 }}>Video placeholder</div>
+        <video
+          className="weekly-video"
+          src={weeklyVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{ width: '100%', height: 'auto', borderRadius: 'clamp(10px, 1.2vw, 18px)' }}
+        />
       </section>
 
       <section className="cp-section">

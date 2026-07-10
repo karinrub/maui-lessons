@@ -1,0 +1,165 @@
+.skill-intro {
+  padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(2rem, 4vw, 3rem);
+}
+
+.skill-intro__label {
+  margin: 0 0 0.75rem;
+  color: rgba(31, 29, 24, 0.38);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.skill-intro__title {
+  margin: 0 0 1.5rem;
+  color: rgba(31, 29, 24, 0.86);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2.4rem, 6vw, 5.5rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.skill-intro__title-line {
+  display: block;
+}
+
+.skill-intro__text {
+  max-width: 640px;
+  color: rgba(31, 29, 24, 0.62);
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  line-height: 1.6;
+}
+
+.skill-section {
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(2.5rem, 5vw, 4.5rem);
+  border-top: 1px solid rgba(45, 39, 29, 0.09);
+}
+
+.skill-tabs {
+  position: relative;
+  display: flex;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid rgba(45, 39, 29, 0.12);
+}
+
+.skill-tab {
+  position: relative;
+  padding: 0 0 0.9rem;
+  background: none;
+  border: none;
+  color: rgba(31, 29, 24, 0.42);
+  font: inherit;
+  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.skill-tab.is-active {
+  color: rgba(31, 29, 24, 0.9);
+}
+
+.skill-tab-underline {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: rgba(31, 29, 24, 0.78);
+  border-radius: 2px;
+}
+
+.skill-panel {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.skill-panel__image {
+  min-height: 220px;
+  border-radius: clamp(10px, 1.2vw, 18px);
+}
+
+.skill-panel__heading {
+  margin: 0 0 0.85rem;
+  color: rgba(31, 29, 24, 0.8);
+  font-size: clamp(1.3rem, 2.2vw, 1.9rem);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.skill-panel__text {
+  margin: 0;
+  color: rgba(31, 29, 24, 0.6);
+  font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+  line-height: 1.6;
+}
+
+/* Beginner: image left, text right */
+.skill-panel__layout--beginner {
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+}
+
+/* Intermediate: text on top, image full-width below */
+.skill-panel__layout--intermediate {
+  grid-template-columns: 1fr;
+}
+
+.skill-panel__layout--intermediate .skill-panel__body {
+  order: -1;
+}
+
+.skill-panel__layout--intermediate .skill-panel__image {
+  min-height: 320px;
+}
+
+/* Advanced: large image, text overlaid bottom-left */
+.skill-panel__layout--advanced {
+  position: relative;
+  grid-template-columns: 1fr;
+}
+
+.skill-panel__layout--advanced .skill-panel__image {
+  min-height: 420px;
+}
+
+.skill-panel__layout--advanced .skill-panel__body {
+  position: absolute;
+  bottom: clamp(1rem, 2.5vw, 2rem);
+  left: clamp(1rem, 2.5vw, 2rem);
+  max-width: 60%;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: rgba(245, 240, 231, 0.92);
+  border-radius: clamp(8px, 1vw, 14px);
+}
+
+@media (max-width: 760px) {
+  .skill-panel__layout--beginner,
+  .skill-panel__layout--intermediate,
+  .skill-panel__layout--advanced {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-panel__layout--beginner .skill-panel__body,
+  .skill-panel__layout--intermediate .skill-panel__body {
+    order: -1;
+  }
+
+  .skill-panel__layout--advanced {
+    position: static;
+  }
+
+  .skill-panel__layout--advanced .skill-panel__body {
+    position: static;
+    max-width: none;
+    margin-top: 1rem;
+    background: none;
+    padding: 0;
+  }
+
+  .skill-tabs {
+    gap: clamp(1rem, 5vw, 1.5rem);
+  }
+}

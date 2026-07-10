@@ -21,11 +21,21 @@
 
 .skill-intro__clip-video {
   position: absolute;
+  z-index: 1;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: 55% 60%;
+}
+
+/* Reveal device for this section: a solid panel that wipes off the video
+   from the top, instead of the fade used for media elsewhere on the site. */
+.skill-intro__clip-curtain {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: var(--home-sage);
 }
 
 .skill-intro__heading {
@@ -43,8 +53,16 @@
   line-height: 1.05;
 }
 
+/* Each title line sits in a clipped mask so it rises up from behind the
+   mask edge on reveal, rather than fading in place. */
+.skill-intro__title-line-mask {
+  display: block;
+  overflow: hidden;
+}
+
 .skill-intro__title-line {
   display: block;
+  will-change: transform;
 }
 
 .skill-intro__text {
@@ -54,12 +72,30 @@
   line-height: 1.6;
 }
 
+/* Marks the boundary between the intro and the tabs section — a deliberate
+   structural break rather than the two sections just touching. */
+.skill-divider-wrap {
+  padding: 0 0 clamp(1.75rem, 3.5vw, 3rem);
+}
+
+.skill-divider {
+  display: block;
+  width: clamp(52px, 6vw, 76px);
+  height: 2px;
+  background: rgba(31, 29, 24, 0.28);
+  border-radius: 2px;
+}
+
 .skill-section {
   position: relative;
   isolation: isolate;
-  padding: clamp(2.5rem, 5vw, 4.5rem) 0 clamp(3rem, 6vw, 5.5rem);
+  margin-top: clamp(0.5rem, 1.5vw, 1rem);
+  padding: clamp(2.75rem, 5.5vw, 4.75rem) 0 clamp(3rem, 6vw, 5.5rem);
 }
 
+/* Full-bleed band with generous rounded top corners — reads as a distinct
+   raised shelf under the intro rather than the flat edge-to-edge sage bands
+   used on About/Vacation. */
 .skill-section::before {
   content: '';
   position: absolute;
@@ -69,6 +105,7 @@
   left: 50%;
   width: 100vw;
   transform: translateX(-50%);
+  border-radius: clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px) 0 0;
   background: linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
 }
 

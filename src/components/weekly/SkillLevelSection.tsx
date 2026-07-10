@@ -51,8 +51,10 @@ export default function SkillLevelSection() {
 
   const introRef = useRef<HTMLDivElement>(null)
   const clipRef = useRef<HTMLDivElement>(null)
+  const clipCurtainRef = useRef<HTMLDivElement>(null)
   const titleLineRefs = useRef<HTMLElement[]>([])
   const textRef = useRef<HTMLParagraphElement>(null)
+  const dividerRef = useRef<HTMLSpanElement>(null)
 
   const tabsRef = useRef<HTMLDivElement>(null)
   const tabButtonRefs = useRef<Record<SkillLevel, HTMLButtonElement | null>>({
@@ -68,28 +70,67 @@ export default function SkillLevelSection() {
   useLayoutEffect(() => {
     const intro = introRef.current
     const clip = clipRef.current
+    const curtain = clipCurtainRef.current
     const titleLines = titleLineRefs.current
     const text = textRef.current
-    if (!intro || !clip || !text || titleLines.length === 0) return
+    const divider = dividerRef.current
+    const panel = panelRef.current
+    const tabButtons = levels
+      .map((level) => tabButtonRefs.current[level.id])
+      .filter((button): button is HTMLButtonElement => button !== null)
 
-    if (prefersReducedMotion) {
-      gsap.set([clip, ...titleLines, text], { opacity: 1, y: 0, scale: 1 })
+    if (
+      !intro ||
+      !clip ||
+      !curtain ||
+      !text ||
+      !divider ||
+      !panel ||
+      titleLines.length === 0 ||
+      tabButtons.length === 0
+    ) {
       return
     }
 
-    gsap.set(clip, { opacity: 0, scale: 0.92 })
-    gsap.set([...titleLines, text], { opacity: 0, y: 24 })
+    if (prefersReducedMotion) {
+      gsap.set(curtain, { scaleY: 0 })
+      gsap.set(titleLines, { yPercent: 0, opacity: 1 })
+      gsap.set(text, { opacity: 1, y: 0 })
+      gsap.set(divider, { scaleX: 1 })
+      gsap.set(tabButtons, { opacity: 1, y: 0, scale: 1 })
+      gsap.set(panel, { opacity: 1, y: 0 })
+      return
+    }
+
+    gsap.set(curtain, { scaleY: 1, transformOrigin: 'top' })
+    gsap.set(titleLines, { yPercent: 120, opacity: 0 })
+    gsap.set(text, { opacity: 0, y: 20 })
+    gsap.set(divider, { scaleX: 0, transformOrigin: 'left' })
+    gsap.set(tabButtons, { opacity: 0, y: 16, scale: 0.94 })
+    gsap.set(panel, { opacity: 0, y: 16 })
 
     let played = false
+    // A distinct reveal idiom for this page: a solid curtain wipes off the
+    // video (not a fade), title lines rise out of a clipped mask (not a
+    // plain opacity fade), a drawn rule marks the intro/tabs boundary, and
+    // tabs pop in with a slight overshoot — deliberately different from the
+    // fade+translateY reveal used on Home/About/Vacation.
     const timeline = gsap
       .timeline({ paused: true })
-      .to(clip, { opacity: 1, scale: 1, duration: 0.7, ease: 'power2.out' }, 0)
+      .to(curtain, { scaleY: 0, duration: 0.9, ease: 'power4.inOut' }, 0)
       .to(
         titleLines,
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12 },
-        0.4,
+        { yPercent: 0, opacity: 1, duration: 0.85, ease: 'expo.out', stagger: 0.12 },
+        0.25,
       )
-      .to(text, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 1.2)
+      .to(text, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.85)
+      .to(divider, { scaleX: 1, duration: 0.5, ease: 'power2.inOut' }, 1.15)
+      .to(
+        tabButtons,
+        { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: 'back.out(1.7)', stagger: 0.07 },
+        1.35,
+      )
+      .to(panel, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 1.65)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -99,7 +140,7 @@ export default function SkillLevelSection() {
           observer.disconnect()
         }
       },
-      { threshold: 0.2 },
+      { threshold: 0.15 },
     )
     observer.observe(intro)
 
@@ -172,24 +213,29 @@ export default function SkillLevelSection() {
               loop
               playsInline
             />
+            <div ref={clipCurtainRef} className="skill-intro__clip-curtain" />
           </div>
           <div className="skill-intro__heading">
             <h1 className="skill-intro__title">
-              <span
-                className="skill-intro__title-line"
-                ref={(el) => {
-                  if (el) titleLineRefs.current[0] = el
-                }}
-              >
-                Twenty-two years of music,
+              <span className="skill-intro__title-line-mask">
+                <span
+                  className="skill-intro__title-line"
+                  ref={(el) => {
+                    if (el) titleLineRefs.current[0] = el
+                  }}
+                >
+                  Twenty-two years of music,
+                </span>
               </span>
-              <span
-                className="skill-intro__title-line"
-                ref={(el) => {
-                  if (el) titleLineRefs.current[1] = el
-                }}
-              >
-                taught with patience.
+              <span className="skill-intro__title-line-mask">
+                <span
+                  className="skill-intro__title-line"
+                  ref={(el) => {
+                    if (el) titleLineRefs.current[1] = el
+                  }}
+                >
+                  taught with patience.
+                </span>
               </span>
             </h1>
           </div>
@@ -200,6 +246,10 @@ export default function SkillLevelSection() {
           you've played for years, lessons move at your pace — patient, unhurried, and built
           around real progress.
         </p>
+      </div>
+
+      <div className="skill-divider-wrap" aria-hidden="true">
+        <span ref={dividerRef} className="skill-divider" />
       </div>
 
       <div className="skill-section">

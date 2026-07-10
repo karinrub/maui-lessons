@@ -190,7 +190,7 @@ export default function SkillLevelSection() {
 
       <div className="skill-section">
         <h2 className="skill-section__heading">
-          Beginner, intermediate, or advanced — there's a lesson for where you are.
+          Wherever you're starting from, there's a lesson built for you.
         </h2>
         <div className="skill-tabs" role="tablist" aria-label="Skill level" ref={tabsRef}>
           {levels.map((level) => (

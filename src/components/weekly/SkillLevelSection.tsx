@@ -23,24 +23,24 @@ const levels: {
   {
     id: 'beginner',
     label: 'Beginner',
-    heading: '[Beginner headline — TODO]',
-    body: '[Short description of what beginner students focus on — TODO]',
+    heading: 'Just starting out',
+    body: 'No experience, no problem. Lessons start with your first chords and basic strumming, at a pace that feels comfortable — no pressure, just steady progress.',
     image: beginnerImage,
     imageAlt: 'Aaron helping a young student strum his first chords on the ukulele',
   },
   {
     id: 'intermediate',
     label: 'Intermediate',
-    heading: '[Intermediate headline — TODO]',
-    body: '[Short description of what intermediate students focus on — TODO]',
+    heading: 'Building real skill',
+    body: 'Already know a few chords? Lessons move into reading music, new strumming patterns, and songs that stretch what you can already do.',
     image: intermediateImage,
     imageAlt: 'Aaron reviewing a chord chart with a student outdoors',
   },
   {
     id: 'advanced',
     label: 'Advanced',
-    heading: '[Advanced headline — TODO]',
-    body: '[Short description of what advanced students focus on — TODO]',
+    heading: 'Refining your sound',
+    body: 'For players ready to go deeper — technique, style, and the kind of playing that comes from years at it. Aaron draws on his own varied musical background to help push your playing further.',
   },
 ]
 

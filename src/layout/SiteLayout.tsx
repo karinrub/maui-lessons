@@ -13,6 +13,8 @@ export default function SiteLayout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isTouristLessons = location.pathname === '/tourist-lessons'
+  const isAbout = location.pathname === '/about'
+  const isCinematic = isTouristLessons || isAbout
   const hasAtmosphericBackground = isTouristLessons
   const [isHeaderSuppressed, setHeaderSuppressed] = useState(false)
   const shellClassName = isHome
@@ -20,13 +22,13 @@ export default function SiteLayout() {
     : [
         'route-shell',
         hasAtmosphericBackground ? 'route-shell--atmospheric' : '',
-        isTouristLessons ? 'route-shell--cinematic' : '',
+        isCinematic ? 'route-shell--cinematic' : '',
       ]
         .filter(Boolean)
         .join(' ')
   const mainClassName = isHome
     ? 'home-main'
-    : ['page-main', isTouristLessons ? 'page-main--cinematic' : ''].filter(Boolean).join(' ')
+    : ['page-main', isCinematic ? 'page-main--cinematic' : ''].filter(Boolean).join(' ')
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 })

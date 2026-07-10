@@ -2,10 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
 import VacationHeadlineLayer from './VacationHeadlineLayer'
 import VacationImageLayer from './VacationImageLayer'
-import {
-  VacationEditorialContinuation,
-  VacationEditorialSurfaceLayer,
-} from './VacationSceneLayers'
+import { VacationEditorialSurfaceLayer } from './VacationSceneLayers'
+import VacationStorySections from './VacationStorySections'
 import { useVacationSceneProgress } from './useVacationSceneProgress'
 import { vacationSceneScroll } from './vacationSceneConfig'
 import './VacationCinematicScene.css'
@@ -64,7 +62,7 @@ export default function VacationCinematicScene() {
         </div>
       </section>
 
-      <VacationEditorialContinuation />
+      <VacationStorySections />
     </>
   )
 }

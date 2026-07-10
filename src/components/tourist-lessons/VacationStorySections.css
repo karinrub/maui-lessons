@@ -1,0 +1,466 @@
+/* ── Vacation story (statement → collage → sage pull quote → finale) ──
+   One continuous editorial surface picks up where the pinned hero's
+   surface layer leaves off; the sage panel and pull-quote band pull the
+   home hero's sage material into this route. */
+
+.vacation-story {
+  position: relative;
+  /* Same gradient family as the hero's editorial surface so the unpin
+     hands off with no visible seam. */
+  background:
+    radial-gradient(ellipse at 18% 4%, rgba(255, 255, 255, 0.74), transparent 34rem),
+    radial-gradient(ellipse at 78% 12%, rgba(174, 184, 111, 0.2), transparent 32rem),
+    linear-gradient(168deg, #fbf8ef 0%, #f5f0e7 46%, #e9e2cf 100%);
+}
+
+/* ── Statement ── */
+
+.vacation-statement {
+  padding:
+    clamp(64px, 9svh, 112px)
+    clamp(22px, 6vw, 96px)
+    clamp(40px, 6svh, 72px);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.vacation-statement__eyebrow {
+  margin: 0 0 clamp(1.2rem, 2.4svh, 2rem);
+  color: rgba(77, 88, 42, 0.82);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(0.66rem, 0.72vw, 0.74rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.vacation-statement__heading {
+  margin: 0;
+  color: #1f1d18;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.9rem, 7.2vw, 6.6rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 0.98;
+}
+
+.vacation-statement__line {
+  display: block;
+  overflow: hidden;
+  /* Room for descenders inside the clip row. */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.vacation-statement__line-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+.vacation-statement__line-inner.is-emphasized {
+  color: #4d582a;
+  font-style: italic;
+}
+
+.vacation-statement__lede {
+  margin: clamp(1.6rem, 3svh, 2.4rem) 0 0;
+  max-width: 44ch;
+  color: rgba(47, 42, 34, 0.72);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(0.95rem, 1.15vw, 1.12rem);
+  line-height: 1.65;
+}
+
+/* ── Collage ── */
+
+.vacation-collage {
+  position: relative;
+  padding:
+    clamp(40px, 6svh, 72px)
+    clamp(22px, 6vw, 96px)
+    clamp(80px, 11svh, 140px);
+  overflow: clip;
+}
+
+/* Sage panel: the home hero's arch color, slid in behind the right side of
+   the collage. Grows down via GSAP (transform-origin top). */
+.vacation-collage__panel {
+  position: absolute;
+  top: clamp(24px, 4svh, 56px);
+  right: 0;
+  bottom: clamp(48px, 8svh, 104px);
+  width: min(62%, 780px);
+  border-radius: clamp(20px, 2.4vw, 34px) 0 0 clamp(20px, 2.4vw, 34px);
+  background:
+    var(--grain-url),
+    linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
+  background-blend-mode: overlay, normal;
+  background-size: 160px 160px, auto;
+  transform-origin: top center;
+  will-change: transform, opacity;
+}
+
+/* Ghost word: oversized italic serif in deep sage ink, floating behind the
+   left column — the page's big typographic texture moment. */
+.vacation-collage__ghost {
+  position: absolute;
+  top: 30%;
+  left: clamp(-40px, -2vw, -16px);
+  z-index: 0;
+  color: rgba(77, 88, 42, 0.13);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(9rem, 24vw, 22rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.vacation-collage__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  row-gap: clamp(36px, 6svh, 72px);
+  column-gap: clamp(16px, 2.4vw, 32px);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.vacation-collage__figure {
+  margin: 0;
+  will-change: transform;
+}
+
+/* Low-res source images: every frame stays width-capped under native px. */
+.vacation-collage__figure--wide {
+  grid-row: 1;
+  grid-column: 6 / 13;
+  justify-self: end;
+  width: min(100%, 540px);
+}
+
+.vacation-collage__figure--portrait {
+  grid-row: 2;
+  grid-column: 1 / 6;
+  justify-self: start;
+  width: min(100%, 400px);
+  margin-top: clamp(-64px, -6svh, -24px);
+}
+
+.vacation-collage__figure--landscape {
+  grid-row: 3;
+  grid-column: 8 / 13;
+  justify-self: end;
+  width: min(100%, 470px);
+  margin-top: clamp(-48px, -4svh, -16px);
+}
+
+.vacation-collage__frame {
+  overflow: hidden;
+  border-radius: clamp(14px, 1.6vw, 22px);
+  box-shadow: 0 28px 64px -22px rgba(23, 53, 42, 0.38);
+}
+
+.vacation-collage__frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: scale(1.02);
+  transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.vacation-collage__figure:hover .vacation-collage__frame img {
+  transform: scale(1.06);
+}
+
+.vacation-collage__caption {
+  margin-top: 0.8rem;
+  color: rgba(23, 53, 42, 0.6);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.vacation-collage__block {
+  align-self: center;
+}
+
+.vacation-collage__block--01 {
+  grid-row: 1;
+  grid-column: 1 / 5;
+}
+
+.vacation-collage__block--02 {
+  grid-row: 2;
+  grid-column: 7 / 11;
+  /* Sits on the sage panel — ink shifts to the sage's deep green. */
+  color: var(--home-sage-ink);
+}
+
+.vacation-collage__block--03 {
+  grid-row: 3;
+  grid-column: 1 / 5;
+}
+
+.vacation-collage__numeral {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: rgba(77, 88, 42, 0.55);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.6rem, 3.6vw, 3.6rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.vacation-collage__block--02 .vacation-collage__numeral {
+  color: rgba(23, 53, 42, 0.5);
+}
+
+.vacation-collage__title {
+  margin: 0 0 0.7rem;
+  color: rgba(31, 29, 24, 0.92);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.5rem, 2.1vw, 2.05rem);
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  line-height: 1.1;
+}
+
+.vacation-collage__block--02 .vacation-collage__title {
+  color: var(--home-sage-ink);
+}
+
+.vacation-collage__body {
+  margin: 0;
+  max-width: 34ch;
+  color: rgba(47, 42, 34, 0.7);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(0.88rem, 0.98vw, 1rem);
+  line-height: 1.65;
+}
+
+.vacation-collage__block--02 .vacation-collage__body {
+  color: rgba(23, 53, 42, 0.78);
+}
+
+/* ── Pull quote: full-bleed sage band ── */
+
+.vacation-quote {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(172deg, #c2d0ab 0%, var(--home-sage) 52%, #a9bb90 100%);
+  padding:
+    clamp(88px, 14svh, 168px)
+    clamp(22px, 7vw, 110px);
+}
+
+.vacation-quote__text {
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+  max-width: 22ch;
+  color: var(--home-sage-ink);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 5.4vw, 4.9rem);
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  line-height: 1.12;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.vacation-quote__word {
+  will-change: opacity;
+}
+
+.vacation-quote__grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ── Finale CTA (deep ink, mirrors the home finale material) ── */
+
+.vacation-story__finale {
+  position: relative;
+  overflow: hidden;
+  background: #0d2018;
+  padding:
+    clamp(72px, 11svh, 128px)
+    clamp(22px, 6vw, 96px)
+    clamp(80px, 11svh, 136px);
+}
+
+.vacation-story__finale-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.4rem, 3.4svh, 2.2rem);
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.vacation-story__finale-line {
+  margin: 0;
+  color: rgba(250, 245, 238, 0.92);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.vacation-story__finale-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: clamp(0.9rem, 1.6vw, 1.15rem) clamp(1.8rem, 3.4vw, 2.6rem);
+  border-radius: 999px;
+  background: #fbf7ee;
+  color: #0d2018;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55);
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+
+.vacation-story__finale-cta:hover,
+.vacation-story__finale-cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px -18px rgba(0, 0, 0, 0.65);
+}
+
+.vacation-story__finale-cta:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.vacation-story__finale-cta-arrow {
+  transition: transform 0.22s ease;
+}
+
+.vacation-story__finale-cta:hover .vacation-story__finale-cta-arrow {
+  transform: translateX(0.25rem);
+}
+
+.vacation-story__finale-aside {
+  margin: 0;
+  color: rgba(250, 245, 238, 0.55);
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.82rem;
+}
+
+.vacation-story__finale-aside a {
+  color: rgba(250, 245, 238, 0.82);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  transition: color 0.22s ease;
+}
+
+.vacation-story__finale-aside a:hover,
+.vacation-story__finale-aside a:focus-visible {
+  color: #faf5ee;
+}
+
+.vacation-story__finale-aside a:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.vacation-story__finale-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ── Mobile ── */
+
+@media (max-width: 760px) {
+  .vacation-statement__heading {
+    font-size: clamp(2.5rem, 12vw, 3.4rem);
+  }
+
+  .vacation-collage__panel {
+    top: 12%;
+    bottom: 6%;
+    width: 78%;
+  }
+
+  .vacation-collage__ghost {
+    top: 38%;
+    font-size: clamp(7rem, 34vw, 10rem);
+  }
+
+  .vacation-collage__grid {
+    grid-template-columns: 1fr;
+    row-gap: clamp(32px, 5svh, 48px);
+  }
+
+  .vacation-collage__figure--wide,
+  .vacation-collage__figure--portrait,
+  .vacation-collage__figure--landscape {
+    grid-row: auto;
+    grid-column: 1;
+    justify-self: center;
+    width: min(100%, 420px);
+    margin-top: 0;
+  }
+
+  .vacation-collage__figure--portrait {
+    width: min(100%, 340px);
+  }
+
+  .vacation-collage__block--01,
+  .vacation-collage__block--02,
+  .vacation-collage__block--03 {
+    grid-row: auto;
+    grid-column: 1;
+    justify-self: center;
+    max-width: 420px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vacation-collage__frame img,
+  .vacation-story__finale-cta,
+  .vacation-story__finale-cta-arrow {
+    transition: none;
+  }
+
+  .vacation-collage__figure:hover .vacation-collage__frame img {
+    transform: scale(1.02);
+  }
+
+  .vacation-statement__line-inner,
+  .vacation-collage__figure,
+  .vacation-collage__ghost,
+  .vacation-collage__panel,
+  .vacation-quote__word {
+    will-change: auto;
+  }
+}

@@ -33,15 +33,6 @@
   min-width: 0;
 }
 
-.skill-intro__label {
-  margin: 0 0 0.75rem;
-  color: rgba(31, 29, 24, 0.38);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
 .skill-intro__title {
   margin: 0;
   color: rgba(31, 29, 24, 0.86);
@@ -79,6 +70,17 @@
   width: 100vw;
   transform: translateX(-50%);
   background: linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
+}
+
+.skill-section__heading {
+  max-width: 46ch;
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+  color: var(--home-sage-ink);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.25;
 }
 
 .skill-tabs {

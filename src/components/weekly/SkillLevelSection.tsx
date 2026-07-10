@@ -36,7 +36,6 @@ export default function SkillLevelSection() {
   const activeLevel = levels.find((level) => level.id === active) ?? levels[0]
 
   const introRef = useRef<HTMLDivElement>(null)
-  const labelRef = useRef<HTMLParagraphElement>(null)
   const clipRef = useRef<HTMLDivElement>(null)
   const titleLineRefs = useRef<HTMLElement[]>([])
   const textRef = useRef<HTMLParagraphElement>(null)
@@ -55,30 +54,28 @@ export default function SkillLevelSection() {
   useLayoutEffect(() => {
     const intro = introRef.current
     const clip = clipRef.current
-    const label = labelRef.current
     const titleLines = titleLineRefs.current
     const text = textRef.current
-    if (!intro || !clip || !label || !text || titleLines.length === 0) return
+    if (!intro || !clip || !text || titleLines.length === 0) return
 
     if (prefersReducedMotion) {
-      gsap.set([clip, label, ...titleLines, text], { opacity: 1, y: 0, scale: 1 })
+      gsap.set([clip, ...titleLines, text], { opacity: 1, y: 0, scale: 1 })
       return
     }
 
     gsap.set(clip, { opacity: 0, scale: 0.92 })
-    gsap.set([label, ...titleLines, text], { opacity: 0, y: 24 })
+    gsap.set([...titleLines, text], { opacity: 0, y: 24 })
 
     let played = false
     const timeline = gsap
       .timeline({ paused: true })
       .to(clip, { opacity: 1, scale: 1, duration: 0.7, ease: 'power2.out' }, 0)
-      .to(label, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, 0.1)
       .to(
         titleLines,
         { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', stagger: 0.12 },
-        0.5,
+        0.4,
       )
-      .to(text, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 1.3)
+      .to(text, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, 1.2)
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -163,9 +160,6 @@ export default function SkillLevelSection() {
             />
           </div>
           <div className="skill-intro__heading">
-            <p ref={labelRef} className="skill-intro__label">
-              Ongoing Lessons
-            </p>
             <h1 className="skill-intro__title">
               <span
                 className="skill-intro__title-line"
@@ -195,6 +189,9 @@ export default function SkillLevelSection() {
       </div>
 
       <div className="skill-section">
+        <h2 className="skill-section__heading">
+          Beginner, intermediate, or advanced — there's a lesson for where you are.
+        </h2>
         <div className="skill-tabs" role="tablist" aria-label="Skill level" ref={tabsRef}>
           {levels.map((level) => (
             <button

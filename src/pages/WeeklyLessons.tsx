@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 import SkillLevelSection from '../components/weekly/SkillLevelSection'
 
-const weeklyVideo = new URL('../../assets/videos/aaron-weekly-section.mp4', import.meta.url).href
 const howItWorksSteps = ['Step 1', 'Step 2', 'Step 3'] as const
 
 export default function WeeklyLessons() {
@@ -26,19 +25,6 @@ export default function WeeklyLessons() {
             </div>
           ))}
         </div>
-      </section>
-
-      <section className="cp-section">
-        <p className="cp-section-label">Video</p>
-        <video
-          className="weekly-video"
-          src={weeklyVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          style={{ width: '100%', height: 'auto', borderRadius: 'clamp(10px, 1.2vw, 18px)' }}
-        />
       </section>
 
       <section className="cp-section">

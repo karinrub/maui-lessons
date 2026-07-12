@@ -590,6 +590,11 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
         onComplete: () => {
           markIntroComplete()
           setHeaderSuppressed(false)
+          // The mid-timeline sync below runs while the video is still fading
+          // (opacity can sit under the availability threshold), which left
+          // focus mode unavailable to keyboard users until their first
+          // scroll. Re-sync against the settled frame.
+          syncFocusAvailabilityFromFrame()
         },
       })
       .to(frame, { autoAlpha: 1, duration: 0.55, ease: 'power1.inOut' })

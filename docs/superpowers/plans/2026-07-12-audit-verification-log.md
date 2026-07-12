@@ -60,7 +60,19 @@ No `[TODO`, `[Placeholder`, or bracketed placeholder text anywhere in the DOM on
 
 ## Task 8 — keyboard / reduced-motion / About transition
 
-(appended after Task 8 run)
+### Keyboard traversal (desktop, normal motion)
+
+- Menu: Tab → menu button → Enter opens overlay; focus trap cycles Vacation → Ongoing → About → FAQ → Book → menu button → wraps; Escape closes and restores focus to the menu button. PASS.
+- Hero focus mode: **defect found and fixed** — `is-focus-available` was not set after the intro until the first scroll (the intro's availability sync ran while the video was still under the opacity threshold), so keyboard-only users couldn't enter focus mode at load. Fixed by re-syncing in the intro timeline's `onComplete` (`OpeningScene.tsx`). Post-fix: video `tabIndex` 0 immediately after intro, Enter enters focus mode, Escape exits and clears the body scroll lock. PASS.
+- About chapter jump: focusing the chapter-4 CTA jumps the pinned sequence to chapter 04 (`focusin` handler). PASS.
+
+### About chapter 3→4 transition (audit §10 "unverified risk")
+
+Sampled 11 scroll positions between the chapter-3 and chapter-4 snap targets: at every frame either chapter 3 was still in the viewport or chapter 4's copy and media were fully revealed (`opacity 1`); zero frames matched the audit's "empty cream with only a ghost numeral" description. The chapter snap also pulls the resting position onto chapter boundaries. **Not reproducible** — recorded as a transient mid-scrub frame in the audit's environment; no code change made.
+
+### Reduced-motion sweep (all six routes)
+
+Every route: 0 pin-spacers, body overflow visible, document scrollable, and no meaningful text stuck hidden — except `/faq`, which reports exactly 8 hidden text blocks matching its 8 collapsed accordion answers (first of 9 open by default): correct collapsed-state behavior, not a defect. PASS.
 
 ## Task 13 — live re-verification
 

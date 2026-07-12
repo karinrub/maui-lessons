@@ -1,0 +1,328 @@
+/* ── The Sage Descent ──
+   These two sections continue the skill shelf's sage and deepen it toward
+   the page's deep-green close, so the whole route reads as one material
+   that darkens as the story goes deeper. Each band's ::before overlaps the
+   previous section with a transparent-to-opaque fade — no hairline seams. */
+
+.weekly-rhythm {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 8vw, 7rem);
+}
+
+/* Full-bleed sage that starts transparent over the shelf band above it,
+   turns opaque before the section's own box begins, then deepens. Extends
+   below the section so the close band's rounded top corners reveal sage,
+   not the cream page background. */
+.weekly-rhythm::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -140px;
+  bottom: -90px;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    180deg,
+    rgba(160, 178, 135, 0) 0px,
+    #a0b287 120px,
+    #96aa7c 55%,
+    #8aa06f 100%
+  );
+}
+
+.weekly-rhythm__eyebrow {
+  margin: 0 0 0.9rem;
+  color: rgba(23, 53, 42, 0.6);
+  font-size: clamp(0.72rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.weekly-rhythm__title {
+  margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+  color: var(--home-sage-ink);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2rem, 4.6vw, 3.9rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.weekly-rhythm__title-mask {
+  display: block;
+  overflow: hidden;
+}
+
+.weekly-rhythm__title-line {
+  display: block;
+  will-change: transform;
+}
+
+.weekly-rhythm__title-line--em {
+  padding-left: clamp(1.5rem, 5vw, 4.5rem);
+}
+
+/* Timeline: a drawn spine on the left, steps hanging off it. */
+.weekly-rhythm__steps {
+  position: relative;
+  display: flex;
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+  max-width: 880px;
+  /* Steps step in from under the title's indented second line, continuing
+     the diagonal descent across the band instead of hugging the left rail. */
+  margin-left: clamp(0px, 16vw, 300px);
+}
+
+.weekly-rhythm__spine {
+  flex: 0 0 2px;
+  position: relative;
+}
+
+.weekly-rhythm__spine-line {
+  position: absolute;
+  inset: 0.4rem 0;
+  display: block;
+  width: 2px;
+  background: rgba(23, 53, 42, 0.34);
+  border-radius: 2px;
+  will-change: transform;
+}
+
+.weekly-rhythm__list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5.5vw, 4.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.weekly-step {
+  position: relative;
+  padding-left: clamp(0.25rem, 1vw, 0.75rem);
+}
+
+/* Milestone dot sits back on the spine itself. */
+.weekly-step__dot {
+  position: absolute;
+  top: 0.42em;
+  left: calc(-1 * clamp(1.5rem, 3.5vw, 3rem) - 6px);
+  width: 14px;
+  height: 14px;
+  background: var(--home-sage-ink);
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px rgba(184, 200, 160, 0.45);
+}
+
+/* Oversized ghost numeral floating behind the step copy — quieter cousin of
+   the vacation collage's solid numerals. GSAP settles it to 0.16 alpha. */
+.weekly-step__numeral {
+  position: absolute;
+  top: -0.55em;
+  left: clamp(-0.5rem, -0.5vw, -0.25rem);
+  z-index: -1;
+  color: var(--home-sage-ink);
+  opacity: 0.16;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(3.6rem, 7vw, 5.8rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.weekly-step__title {
+  margin: 0 0 0.7rem;
+  color: var(--home-sage-ink);
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.weekly-step__body {
+  max-width: 52ch;
+  margin: 0;
+  color: rgba(23, 53, 42, 0.74);
+  font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+  line-height: 1.65;
+}
+
+/* ── Deep-green close ──
+   Rounded top and bottom corners bookend the skill shelf's rounded top: the
+   page ends as a nested stack of shelves, cream → sage → deep green. */
+.weekly-close {
+  position: relative;
+  isolation: isolate;
+  margin-top: clamp(1rem, 2.5vw, 2rem);
+  padding: clamp(4rem, 8vw, 7rem) 0 clamp(3.5rem, 7vw, 6rem);
+  text-align: center;
+}
+
+.weekly-close::before {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  border-radius: clamp(28px, 4vw, 56px);
+  background: var(--home-sage-ink);
+}
+
+/* Pool of sage light behind the CTA — same device as the home deck's
+   radial lift, inverted for a dark field. */
+.weekly-close::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  border-radius: clamp(28px, 4vw, 56px);
+  background: radial-gradient(
+    70% 55% at 50% 78%,
+    rgba(184, 200, 160, 0.18) 0%,
+    rgba(184, 200, 160, 0) 68%
+  );
+  pointer-events: none;
+}
+
+.weekly-close__quote {
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+  max-width: 30ch;
+  color: rgba(250, 245, 238, 0.94);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.55rem, 3.4vw, 2.9rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.28;
+}
+
+.weekly-close__quote-line {
+  display: block;
+  overflow: hidden;
+}
+
+.weekly-close__quote-line-inner {
+  display: block;
+  will-change: transform;
+}
+
+.weekly-close__cta-wrap {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.1rem, 2.5vw, 1.6rem);
+}
+
+.weekly-close__line {
+  margin: 0;
+  color: rgba(250, 245, 238, 0.9);
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.weekly-close__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: clamp(0.9rem, 1.6vw, 1.15rem) clamp(1.8rem, 3.4vw, 2.6rem);
+  border-radius: 999px;
+  background: #fbf7ee;
+  color: var(--home-sage-ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55);
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease;
+}
+
+.weekly-close__cta:hover,
+.weekly-close__cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px -18px rgba(0, 0, 0, 0.65);
+}
+
+.weekly-close__cta:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.weekly-close__cta-arrow {
+  transition: transform 0.22s ease;
+}
+
+.weekly-close__cta:hover .weekly-close__cta-arrow {
+  transform: translateX(0.25rem);
+}
+
+.weekly-close__aside {
+  margin: 0;
+  color: rgba(250, 245, 238, 0.55);
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+}
+
+.weekly-close__aside a {
+  color: rgba(250, 245, 238, 0.85);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  transition: color 0.22s ease;
+}
+
+.weekly-close__aside a:hover,
+.weekly-close__aside a:focus-visible {
+  color: #faf5ee;
+}
+
+/* Same grain material as the deck band, hero arch, and home finale. */
+.weekly-close__grain {
+  position: absolute;
+  inset: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  border-radius: clamp(28px, 4vw, 56px);
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .weekly-rhythm__steps {
+    gap: 1.4rem;
+    margin-left: 0.4rem;
+  }
+
+  .weekly-step__dot {
+    left: calc(-1.4rem - 6px);
+    width: 12px;
+    height: 12px;
+    box-shadow: 0 0 0 4px rgba(184, 200, 160, 0.45);
+  }
+
+  .weekly-step__numeral {
+    top: -0.4em;
+  }
+
+  .weekly-close__quote {
+    max-width: 24ch;
+  }
+}

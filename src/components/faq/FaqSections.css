@@ -1,0 +1,330 @@
+/* ── FAQ ──
+   Editorial two-column accordion on the cream page ground: category label
+   in the left rail, questions on the right, sage-ink accents throughout.
+   Accordion height animates via the grid-rows 0fr→1fr trick — cheap,
+   content-sized, no JS measurement. */
+
+.faq-page {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.faq-intro {
+  padding: clamp(1.5rem, 4vw, 3.5rem) 0 clamp(2.75rem, 5.5vw, 4.5rem);
+}
+
+.faq-intro__eyebrow {
+  margin: 0 0 0.9rem;
+  color: rgba(31, 29, 24, 0.55);
+  font-size: clamp(0.72rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.faq-intro__title {
+  margin: 0 0 1.4rem;
+  color: rgba(31, 29, 24, 0.86);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.06;
+}
+
+.faq-intro__title-mask {
+  display: block;
+  overflow: hidden;
+}
+
+.faq-intro__title-line {
+  display: block;
+  will-change: transform;
+}
+
+.faq-intro__lede {
+  max-width: 52ch;
+  margin: 0;
+  color: rgba(31, 29, 24, 0.62);
+  font-size: clamp(1rem, 1.25vw, 1.12rem);
+  line-height: 1.6;
+}
+
+/* ── Sage shelf ──
+   The accordion body sits on the site's sage material: a full-bleed band
+   with the same generous rounded top corners as the weekly shelf, so the
+   FAQ reads as part of the same family of surfaces. */
+.faq-shelf {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(2.5rem, 5vw, 4rem) 0 clamp(3rem, 6vw, 5rem);
+}
+
+.faq-shelf::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  border-radius: clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px) 0 0;
+  background: linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
+}
+
+/* Oversized ghost word drifting counter-scroll behind the accordion —
+   quiet cousin of the home deck's "experiences". */
+.faq-shelf__ghost {
+  position: absolute;
+  z-index: -1;
+  top: 8%;
+  right: -0.06em;
+  color: rgba(23, 53, 42, 0.05);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(7rem, 16vw, 15rem);
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+.faq-category {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(140px, 22%, 220px) 1fr;
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+  padding: clamp(1.75rem, 3.5vw, 2.75rem) 0;
+}
+
+/* Drawn rule instead of a static border: GSAP scales it in from the left
+   as the category enters. */
+.faq-category__rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(23, 53, 42, 0.25);
+  will-change: transform;
+}
+
+.faq-category__label {
+  margin: 0.4rem 0 0;
+  color: rgba(23, 53, 42, 0.6);
+  font-size: clamp(0.72rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.faq-category__rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-row {
+  border-bottom: 1px solid rgba(23, 53, 42, 0.16);
+}
+
+.faq-row:last-child {
+  border-bottom: none;
+}
+
+.faq-row__question {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  padding: clamp(1rem, 1.8vw, 1.35rem) 0;
+  background: none;
+  border: none;
+  color: rgba(23, 53, 42, 0.82);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-row__question:focus-visible {
+  outline: 1px solid rgba(23, 53, 42, 0.6);
+  outline-offset: 0.3rem;
+}
+
+.faq-row__question-text {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.15rem, 1.8vw, 1.55rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.25;
+  transition:
+    color 0.24s ease,
+    transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.faq-row__question:hover .faq-row__question-text,
+.faq-row.is-open .faq-row__question-text {
+  color: var(--home-sage-ink);
+}
+
+/* Micro-interaction: question eases right a beat on hover. */
+.faq-row__question:hover .faq-row__question-text {
+  transform: translateX(0.35rem);
+}
+
+/* Plus icon drawn from two bars; rotates to an × when open. */
+.faq-row__icon {
+  position: relative;
+  flex: 0 0 auto;
+  align-self: center;
+  width: 14px;
+  height: 14px;
+  transition: transform 0.36s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.faq-row__icon::before,
+.faq-row__icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: rgba(23, 53, 42, 0.7);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.faq-row__icon::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+
+/* Closed rows: icon quarter-spins on hover as an invitation; open rows
+   hold the × . */
+.faq-row:not(.is-open) .faq-row__question:hover .faq-row__icon {
+  transform: rotate(90deg);
+}
+
+.faq-row.is-open .faq-row__icon {
+  transform: rotate(45deg);
+}
+
+.faq-row__answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.faq-row.is-open .faq-row__answer {
+  grid-template-rows: 1fr;
+}
+
+.faq-row__answer-clip {
+  overflow: hidden;
+}
+
+/* Open answer sits on a soft cream sheet — the site's card material laid
+   onto the sage, echoing the deck cards and booking panels. */
+.faq-row__answer-text {
+  max-width: 58ch;
+  margin: 0 0 clamp(1.1rem, 2vw, 1.5rem);
+  padding: clamp(0.9rem, 1.6vw, 1.2rem) clamp(1.1rem, 2vw, 1.5rem);
+  background: rgba(251, 247, 238, 0.6);
+  border-radius: clamp(10px, 1.2vw, 16px);
+  color: rgba(23, 53, 42, 0.8);
+  font-size: clamp(0.95rem, 1.15vw, 1.05rem);
+  line-height: 1.65;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.34s ease 0.08s,
+    transform 0.34s ease 0.08s;
+}
+
+.faq-row.is-open .faq-row__answer-text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.faq-close {
+  padding: clamp(3rem, 6vw, 5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 1px solid rgba(23, 53, 42, 0.2);
+  text-align: center;
+}
+
+.faq-close__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.1rem, 2.2vw, 1.5rem);
+}
+
+.faq-close__line {
+  margin: 0;
+  color: var(--home-sage-ink);
+  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.faq-close__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: clamp(0.85rem, 1.5vw, 1.05rem) clamp(1.7rem, 3.2vw, 2.4rem);
+  border-radius: 999px;
+  background: var(--home-sage-ink);
+  color: #fbf7ee;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 18px 40px -20px rgba(13, 32, 24, 0.6);
+  transition:
+    transform 0.24s ease,
+    box-shadow 0.24s ease;
+}
+
+.faq-close__cta:hover,
+.faq-close__cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px -20px rgba(13, 32, 24, 0.7);
+}
+
+.faq-close__cta:focus-visible {
+  outline: 1px solid rgba(23, 53, 42, 0.7);
+  outline-offset: 0.3rem;
+}
+
+.faq-close__cta-arrow {
+  transition: transform 0.22s ease;
+}
+
+.faq-close__cta:hover .faq-close__cta-arrow {
+  transform: translateX(0.25rem);
+}
+
+@media (max-width: 760px) {
+  .faq-category {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .faq-shelf__ghost {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-row__answer,
+  .faq-row__answer-text,
+  .faq-row__icon {
+    transition: none;
+  }
+}

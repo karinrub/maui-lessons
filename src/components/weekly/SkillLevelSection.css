@@ -120,44 +120,65 @@
   line-height: 1.25;
 }
 
+/* Segmented control: a rounded track holding three tabs, with a filled
+   ink pill that glides behind the active one — the same pill language as
+   the site's CTAs, instead of a flat underline. */
 .skill-tabs {
   position: relative;
-  display: flex;
-  gap: clamp(1.5rem, 3vw, 2.75rem);
-  margin-bottom: clamp(2rem, 4vw, 3rem);
-  border-bottom: 1px solid rgba(23, 53, 42, 0.18);
+  display: inline-flex;
+  margin-bottom: clamp(2.25rem, 4.5vw, 3.5rem);
+  padding: 5px;
+  border: 1px solid rgba(23, 53, 42, 0.24);
+  border-radius: 999px;
+  background: rgba(250, 245, 238, 0.22);
 }
 
 .skill-tab {
   position: relative;
-  padding: 0 0 0.9rem;
+  z-index: 1;
+  padding: clamp(0.55rem, 1vw, 0.7rem) clamp(1.1rem, 2.4vw, 1.9rem);
   background: none;
   border: none;
-  color: rgba(23, 53, 42, 0.52);
+  border-radius: 999px;
+  color: rgba(23, 53, 42, 0.6);
   font: inherit;
-  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+  font-size: clamp(0.88rem, 1.15vw, 1rem);
   font-weight: 500;
+  letter-spacing: 0.02em;
   cursor: pointer;
+  transition: color 0.28s ease;
 }
 
-.skill-tab.is-active {
+.skill-tab:hover {
   color: var(--home-sage-ink);
 }
 
-.skill-tab-underline {
+.skill-tab.is-active {
+  color: #fbf7ee;
+}
+
+.skill-tab:focus-visible {
+  outline: 1px solid rgba(23, 53, 42, 0.7);
+  outline-offset: 2px;
+}
+
+.skill-tab-pill {
   position: absolute;
-  bottom: -1px;
+  z-index: 0;
+  top: 5px;
+  bottom: 5px;
   left: 0;
   width: 0;
-  height: 2px;
   background: var(--home-sage-ink);
-  border-radius: 2px;
+  border-radius: 999px;
+  box-shadow: 0 10px 24px -12px rgba(23, 53, 42, 0.55);
+  will-change: transform;
 }
 
 .skill-panel {
   display: flex;
-  align-items: flex-start;
-  gap: clamp(1.75rem, 3.5vw, 3rem);
+  align-items: center;
+  gap: clamp(2rem, 4.5vw, 4rem);
 }
 
 /* Intermediate mirrors the row so the tabs don't feel identical. */
@@ -165,27 +186,35 @@
   flex-direction: row-reverse;
 }
 
-.skill-panel__image {
-  position: relative;
-  flex: 0 0 clamp(180px, 20vw, 240px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: clamp(180px, 20vw, 240px);
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background: rgba(23, 53, 42, 0.08);
-  border: 1px solid rgba(23, 53, 42, 0.16);
-  border-radius: clamp(10px, 1.2vw, 18px);
-  color: rgba(23, 53, 42, 0.34);
+/* Editorial photo frame: the two weekly photos are native 3:4 portraits, so
+   the 3/4 cover frame shows them edge to edge; the advanced close-up crops
+   into a tight detail shot. Caption echoes the vacation collage figures. */
+.skill-panel__figure {
+  flex: 0 0 clamp(230px, 27vw, 360px);
+  width: clamp(230px, 27vw, 360px);
+  margin: 0;
 }
 
-.skill-panel__image-img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
+.skill-panel__frame {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: clamp(14px, 1.6vw, 22px);
+  box-shadow: 0 28px 56px -28px rgba(13, 32, 24, 0.55);
+}
+
+.skill-panel__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.skill-panel__caption {
+  margin-top: 0.8rem;
+  color: rgba(23, 53, 42, 0.58);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(0.9rem, 1.1vw, 1rem);
+  font-style: italic;
 }
 
 .skill-panel__body {
@@ -202,14 +231,17 @@
 }
 
 .skill-panel__heading {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.9rem;
   color: var(--home-sage-ink);
-  font-size: clamp(1.3rem, 2.2vw, 1.9rem);
-  font-weight: 400;
-  line-height: 1.15;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.55rem, 2.6vw, 2.3rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.12;
 }
 
 .skill-panel__text {
+  max-width: 58ch;
   margin: 0;
   color: rgba(23, 53, 42, 0.72);
   font-size: clamp(0.95rem, 1.1vw, 1.05rem);
@@ -252,14 +284,20 @@
     min-height: 0;
   }
 
-  .skill-panel__image {
+  .skill-panel__figure {
     flex: 0 0 auto;
-    width: 100%;
-    aspect-ratio: 16 / 10;
+    width: min(100%, 340px);
   }
 
   .skill-tabs {
-    gap: clamp(1rem, 5vw, 1.5rem);
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .skill-tab {
+    flex: 1 1 0;
+    padding-inline: 0.5rem;
+    text-align: center;
   }
 
   .skill-intro__top {

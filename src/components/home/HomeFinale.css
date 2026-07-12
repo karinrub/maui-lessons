@@ -7,7 +7,11 @@
   z-index: 2;
   overflow: hidden;
   margin-top: -2px;
-  background: #0d2018;
+  /* Top 3px painted tan: the arch's anti-aliased top row lets sub-pixel
+     slivers of the section background through, which read as a hairline
+     against the tan section above. Tan-behind-tan makes those slivers
+     invisible; the arch fully covers this strip anyway. */
+  background: linear-gradient(180deg, var(--home-tan) 0 3px, #0d2018 3px);
   padding: 0 clamp(16px, 4vw, 56px) clamp(40px, 6svh, 72px);
 }
 

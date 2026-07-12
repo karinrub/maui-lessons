@@ -13,6 +13,12 @@ export default function SiteLayout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isTouristLessons = location.pathname === '/tourist-lessons'
+  // Routes that end on their own finale band (booking CTA + links) — the
+  // minimal site footer under those reads as a leftover, so it only renders
+  // on utility pages (FAQ, Book).
+  const hasOwnFinale = ['/', '/weekly-lessons', '/tourist-lessons', '/about'].includes(
+    location.pathname,
+  )
   const isAbout = location.pathname === '/about'
   const isCinematic = isTouristLessons || isAbout
   const hasAtmosphericBackground = isTouristLessons
@@ -51,7 +57,7 @@ export default function SiteLayout() {
           </main>
         </PageTransition>
       </div>
-      {isHome ? null : <SiteFooter />}
+      {hasOwnFinale ? null : <SiteFooter />}
     </div>
   )
 }

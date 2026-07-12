@@ -14,24 +14,24 @@ const touristsImage = new URL('../../../assets/images/aaron-tourists-1.jpg', imp
 
 const services = [
   {
-    title: 'Private Ukulele Lessons',
-    eyebrow: 'Private lesson',
+    title: 'Ukulele Lessons',
+    eyebrow: 'One-on-one',
     description:
-      '[Placeholder] A one-on-one ukulele lesson shaped around you — a few warm sentences about what this experience feels like will live here.',
+      'A private ukulele lesson shaped entirely around you — your pace, your favorite songs, your ear. No classroom, no crowd, just the beach and the instrument.',
     image: playingImage,
   },
   {
-    title: 'Private Guitar Lessons',
-    eyebrow: 'Private lesson',
+    title: 'Guitar Lessons',
+    eyebrow: 'One-on-one',
     description:
-      '[Placeholder] A one-on-one guitar lesson at your pace — a few warm sentences about what this experience feels like will live here.',
+      'The same one-on-one attention, on guitar — for players starting from scratch or picking the instrument back up after years away.',
     image: teachingImage,
   },
   {
-    title: 'Group Ukulele Experience',
-    eyebrow: 'Group experience',
+    title: 'Group Experience',
+    eyebrow: 'Small group',
     description:
-      '[Placeholder] A shared ukulele session for families and friends — a few warm sentences about what this experience feels like will live here.',
+      'A shared session for families and friends traveling together — everyone learns the same song, side by side, on the sand.',
     image: touristsImage,
   },
 ]
@@ -308,15 +308,9 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
                       loading="lazy"
                       draggable={false}
                     />
-                    <span className="stacked-services-deck__media-mark">{`0${index + 1}`}</span>
                   </div>
                   <div className="stacked-services-deck__body">
-                    <div className="stacked-services-deck__meta">
-                      <p className="stacked-services-deck__eyebrow">{service.eyebrow}</p>
-                      <span className="stacked-services-deck__count" aria-hidden="true">
-                        {`0${index + 1} / 03`}
-                      </span>
-                    </div>
+                    <p className="stacked-services-deck__eyebrow">{service.eyebrow}</p>
                     <h3 className="stacked-services-deck__title">{service.title}</h3>
                     <p className="stacked-services-deck__description">{service.description}</p>
                     <Link className="stacked-services-deck__cta" to="/book">

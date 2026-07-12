@@ -270,7 +270,10 @@ select {
 }
 
 .page-transition {
-  animation: page-fade 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  /* Opacity only, deliberately: a transform here would wrap every pinned
+     ScrollTrigger scene in a containing block and degrade pinning. Each
+     page's own entrance choreography supplies the motion. */
+  animation: page-fade 460ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .home-main {

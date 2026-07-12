@@ -265,6 +265,28 @@
   height: 0.5rem;
 }
 
+.bw-choice-title-band {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: clamp(6.25rem, 10vw, 8rem);
+  padding: clamp(1.1rem, 2vw, 1.6rem);
+  color: #fbf7ee;
+  flex-shrink: 0;
+}
+
+.bw-choice-title-band .bw-choice-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.2em;
+  font-size: clamp(1.55rem, 2.4vw, 2.15rem);
+  line-height: 1.08;
+  text-align: center;
+  color: inherit;
+  text-shadow: 0 1px 8px rgba(9, 20, 15, 0.32);
+}
+
 .bw-choice[data-accent='green'] .bw-choice-media {
   background: linear-gradient(135deg, var(--bw-accent-green-a) 0%, var(--bw-accent-green-b) 100%);
 }
@@ -277,11 +299,26 @@
   background: linear-gradient(135deg, var(--bw-accent-teal-a) 0%, var(--bw-accent-teal-b) 100%);
 }
 
+.bw-choice[data-accent='green'] .bw-choice-title-band {
+  background: linear-gradient(135deg, var(--bw-accent-green-a) 0%, var(--bw-accent-green-b) 100%);
+}
+
+.bw-choice[data-accent='amber'] .bw-choice-title-band {
+  background: linear-gradient(135deg, var(--bw-accent-amber-a) 0%, var(--bw-accent-amber-b) 100%);
+}
+
 .bw-choice-body {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   padding: clamp(1.1rem, 2vw, 1.6rem);
+}
+
+.bw-choice--title-band .bw-choice-body {
+  min-height: clamp(6rem, 11vw, 8rem);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .bw-choice-title {
@@ -477,6 +514,11 @@
   gap: 0.6rem;
 }
 
+.bw-slot-list--hours {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .bw-slot {
   display: flex;
   flex-direction: column;
@@ -517,6 +559,21 @@
   color: rgba(31, 29, 24, 0.42);
   font-size: 0.72rem;
   font-weight: 400;
+}
+
+.bw-slot--hour {
+  align-items: center;
+  min-height: 2.75rem;
+  justify-content: center;
+  padding: 0.7rem 0.85rem;
+  text-align: center;
+}
+
+.bw-datetime-empty {
+  margin: 0;
+  color: rgba(31, 29, 24, 0.5);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 /* ── Review summary ── */

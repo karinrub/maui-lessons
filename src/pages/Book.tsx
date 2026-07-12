@@ -26,11 +26,16 @@ type BookingData = {
 
 const PARTICIPANT_OPTIONS = ['Solo', '2-3 people', '4-5 people', '6-8 people']
 
-const TIME_SLOTS = [
-  { id: 'morning', label: 'Morning', sub: '[Exact times TBD]' },
-  { id: 'afternoon', label: 'Afternoon', sub: '[Exact times TBD]' },
-  { id: 'late-afternoon', label: 'Late afternoon', sub: '[Exact times TBD]' },
-]
+const TIME_SLOTS = Array.from({ length: 11 }, (_, index) => {
+  const hour24 = index + 7
+  const hour12 = hour24 <= 12 ? hour24 : hour24 - 12
+  const suffix = hour24 < 12 ? 'AM' : 'PM'
+
+  return {
+    id: `${hour24}:00`,
+    label: `${hour12}:00 ${suffix}`,
+  }
+})
 
 const LESSON_TYPE_LABELS: Record<LessonType, string> = {
   vacation: 'Vacation Lessons / Ukulele Experience',
@@ -56,7 +61,7 @@ function stepsFor(lessonType: LessonType | null): StepId[] {
 
 function formatDate(iso: string) {
   if (!iso) {
-    return '[No date chosen]'
+    return 'No date chosen yet'
   }
   return new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', {
     weekday: 'long',
@@ -366,7 +371,7 @@ export default function Book() {
     },
     {
       label: 'Time',
-      value: TIME_SLOTS.find((slot) => slot.id === data.timeSlot)?.label ?? '[No time chosen]',
+      value: TIME_SLOTS.find((slot) => slot.id === data.timeSlot)?.label ?? '—',
       editStep: 'datetime',
     },
   ]
@@ -430,26 +435,34 @@ export default function Book() {
                   type="button"
                   data-bw-item
                   data-accent="green"
-                  className={`bw-choice bw-choice--large${data.lessonType === 'vacation' ? ' is-selected' : ''}`}
+                  className={`bw-choice bw-choice--large bw-choice--title-band${data.lessonType === 'vacation' ? ' is-selected' : ''}`}
                   onClick={() => selectLessonType('vacation')}
                 >
-                  <span className="bw-choice-media" aria-hidden="true" />
-                  <span className="bw-choice-body">
+                  <span className="bw-choice-title-band">
                     <span className="bw-choice-title">Vacation Lessons / Ukulele Experience</span>
-                    <span className="bw-choice-sub">[Short description of the visitor experience]</span>
+                  </span>
+                  <span className="bw-choice-body">
+                    <span className="bw-choice-sub">
+                      A relaxed beachside ukulele session for visitors, families, and new
+                      players who want to leave Maui with a song they can actually play.
+                    </span>
                   </span>
                 </button>
                 <button
                   type="button"
                   data-bw-item
                   data-accent="amber"
-                  className={`bw-choice bw-choice--large${data.lessonType === 'ongoing' ? ' is-selected' : ''}`}
+                  className={`bw-choice bw-choice--large bw-choice--title-band${data.lessonType === 'ongoing' ? ' is-selected' : ''}`}
                   onClick={() => selectLessonType('ongoing')}
                 >
-                  <span className="bw-choice-media" aria-hidden="true" />
-                  <span className="bw-choice-body">
+                  <span className="bw-choice-title-band">
                     <span className="bw-choice-title">Ongoing Lessons</span>
-                    <span className="bw-choice-sub">[Short description of recurring lessons]</span>
+                  </span>
+                  <span className="bw-choice-body">
+                    <span className="bw-choice-sub">
+                      Steady private lessons for local students who want to build real skill over
+                      time on ukulele or guitar, at a patient and comfortable pace.
+                    </span>
                   </span>
                 </button>
               </div>
@@ -496,26 +509,31 @@ export default function Book() {
               <div className="bw-surface bw-datetime" data-bw-item>
                 <BookingCalendar
                   value={data.date}
-                  onChange={(iso) => setData((prev) => ({ ...prev, date: iso }))}
+                  onChange={(iso) => setData((prev) => ({ ...prev, date: iso, timeSlot: null }))}
                   prefersReducedMotion={prefersReducedMotion}
                 />
                 <div className="bw-datetime-side">
                   <p className="bw-datetime-chosen">{formatDate(data.date)}</p>
-                  <p className="bw-datetime-label">Preferred time of day</p>
-                  <div className="bw-slot-list">
-                    {TIME_SLOTS.map((slot) => (
-                      <button
-                        key={slot.id}
-                        type="button"
-                        className={`bw-slot${data.timeSlot === slot.id ? ' is-selected' : ''}`}
-                        aria-pressed={data.timeSlot === slot.id}
-                        onClick={() => setData((prev) => ({ ...prev, timeSlot: slot.id }))}
-                      >
-                        {slot.label}
-                        <span className="bw-slot-sub">{slot.sub}</span>
-                      </button>
-                    ))}
-                  </div>
+                  {data.date ? (
+                    <>
+                      <p className="bw-datetime-label">Choose an hour</p>
+                      <div className="bw-slot-list bw-slot-list--hours">
+                        {TIME_SLOTS.map((slot) => (
+                          <button
+                            key={slot.id}
+                            type="button"
+                            className={`bw-slot bw-slot--hour${data.timeSlot === slot.id ? ' is-selected' : ''}`}
+                            aria-pressed={data.timeSlot === slot.id}
+                            onClick={() => setData((prev) => ({ ...prev, timeSlot: slot.id }))}
+                          >
+                            {slot.label}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <p className="bw-datetime-empty">Choose a date to see available lesson times.</p>
+                  )}
                 </div>
               </div>
               <div className="bw-footer">

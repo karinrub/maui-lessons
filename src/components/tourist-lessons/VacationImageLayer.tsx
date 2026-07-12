@@ -17,6 +17,7 @@ export default function VacationImageLayer() {
           decoding="async"
           fetchPriority="high"
         />
+        <div className="vacation-cinematic-scene__image-scrim" aria-hidden="true" />
       </div>
     </div>
   )

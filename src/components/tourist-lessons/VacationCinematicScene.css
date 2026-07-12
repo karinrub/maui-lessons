@@ -11,7 +11,7 @@
   --vac-image-position-y: 48%;
   --vac-headline-progress: 0;
   --vac-headline-scale: 0.78;
-  --vac-headline-opacity: 0.3;
+  --vac-headline-opacity: 0.62;
   --vac-headline-x: 0px;
   --vac-headline-y: 0px;
   --vac-headline-tracking: 0.055em;
@@ -63,6 +63,7 @@
 }
 
 .vacation-cinematic-scene__image-frame {
+  position: relative;
   width: 100vw;
   height: 100svh;
   min-height: 620px;
@@ -197,4 +198,24 @@
     font-size: clamp(1rem, 4.55vw, 2.2rem);
     text-shadow: 0 1px 14px rgba(6, 17, 12, 0.16);
   }
+}
+
+/* Readability scrim for the pre-scroll hero state: fully present while the
+   cream headline sits over the bright sky, dissolving as the framing effect
+   (and the headline's own shift to ink) takes over. Driven by the same
+   surface-progress variable the scene already writes every tick. In the
+   reduced-motion / mobile state the scene applies progress 1, so the scrim
+   is invisible there — the headline already renders in its settled
+   high-contrast form. */
+.vacation-cinematic-scene__image-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(9, 20, 14, 0.52) 0%,
+    rgba(9, 20, 14, 0.3) 48%,
+    rgba(9, 20, 14, 0.14) 100%
+  );
+  opacity: calc(1 - var(--vac-surface-progress, 0));
+  pointer-events: none;
 }

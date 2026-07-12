@@ -110,10 +110,10 @@ export function getVacationSceneVisualState(progress: number): VacationSceneVisu
       headlineDominanceProgress * 0.18 +
       headlineSettleProgress * 0.01,
     headlineOpacity:
-      0.3 +
+      0.62 +
       headlineQuietProgress * 0.08 +
-      headlineBuildProgress * 0.32 +
-      headlineDominanceProgress * 0.3,
+      headlineBuildProgress * 0.2 +
+      headlineDominanceProgress * 0.1,
     headlineX: 0,
     headlineY: 0,
     headlineTracking: Math.max(

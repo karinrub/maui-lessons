@@ -274,6 +274,8 @@
 }
 
 .weekly-close__cta-arrow {
+  /* Book-page gold (lighter cut for dark surfaces), foreshadowed sitewide. */
+  color: #d69e54;
   transition: transform 0.22s ease;
 }
 

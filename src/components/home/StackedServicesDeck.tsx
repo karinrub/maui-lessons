@@ -131,7 +131,7 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
       unregisterDeck = scrollSequence.registerDeck({
         sectionEl: sectionElement,
         pinEl: pinElement,
-        end: '+=320%',
+        end: '+=260%',
         buildTimeline: () => {
           const tl = gsap
             .timeline({ paused: true })

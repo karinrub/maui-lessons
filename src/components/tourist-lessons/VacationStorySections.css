@@ -417,6 +417,8 @@
 }
 
 .vacation-story__finale-cta-arrow {
+  /* Book-page gold, foreshadowed on every primary CTA (audit P2). */
+  color: #b87d2c;
   transition: transform 0.22s ease;
 }
 

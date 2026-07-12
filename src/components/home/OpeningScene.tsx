@@ -122,6 +122,13 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
   const [hasPlaybackStarted, setHasPlaybackStarted] = useState(false)
   const [isVideoVisible, setIsVideoVisible] = useState(false)
   const [isFocusAvailable, setIsFocusAvailable] = useState(false)
+  const [videoLoadTimedOut, setVideoLoadTimedOut] = useState(false)
+
+  // The hero registration effect gates on this instead of raw videoReady so
+  // a video that becomes ready AFTER the fallback timeout doesn't re-run the
+  // effect (its cleanup would tear down both hero and deck triggers via the
+  // hook's shared teardown, with no path to rebuild them).
+  const heroMediaSettled = videoReady || videoLoadTimedOut
 
   const updateMutedState = useCallback((muted: boolean) => {
     const video = videoRef.current
@@ -623,8 +630,10 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
   // hero video, and a stalled video (slow cell connection, blocked request,
   // exhausted decoder) would otherwise leave the header suppressed forever
   // with no way to navigate. Whichever fires first — media ready or this
-  // timer — reveals the header and hands scrolling back; the beach image
-  // stays as the static backdrop.
+  // timer — reveals the header, hands scrolling back, and unblocks the
+  // scroll-sequence registration below (the tagline and arch live only in
+  // that timeline, and the deck pin waits on the hero registering); the
+  // beach image stays as the static backdrop.
   useEffect(() => {
     if (prefersReducedMotion) {
       return
@@ -644,6 +653,12 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
       setHeaderSuppressed(false)
       markIntroComplete()
       lenisRef.current?.start()
+
+      // Forcing landscapeReady covers the double-stall case where the beach
+      // image is also still loading (registration below also waits on
+      // landscapeVisible); if it's already loaded this is a no-op.
+      setLandscapeReady(true)
+      setVideoLoadTimedOut(true)
     }, 3000)
 
     return () => {
@@ -655,7 +670,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
     if (
       prefersReducedMotion ||
       !landscapeVisible ||
-      !videoReady ||
+      !heroMediaSettled ||
       !sceneRef.current ||
       !pinRef.current ||
       !mediaRef.current ||
@@ -754,12 +769,12 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
     }
   }, [
     handleAudioZoneChange,
+    heroMediaSettled,
     landscapeVisible,
     prefersReducedMotion,
     scrollSequence,
     setFocusAvailableState,
     syncFocusAvailabilityFromFrame,
-    videoReady,
   ])
 
   useEffect(() => {

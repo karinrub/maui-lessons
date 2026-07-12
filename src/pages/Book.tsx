@@ -409,7 +409,8 @@ export default function Book() {
               }`}
               aria-current={index === stepIndex ? 'step' : undefined}
             >
-              {index + 1}. {STEP_LABELS[id]}
+              <span className="bw-progress-numeral">0{index + 1}</span>
+              <span className="bw-progress-label">{STEP_LABELS[id]}</span>
             </li>
           ))}
         </ol>

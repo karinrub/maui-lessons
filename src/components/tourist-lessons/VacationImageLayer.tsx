@@ -10,7 +10,7 @@ export default function VacationImageLayer() {
         <img
           className="vacation-cinematic-scene__image"
           src={vacationSceneImage}
-          alt=""
+          alt="Aaron splashing in the surf beneath leaning palm trees on a Maui beach"
           width={vacationSceneImageConfig.width}
           height={vacationSceneImageConfig.height}
           loading="eager"

@@ -40,6 +40,11 @@ const faqCategories: FaqCategory[] = [
         a: 'One private hour on a Maui beach. You’ll learn your first chords, then a real song — one you keep long after the trip ends.',
       },
       {
+        id: 'where',
+        q: 'Where do lessons happen?',
+        a: 'Around South Maui. Vacation lessons usually meet at Maipoina Beach Park or along the coast through Kihei and Wailea — and if it’s easier, Aaron will come to you, whether you’re staying at a hotel or an Airbnb. Ongoing students meet across Kihei and Wailea, and at Maipoina Beach Park.',
+      },
+      {
         id: 'ongoing',
         q: 'How do ongoing lessons work?',
         a: 'They become a regular part of your week. Each lesson picks up exactly where the last left off — from first chords, through reading music, to refining your own style.',

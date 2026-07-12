@@ -110,6 +110,29 @@
   outline-offset: 0.3rem;
 }
 
+.meet-aaron__voice {
+  max-width: 42rem;
+  margin: clamp(2.4rem, 5vw, 4rem) 0 0;
+  padding-left: clamp(1rem, 1.8vw, 1.5rem);
+  border-left: 2px solid rgba(23, 53, 42, 0.3);
+}
+
+.meet-aaron__voice-quote {
+  margin: 0 0 0.9rem;
+  color: #1f1d18;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.2rem, 1.8vw, 1.55rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.meet-aaron__voice-attribution {
+  color: rgba(31, 29, 24, 0.55);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
 .meet-aaron__description {
   margin: 0;
   max-width: 52ch;

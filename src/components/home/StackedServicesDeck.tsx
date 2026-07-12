@@ -19,6 +19,7 @@ const services = [
     description:
       'A private ukulele lesson shaped entirely around you — your pace, your favorite songs, your ear. No classroom, no crowd, just the beach and the instrument.',
     image: playingImage,
+    imageAlt: 'Aaron playing ukulele outdoors on Maui',
   },
   {
     title: 'Guitar Lessons',
@@ -26,6 +27,7 @@ const services = [
     description:
       'The same one-on-one attention, on guitar — for players starting from scratch or picking the instrument back up after years away.',
     image: teachingImage,
+    imageAlt: 'Aaron teaching a one-on-one music lesson',
   },
   {
     title: 'Group Experience',
@@ -33,6 +35,7 @@ const services = [
     description:
       'A shared session for families and friends traveling together — everyone learns the same song, side by side, on the sand.',
     image: touristsImage,
+    imageAlt: 'Two visitors playing ukulele together during a beachside group lesson',
   },
 ]
 
@@ -300,11 +303,11 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
                   data-card-index={index + 1}
                   role="listitem"
                 >
-                  <div className="stacked-services-deck__media" aria-hidden="true">
+                  <div className="stacked-services-deck__media">
                     <img
                       className="stacked-services-deck__media-image"
                       src={service.image}
-                      alt=""
+                      alt={service.imageAlt}
                       loading="lazy"
                       draggable={false}
                     />

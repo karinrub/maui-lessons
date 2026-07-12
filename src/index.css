@@ -311,15 +311,30 @@ select {
 
 .site-footer nav {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   width: min(100%, 1480px);
   margin: 0 auto;
-  gap: 1.5rem;
+  gap: 0.9rem 1.5rem;
 }
 
 .site-footer a {
   color: rgba(31, 29, 24, 0.58);
   font-size: 0.78rem;
+  letter-spacing: 0.08em;
   text-decoration: none;
+  text-transform: uppercase;
+}
+
+.site-footer a:hover {
+  color: rgba(31, 29, 24, 0.85);
+}
+
+.site-footer__copyright {
+  margin: 1.4rem 0 0;
+  color: rgba(31, 29, 24, 0.4);
+  font-size: 0.72rem;
+  text-align: center;
 }
 
 /* ── Content page layouts ── */

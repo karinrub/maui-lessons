@@ -234,6 +234,15 @@
   line-height: 1.2;
 }
 
+.weekly-close__note {
+  margin: -0.4rem 0 0;
+  max-width: 34rem;
+  color: rgba(250, 245, 238, 0.68);
+  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
 .weekly-close__cta {
   display: inline-flex;
   align-items: center;

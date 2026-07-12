@@ -212,6 +212,18 @@ export default function MeetAaron() {
             </span>
           </Link>
         </div>
+
+        {/* Placeholder testimonial slot — swap in a real, specific student
+            quote; specificity is what makes it read as genuine. */}
+        <figure className="meet-aaron__voice">
+          <blockquote className="meet-aaron__voice-quote">
+            [TODO: real quote needed — a short, specific line from a student about learning with
+            Aaron.]
+          </blockquote>
+          <figcaption className="meet-aaron__voice-attribution">
+            [TODO: first name, visitor or local student]
+          </figcaption>
+        </figure>
       </div>
     </section>
   )

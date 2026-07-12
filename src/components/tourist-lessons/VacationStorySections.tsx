@@ -384,10 +384,42 @@ export default function VacationStorySections() {
         <div className="vacation-quote__grain" aria-hidden="true" />
       </section>
 
+      {/* ── Voices: short, specific student quotes (placeholder content —
+           swap in real testimonials, keep them specific, never generic) ── */}
+      <section className="vacation-voices" aria-label="What past students say">
+        <p className="vacation-voices__eyebrow" data-vacation-reveal>
+          From past lessons
+        </p>
+        <div className="vacation-voices__grid" data-vacation-reveal data-vacation-reveal-group>
+          <figure className="vacation-voices__item">
+            <blockquote className="vacation-voices__quote">
+              [TODO: real quote needed — one specific detail works best: the song they learned,
+              the beach, what surprised them.]
+            </blockquote>
+            <figcaption className="vacation-voices__attribution">
+              [TODO: first name, where they visited from]
+            </figcaption>
+          </figure>
+          <figure className="vacation-voices__item">
+            <blockquote className="vacation-voices__quote">
+              [TODO: real quote needed — ideally from a family or group lesson, with a concrete
+              moment from the hour.]
+            </blockquote>
+            <figcaption className="vacation-voices__attribution">
+              [TODO: first name, where they visited from]
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
       {/* ── Finale CTA ── */}
       <section className="vacation-story__finale" aria-label="Book a vacation lesson">
         <div className="vacation-story__finale-inner" data-vacation-reveal data-vacation-reveal-group>
           <p className="vacation-story__finale-line">One morning. One song. Yours for good.</p>
+          <p className="vacation-story__finale-note">
+            Lessons meet at Maipoina Beach Park and along the coast through Kihei and Wailea — or
+            Aaron will come to you, wherever you're staying.
+          </p>
           <Link to="/book" className="vacation-story__finale-cta">
             Book a Lesson
             <span className="vacation-story__finale-cta-arrow" aria-hidden="true">

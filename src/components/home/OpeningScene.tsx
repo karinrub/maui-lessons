@@ -619,6 +619,38 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
     videoReady,
   ])
 
+  // Hard fallback: the load intro above waits on the beach image and the
+  // hero video, and a stalled video (slow cell connection, blocked request,
+  // exhausted decoder) would otherwise leave the header suppressed forever
+  // with no way to navigate. Whichever fires first — media ready or this
+  // timer — reveals the header and hands scrolling back; the beach image
+  // stays as the static backdrop.
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      return
+    }
+
+    const timeout = window.setTimeout(() => {
+      if (introStartedRef.current) {
+        return
+      }
+
+      const header = document.querySelector<HTMLElement>('.site-header')
+
+      if (header) {
+        gsap.to(header, { autoAlpha: 1, duration: 0.4, ease: 'power1.inOut' })
+      }
+
+      setHeaderSuppressed(false)
+      markIntroComplete()
+      lenisRef.current?.start()
+    }, 3000)
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [markIntroComplete, prefersReducedMotion, setHeaderSuppressed])
+
   useEffect(() => {
     if (
       prefersReducedMotion ||
@@ -960,7 +992,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
           ref={landscapeRef}
           className="opening-scene__landscape"
           src={landscapeImage}
-          alt=""
+          alt="A calm Maui beach lined with palm trees at the water's edge"
           decoding="async"
           fetchPriority="high"
           onLoad={() => setLandscapeReady(true)}
@@ -1029,11 +1061,11 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
         </div>
 
         <div ref={taglineRef} className="opening-scene__tagline">
-          <p className="opening-scene__tagline-text">
+          <h1 className="opening-scene__tagline-text">
             {TAGLINE_WORDS.map((word, i) => (
-              <span key={i} className="tagline-word">{word}</span>
+              <span key={i} className="tagline-word">{word} </span>
             ))}
-          </p>
+          </h1>
         </div>
 
         <div ref={archRef} className="opening-scene__arch">

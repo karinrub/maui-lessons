@@ -82,55 +82,6 @@ export default function WeeklyJourneySections() {
         },
       )
 
-      // The timeline spine draws itself down while the steps scroll through —
-      // the signature move of this section, scrubbed so it tracks the reader.
-      gsap.fromTo(
-        root.querySelector('.weekly-rhythm__spine-line'),
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: 'none',
-          transformOrigin: 'top',
-          scrollTrigger: {
-            trigger: root.querySelector('.weekly-rhythm__steps'),
-            start: 'top 72%',
-            end: 'bottom 58%',
-            scrub: 0.6,
-          },
-        },
-      )
-
-      // Each step arrives as the spine reaches it: dot pops with overshoot,
-      // ghost numeral settles, copy fades up.
-      for (const step of gsap.utils.toArray<HTMLElement>('.weekly-step', root)) {
-        const dot = step.querySelector('.weekly-step__dot')
-        const numeral = step.querySelector('.weekly-step__numeral')
-        const body = step.querySelector('.weekly-step__content')
-
-        const timeline = gsap.timeline({
-          scrollTrigger: {
-            trigger: step,
-            start: 'top 78%',
-            toggleActions: 'play none none none',
-          },
-        })
-
-        timeline
-          .fromTo(dot, { scale: 0 }, { scale: 1, duration: 0.45, ease: 'back.out(2)' }, 0)
-          .fromTo(
-            numeral,
-            { autoAlpha: 0, y: 26 },
-            { autoAlpha: 0.16, y: 0, duration: 0.7, ease: 'power3.out' },
-            0.05,
-          )
-          .fromTo(
-            body,
-            { autoAlpha: 0, y: 24 },
-            { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power3.out' },
-            0.12,
-          )
-      }
-
       // Quote lines rise out of their masks one after another.
       gsap.fromTo(
         gsap.utils.toArray<HTMLElement>('.weekly-close__quote-line-inner', root),
@@ -165,6 +116,107 @@ export default function WeeklyJourneySections() {
           },
         },
       )
+    })
+
+    // Desktop: the timeline becomes a pinned, scrubbed sequence — the same
+    // pin-and-scrub idiom as the home deck. The steps hold in place while
+    // the spine draws down and each beat (dot pop, ghost numeral, copy)
+    // arrives on the reader's own scroll.
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 761px)', () => {
+      const stepsWrap = root.querySelector<HTMLElement>('.weekly-rhythm__steps')
+      const spine = root.querySelector<HTMLElement>('.weekly-rhythm__spine-line')
+      const stepEls = gsap.utils.toArray<HTMLElement>('.weekly-step', root)
+
+      if (!stepsWrap || !spine || stepEls.length === 0) {
+        return
+      }
+
+      gsap.set(spine, { scaleY: 0, transformOrigin: 'top' })
+
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: stepsWrap,
+          start: 'top 22%',
+          end: '+=220%',
+          scrub: 1,
+          pin: stepsWrap,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      })
+
+      stepEls.forEach((step, index) => {
+        const dot = step.querySelector('.weekly-step__dot')
+        const numeral = step.querySelector('.weekly-step__numeral')
+        const body = step.querySelector('.weekly-step__content')
+
+        gsap.set(dot, { scale: 0 })
+        gsap.set(numeral, { autoAlpha: 0, y: 26 })
+        gsap.set(body, { autoAlpha: 0, y: 24 })
+
+        timeline
+          .to(
+            spine,
+            { scaleY: (index + 1) / stepEls.length, duration: 0.5, ease: 'none' },
+            index === 0 ? 0 : '>+=0.18',
+          )
+          .to(dot, { scale: 1, duration: 0.3, ease: 'back.out(2)' }, '<+=0.22')
+          .to(numeral, { autoAlpha: 0.16, y: 0, duration: 0.42, ease: 'power3.out' }, '<')
+          .to(body, { autoAlpha: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '<+=0.06')
+      })
+
+      // Settle beat so the third step is readable before the pin releases.
+      timeline.to({}, { duration: 0.35 })
+    })
+
+    // Mobile keeps the unpinned flow: the spine scrubs with the scroll and
+    // each step reveals as it enters — pinning a near-viewport-height block
+    // on a phone would trap the reader.
+    mm.add('(prefers-reduced-motion: no-preference) and (max-width: 760px)', () => {
+      gsap.fromTo(
+        root.querySelector('.weekly-rhythm__spine-line'),
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: 'none',
+          transformOrigin: 'top',
+          scrollTrigger: {
+            trigger: root.querySelector('.weekly-rhythm__steps'),
+            start: 'top 72%',
+            end: 'bottom 58%',
+            scrub: 0.6,
+          },
+        },
+      )
+
+      for (const step of gsap.utils.toArray<HTMLElement>('.weekly-step', root)) {
+        const dot = step.querySelector('.weekly-step__dot')
+        const numeral = step.querySelector('.weekly-step__numeral')
+        const body = step.querySelector('.weekly-step__content')
+
+        const timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: step,
+            start: 'top 78%',
+            toggleActions: 'play none none none',
+          },
+        })
+
+        timeline
+          .fromTo(dot, { scale: 0 }, { scale: 1, duration: 0.45, ease: 'back.out(2)' }, 0)
+          .fromTo(
+            numeral,
+            { autoAlpha: 0, y: 26 },
+            { autoAlpha: 0.16, y: 0, duration: 0.7, ease: 'power3.out' },
+            0.05,
+          )
+          .fromTo(
+            body,
+            { autoAlpha: 0, y: 24 },
+            { autoAlpha: 1, y: 0, duration: 0.65, ease: 'power3.out' },
+            0.12,
+          )
+      }
     })
 
     return () => {
@@ -221,6 +273,9 @@ export default function WeeklyJourneySections() {
 
         <div className="weekly-close__cta-wrap">
           <p className="weekly-close__line">Ready to make it a rhythm?</p>
+          <p className="weekly-close__note">
+            Lessons meet across Kihei and Wailea, and at Maipoina Beach Park.
+          </p>
           <Link to="/book" className="weekly-close__cta">
             Book a Lesson
             <span className="weekly-close__cta-arrow" aria-hidden="true">

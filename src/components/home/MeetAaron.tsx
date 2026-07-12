@@ -11,6 +11,10 @@ const portraitImage = new URL('../../../assets/images/aaron-playing-close-2.jpg'
 
 const HEADLINE = 'Meet Aaron'
 
+// Real student quote goes here (see plan Task 10). Rendering nothing beats
+// rendering placeholder text: the section reads as complete either way.
+const MEET_AARON_VOICE: { quote: string; attribution: string } | null = null
+
 export default function MeetAaron() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const sectionRef = useRef<HTMLElement>(null)
@@ -202,9 +206,8 @@ export default function MeetAaron() {
           <Link ref={cardRef} to="/about" className="meet-aaron__content">
             <p className="meet-aaron__description">
               Aaron teaches with patience, warmth, and a genuine love for helping people learn.
-              With more than 20 years of playing and teaching experience, he creates relaxed
-              lessons where students of any age can feel comfortable, capable, and connected
-              through music.
+              The ukulele has been his focus for the last eight of his twenty-two years in music —
+              most Thursday nights, you can catch him playing at Keolahou Church in Kihei.
             </p>
             <span className="meet-aaron__cta">
               Learn more about Aaron
@@ -213,17 +216,14 @@ export default function MeetAaron() {
           </Link>
         </div>
 
-        {/* Placeholder testimonial slot — swap in a real, specific student
-            quote; specificity is what makes it read as genuine. */}
-        <figure className="meet-aaron__voice">
-          <blockquote className="meet-aaron__voice-quote">
-            [TODO: real quote needed — a short, specific line from a student about learning with
-            Aaron.]
-          </blockquote>
-          <figcaption className="meet-aaron__voice-attribution">
-            [TODO: first name, visitor or local student]
-          </figcaption>
-        </figure>
+        {MEET_AARON_VOICE ? (
+          <figure className="meet-aaron__voice">
+            <blockquote className="meet-aaron__voice-quote">{MEET_AARON_VOICE.quote}</blockquote>
+            <figcaption className="meet-aaron__voice-attribution">
+              {MEET_AARON_VOICE.attribution}
+            </figcaption>
+          </figure>
+        ) : null}
       </div>
     </section>
   )

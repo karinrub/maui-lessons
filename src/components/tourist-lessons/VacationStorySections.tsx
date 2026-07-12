@@ -19,6 +19,10 @@ const statementLines = [
 const pullQuoteWords =
   'Most vacation activities end when you fly home. This one doesn’t.'.split(' ')
 
+// Real student quotes go here (see plan Task 10). The section is skipped
+// entirely while this is empty so no placeholder text ever ships.
+const vacationVoices: Array<{ id: string; quote: string; attribution: string }> = []
+
 export default function VacationStorySections() {
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -384,33 +388,23 @@ export default function VacationStorySections() {
         <div className="vacation-quote__grain" aria-hidden="true" />
       </section>
 
-      {/* ── Voices: short, specific student quotes (placeholder content —
-           swap in real testimonials, keep them specific, never generic) ── */}
-      <section className="vacation-voices" aria-label="What past students say">
-        <p className="vacation-voices__eyebrow" data-vacation-reveal>
-          From past lessons
-        </p>
-        <div className="vacation-voices__grid" data-vacation-reveal data-vacation-reveal-group>
-          <figure className="vacation-voices__item">
-            <blockquote className="vacation-voices__quote">
-              [TODO: real quote needed — one specific detail works best: the song they learned,
-              the beach, what surprised them.]
-            </blockquote>
-            <figcaption className="vacation-voices__attribution">
-              [TODO: first name, where they visited from]
-            </figcaption>
-          </figure>
-          <figure className="vacation-voices__item">
-            <blockquote className="vacation-voices__quote">
-              [TODO: real quote needed — ideally from a family or group lesson, with a concrete
-              moment from the hour.]
-            </blockquote>
-            <figcaption className="vacation-voices__attribution">
-              [TODO: first name, where they visited from]
-            </figcaption>
-          </figure>
-        </div>
-      </section>
+      {/* ── Voices: short, specific student quotes — rendered only once real
+           testimonials exist (keep them specific, never generic) ── */}
+      {vacationVoices.length > 0 ? (
+        <section className="vacation-voices" aria-label="What past students say">
+          <p className="vacation-voices__eyebrow" data-vacation-reveal>
+            From past lessons
+          </p>
+          <div className="vacation-voices__grid" data-vacation-reveal data-vacation-reveal-group>
+            {vacationVoices.map((voice) => (
+              <figure key={voice.id} className="vacation-voices__item">
+                <blockquote className="vacation-voices__quote">{voice.quote}</blockquote>
+                <figcaption className="vacation-voices__attribution">{voice.attribution}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {/* ── Finale CTA ── */}
       <section className="vacation-story__finale" aria-label="Book a vacation lesson">

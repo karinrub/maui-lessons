@@ -632,7 +632,7 @@ export default function Book() {
                     id="bw-message"
                     name="message"
                     className="cp-form-control cp-form-control--textarea"
-                    placeholder="[Anything else we should know?]"
+                    placeholder="Anything else Aaron should know?"
                     value={data.message}
                     onChange={(event) => setData((prev) => ({ ...prev, message: event.target.value }))}
                   />
@@ -655,8 +655,8 @@ export default function Book() {
                 Request received
               </h2>
               <p className="bw-confirm-lede" data-bw-item>
-                [Placeholder confirmation copy — no request was actually sent. Real submission and
-                response-time details go here once the booking flow is wired up.]
+                Here’s your lesson request. Aaron will follow up by email to confirm the time and
+                current rates.
               </p>
               <div className="bw-surface" data-bw-item>
                 <p className="bw-surface-label">Your request</p>

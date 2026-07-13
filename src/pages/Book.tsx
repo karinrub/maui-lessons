@@ -1,10 +1,9 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import BookingCalendar from '../components/booking/BookingCalendar'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion'
-import { MAUI_PALETTE_CSS_VARS } from '../styles/mauiPalette'
 import './Book.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -206,10 +205,8 @@ export default function Book() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [step, setStep] = useState<StepId>('type')
   const [data, setData] = useState<BookingData>(INITIAL_DATA)
-  const sceneRef = useRef<HTMLElement>(null)
   const heroRef = useRef<HTMLElement>(null)
-  const canvasRef = useRef<HTMLDivElement>(null)
-  const glowRef = useRef<HTMLDivElement>(null)
+  const belowRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const summaryCardRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -224,30 +221,30 @@ export default function Book() {
   const progressIndex = PROGRESS_STEPS.findIndex(({ id }) => id === progressStep)
 
   /*
-    Entrance: word-by-word headline reveal (OpeningScene tagline spirit) at
-    arrival scale, then the dark canvas grows in from a small centered point
-    to its full footprint. Runs once on arrival; reduced-motion users get the
-    fully-visible static layout (CSS defaults) with no scroll/tween work.
+    Entrance: word-by-word headline reveal (OpeningScene tagline spirit), then
+    everything below the hero (progress rail, context line, step panel) rises
+    in as one block. Runs once on arrival; reduced-motion users get the
+    fully-visible static layout (CSS defaults) with no tween work.
   */
   useLayoutEffect(() => {
     if (prefersReducedMotion) {
       return
     }
     const words = heroRef.current?.querySelectorAll('.bw-hero-word-inner')
-    const canvas = canvasRef.current
-    if (!words || words.length === 0 || !canvas) {
+    const below = belowRef.current
+    if (!words || words.length === 0 || !below) {
       return
     }
 
     const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
     timeline
-      .set(canvas, { autoAlpha: 0, scale: 0.05, transformOrigin: '50% 50%' })
+      .set(below, { autoAlpha: 0, y: 24 })
       .fromTo(
         words,
         { yPercent: 112 },
         { yPercent: 0, duration: 0.9, stagger: 0.1 },
       )
-      .to(canvas, { autoAlpha: 1, scale: 1, duration: 0.95, ease: 'expo.out' }, '-=0.2')
+      .to(below, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.35')
 
     return () => {
       timeline.kill()
@@ -256,11 +253,11 @@ export default function Book() {
 
   /*
     Type-step title card: the display title rises line-by-line out of overflow
-    masks before the choice cards arrive, so the step opens on its own beat.
+    masks before the choice rows arrive, so the step opens on its own beat.
     On first arrival the timeline waits out the page entrance (hero words +
-    canvas growth) and holds the cards back until the title has landed; on
+    below-block rise) and holds the rows back until the title has landed; on
     returns to this step it plays immediately alongside the panel fade, and
-    the shared step-change effect below keeps ownership of the cards.
+    the shared step-change effect below keeps ownership of the rows.
   */
   useLayoutEffect(() => {
     if (step !== 'type' || prefersReducedMotion) {
@@ -273,20 +270,20 @@ export default function Book() {
     }
 
     const firstArrival = !hasMountedRef.current
-    const cards = firstArrival ? panel.querySelectorAll('.bw-choice-grid [data-bw-item]') : null
+    const rows = firstArrival ? panel.querySelectorAll('.bw-rows [data-bw-item]') : null
 
     // Pre-hide before the delayed timeline's first tick so nothing flashes
-    // while the entrance canvas is still growing.
+    // while the entrance is still playing.
     gsap.set(lines, { yPercent: 112 })
-    if (cards) {
-      gsap.set(cards, { autoAlpha: 0, y: 26 })
+    if (rows) {
+      gsap.set(rows, { autoAlpha: 0, y: 26 })
     }
 
-    const timeline = gsap.timeline({ delay: firstArrival ? 1.35 : 0.1 })
+    const timeline = gsap.timeline({ delay: firstArrival ? 1.2 : 0.1 })
     timeline.to(lines, { yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.13 })
-    if (cards) {
+    if (rows) {
       timeline.to(
-        cards,
+        rows,
         { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.09 },
         '-=0.3',
       )
@@ -297,47 +294,7 @@ export default function Book() {
     }
   }, [step, prefersReducedMotion])
 
-  /*
-    Scroll-linked chrome only (Apple-style polish): headline parallax drift and
-    ambient amber glow intensity. The wizard itself stays click-driven — these
-    scrub tweens never touch step state or interactive elements.
-  */
-  useLayoutEffect(() => {
-    if (prefersReducedMotion) {
-      return
-    }
-    const scene = sceneRef.current
-    const hero = heroRef.current
-    const canvas = canvasRef.current
-    const glow = glowRef.current
-    if (!scene || !hero || !canvas || !glow) {
-      return
-    }
-
-    const heroDrift = gsap.to(hero, {
-      yPercent: -16,
-      ease: 'none',
-      scrollTrigger: { trigger: scene, start: 'top top', end: '+=70%', scrub: true },
-    })
-    const glowSwell = gsap.fromTo(
-      glow,
-      { opacity: 0.45 },
-      {
-        opacity: 1,
-        ease: 'none',
-        scrollTrigger: { trigger: canvas, start: 'top 90%', end: 'top 15%', scrub: true },
-      },
-    )
-
-    return () => {
-      heroDrift.scrollTrigger?.kill()
-      heroDrift.kill()
-      glowSwell.scrollTrigger?.kill()
-      glowSwell.kill()
-    }
-  }, [prefersReducedMotion])
-
-  // Subtle scroll drift on the review summary card while the contact step is up.
+  // Subtle scroll drift on the review summary while the contact step is up.
   useLayoutEffect(() => {
     const card = summaryCardRef.current
     if (prefersReducedMotion || step !== 'contact' || !card) {
@@ -387,17 +344,23 @@ export default function Book() {
       return
     }
 
-    panel.scrollTop = 0
-
     if (!hasMountedRef.current) {
       hasMountedRef.current = true
       return
     }
 
-    headingRef.current?.focus({ preventScroll: true })
+    // The page scrolls normally now (no internal panel scroll container), so
+    // bring the wizard back to the top of the viewport on each step change —
+    // otherwise a selection made low on the page (e.g. a late time slot)
+    // would land the next step's heading off-screen.
+    belowRef.current?.scrollIntoView({
+      block: 'start',
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    })
 
     if (prefersReducedMotion) {
       gsap.set(panel, { clearProps: 'opacity,visibility,transform' })
+      headingRef.current?.focus({ preventScroll: true })
       return
     }
 
@@ -407,6 +370,12 @@ export default function Book() {
       { autoAlpha: 0, y: 28 * directionRef.current },
       { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' },
     )
+    // Focus only once the panel is visible again: autoAlpha starts the panel
+    // at visibility:hidden, and focusing a hidden element silently falls
+    // back to <body>, which would drop the heading announcement.
+    transitionRef.current.eventCallback('onComplete', () => {
+      headingRef.current?.focus({ preventScroll: true })
+    })
 
     const items = panel.querySelectorAll('[data-bw-item]')
     if (items.length > 0) {
@@ -509,32 +478,34 @@ export default function Book() {
     },
   ]
 
+  const summaryDl = (
+    <dl className="bw-summary">
+      {summaryRows.map((row) => (
+        <div key={row.label} className="bw-summary-row">
+          <dt>{row.label}</dt>
+          <dd>{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+
   return (
-    <section
-      ref={sceneRef}
-      className="bw"
-      style={MAUI_PALETTE_CSS_VARS as CSSProperties}
-      aria-label="Booking wizard"
-    >
-      <div className="bw-sage-shelf">
-        <div className="bw-content">
-          <header ref={heroRef} className="bw-hero">
-            <p className="cp-section-label">Book a Lesson</p>
-            <h1 className="bw-hero-headline">
-              <span className="bw-sr-only">{ENTRANCE_HEADLINE}</span>
-              <span aria-hidden="true" className="bw-hero-words">
-                {ENTRANCE_HEADLINE.split(' ').map((word, index) => (
-                  <span key={index} className="bw-hero-word">
-                    <span className="bw-hero-word-inner">{word}</span>
-                  </span>
-                ))}
+    <section className="bw" aria-label="Booking wizard">
+      <header ref={heroRef} className="bw-hero">
+        <p className="cp-section-label">Book a Lesson</p>
+        <h1 className="bw-hero-headline">
+          <span className="bw-sr-only">{ENTRANCE_HEADLINE}</span>
+          <span aria-hidden="true" className="bw-hero-words">
+            {ENTRANCE_HEADLINE.split(' ').map((word, index) => (
+              <span key={index} className="bw-hero-word">
+                <span className="bw-hero-word-inner">{word}</span>
               </span>
-            </h1>
-          </header>
+            ))}
+          </span>
+        </h1>
+      </header>
 
-          <div ref={canvasRef} className="bw-canvas">
-        <div ref={glowRef} className="bw-canvas-glow" aria-hidden="true" />
-
+      <div ref={belowRef} className="bw-below">
         <ol className="bw-progress" aria-label="Booking progress">
           {PROGRESS_STEPS.map(({ id, label }, index) => (
             <li
@@ -544,13 +515,19 @@ export default function Book() {
               }`}
               aria-current={index === progressIndex ? 'step' : undefined}
             >
-              <span className="bw-progress-numeral" aria-hidden="true">
-                {index + 1}
-              </span>
-              <span className="bw-progress-label">{label}</span>
+              {label}
             </li>
           ))}
         </ol>
+        {/* Hairline rule with a gold fill segment — the active step's share
+            of the journey. Purely decorative; the ol above carries the
+            semantics. */}
+        <div className="bw-progress-rule" aria-hidden="true">
+          <span
+            className="bw-progress-fill"
+            style={{ transform: `scaleX(${(progressIndex + 1) / PROGRESS_STEPS.length})` }}
+          />
+        </div>
 
         <div className="bw-context" aria-live="polite" aria-atomic="true">
           <span className="bw-context-label">Your lesson</span>
@@ -558,6 +535,12 @@ export default function Book() {
         </div>
 
         <div ref={panelRef} className="bw-panel">
+          {/* Ghost watermark: the current progress numeral, About-chapter
+              idiom. Fades with the panel on step changes. */}
+          <span className="bw-watermark" aria-hidden="true">
+            {progressIndex + 1}
+          </span>
+
           {step === 'type' && (
             <>
               <h2 ref={headingRef} className="bw-step-heading bw-step-title" tabIndex={-1}>
@@ -576,39 +559,39 @@ export default function Book() {
               <p className="bw-step-support">
                 Start with the kind of lesson you’re looking for.
               </p>
-              <div className="bw-choice-grid">
+              <div className="bw-rows">
                 <button
                   type="button"
                   data-bw-item
-                  data-accent="green"
-                  className={`bw-choice bw-choice--large bw-choice--title-band${data.lessonType === 'vacation' ? ' is-selected' : ''}`}
+                  className={`bw-row bw-row--major${data.lessonType === 'vacation' ? ' is-selected' : ''}`}
                   onClick={() => selectLessonType('vacation')}
                 >
-                  <span className="bw-choice-title-band">
-                    <span className="bw-choice-title">Vacation Lessons / Ukulele Experience</span>
-                  </span>
-                  <span className="bw-choice-body">
-                    <span className="bw-choice-sub">
+                  <span className="bw-row-main">
+                    <span className="bw-row-title">Vacation Lessons / Ukulele Experience</span>
+                    <span className="bw-row-sub">
                       A relaxed beachside ukulele session for visitors, families, and new
                       players who want to leave Maui with a song they can actually play.
                     </span>
+                  </span>
+                  <span className="bw-row-arrow" aria-hidden="true">
+                    →
                   </span>
                 </button>
                 <button
                   type="button"
                   data-bw-item
-                  data-accent="amber"
-                  className={`bw-choice bw-choice--large bw-choice--title-band${data.lessonType === 'ongoing' ? ' is-selected' : ''}`}
+                  className={`bw-row bw-row--major${data.lessonType === 'ongoing' ? ' is-selected' : ''}`}
                   onClick={() => selectLessonType('ongoing')}
                 >
-                  <span className="bw-choice-title-band">
-                    <span className="bw-choice-title">Ongoing Lessons</span>
-                  </span>
-                  <span className="bw-choice-body">
-                    <span className="bw-choice-sub">
+                  <span className="bw-row-main">
+                    <span className="bw-row-title">Ongoing Lessons</span>
+                    <span className="bw-row-sub">
                       Steady private lessons for local students who want to build real skill over
                       time on ukulele or guitar, at a patient and comfortable pace.
                     </span>
+                  </span>
+                  <span className="bw-row-arrow" aria-hidden="true">
+                    →
                   </span>
                 </button>
               </div>
@@ -625,14 +608,13 @@ export default function Book() {
               <p className="bw-step-support">
                 Choose the pace and group size that feels right.
               </p>
-              <div className="bw-choice-grid bw-choice-grid--pricing">
+              <div className="bw-rows">
                 {lessonOptions.map((option) => (
                   <button
                     key={option.id}
                     type="button"
                     data-bw-item
-                    data-accent="teal"
-                    className={`bw-choice${
+                    className={`bw-row${
                       data.participants === option.participants && data.duration === option.duration
                         ? ' is-selected'
                         : ''
@@ -644,11 +626,13 @@ export default function Book() {
                       })
                     }
                   >
-                    <span className="bw-choice-media bw-choice-media--thin" aria-hidden="true" />
-                    <span className="bw-choice-body">
-                      <span className="bw-choice-title">{option.title}</span>
-                      <span className="bw-choice-sub">{option.detail}</span>
-                      <span className="bw-choice-price">${option.price}</span>
+                    <span className="bw-row-main">
+                      <span className="bw-row-title">{option.title}</span>
+                      <span className="bw-row-sub">{option.detail}</span>
+                    </span>
+                    <span className="bw-row-price">${option.price}</span>
+                    <span className="bw-row-arrow" aria-hidden="true">
+                      →
                     </span>
                   </button>
                 ))}
@@ -667,9 +651,7 @@ export default function Book() {
                 When would you like to play?
               </h2>
               <p className="bw-step-support">Find a time that feels easy.</p>
-              {/* Calendar + slots share one warm card face so the step reads
-                  as a single composed moment, not two stacked widgets. */}
-              <div className="bw-surface bw-datetime" data-bw-item>
+              <div className="bw-datetime" data-bw-item>
                 <BookingCalendar
                   value={data.date}
                   onChange={(iso) => setData((prev) => ({ ...prev, date: iso, timeSlot: null }))}
@@ -680,12 +662,12 @@ export default function Book() {
                   {data.date ? (
                     <>
                       <p className="bw-datetime-label">Choose an hour</p>
-                      <div className="bw-slot-list bw-slot-list--hours">
+                      <div className="bw-slots">
                         {TIME_SLOTS.map((slot) => (
                           <button
                             key={slot.id}
                             type="button"
-                            className={`bw-slot bw-slot--hour${data.timeSlot === slot.id ? ' is-selected' : ''}`}
+                            className={`bw-slot${data.timeSlot === slot.id ? ' is-selected' : ''}`}
                             aria-pressed={data.timeSlot === slot.id}
                             onClick={() => setData((prev) => ({ ...prev, timeSlot: slot.id }))}
                           >
@@ -715,16 +697,9 @@ export default function Book() {
               <p className="bw-step-support">
                 A few details, then Aaron will take it from here.
               </p>
-              <div ref={summaryCardRef} className="bw-surface bw-review-summary" data-bw-item>
-                <p className="bw-surface-label">Your request</p>
-                <dl className="bw-summary">
-                  {summaryRows.map((row) => (
-                    <div key={row.label} className="bw-summary-row">
-                      <dt>{row.label}</dt>
-                      <dd>{row.value}</dd>
-                    </div>
-                  ))}
-                </dl>
+              <div ref={summaryCardRef} className="bw-review" data-bw-item>
+                <p className="bw-block-label">Your request</p>
+                {summaryDl}
                 <button type="button" className="bw-change-link bw-summary-change" onClick={() => goTo('type')}>
                   Change selections
                 </button>
@@ -732,7 +707,7 @@ export default function Book() {
               <form
                 id="booking-request-form"
                 name="booking-request-form"
-                className="bw-surface"
+                className="bw-form"
                 aria-label="Contact details"
                 onSubmit={handleSubmit}
                 data-bw-item
@@ -804,11 +779,11 @@ export default function Book() {
                     onChange={(event) => setData((prev) => ({ ...prev, message: event.target.value }))}
                   />
                 </div>
-                <div className="bw-footer bw-footer--in-surface">
+                <div className="bw-footer">
                   <button type="button" className="bw-back" onClick={goBack}>
                     ← Back
                   </button>
-                  <button type="submit" className="cp-button bw-cta">
+                  <button type="submit" className="cp-button">
                     Send booking request
                   </button>
                 </div>
@@ -825,8 +800,8 @@ export default function Book() {
                 Here’s your lesson request. Aaron will follow up by email to confirm the time and
                 next steps.
               </p>
-              <div className="bw-surface" data-bw-item>
-                <p className="bw-surface-label">Your request</p>
+              <div className="bw-review" data-bw-item>
+                <p className="bw-block-label">Your request</p>
                 <dl className="bw-summary">
                   {summaryRows.map((row) => (
                     <div key={row.label} className="bw-summary-row">
@@ -846,9 +821,7 @@ export default function Book() {
               </div>
             </>
           )}
-          </div>
         </div>
-      </div>
       </div>
     </section>
   )

@@ -1,71 +1,45 @@
 /* ── Booking wizard ──
-   Palette sources:
-   - --maui-* custom properties are injected inline by Book.tsx from
-     src/styles/mauiPalette.ts (the NavGradient shader's five stops).
-   - The --bw-* card/canvas treatment mirrors StackedServicesDeck.css so the
-     booking page reads as part of the same family as the home services deck. */
+   Editorial redesign (see docs/superpowers/specs/2026-07-12-booking-wizard-
+   editorial-redesign-design.md): content sits directly on the site's cream
+   page background in normal scroll flow — no dark canvas, no card chrome.
+   Fraunces/Cormorant display over the quiet sans body, hairline rules,
+   ghost-numeral watermark per step, gold reserved for high-intent state. */
 
 .bw {
-  /* Flat surfaces keep the booking flow in the same visual family as the
-     site's editorial cream/sage sections. */
-  --bw-canvas: #17352a;
-  --bw-face: #fbf7ee;
   --bw-ink: #1f1d18;
-  --bw-cream: #f2ead9;
-  --bw-accent-green: #1c4432;
-  --bw-accent-amber: #b98a4e;
-  --bw-accent-teal: #1e4a4c;
+  --bw-hairline: rgba(31, 29, 24, 0.16);
+  --bw-hairline-soft: rgba(31, 29, 24, 0.12);
 
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
-
-/* The booking experience sits on the same sage material used by the Home and
-   About sections, while the dark wizard canvas remains the focused interactive
-   object inside it. */
-.bw-sage-shelf {
-  height: 100%;
-  overflow: hidden;
-  padding: clamp(3.5rem, 7vw, 6.5rem) clamp(1rem, 4vw, 4rem) clamp(4rem, 7vw, 6.5rem);
-}
-
-.site-shell--booking .bw-sage-shelf {
-  padding-block: clamp(1.25rem, 3svh, 2rem);
-}
-
-.site-shell--booking .bw-hero {
-  margin-bottom: clamp(1rem, 2vw, 1.5rem);
-}
-
-.site-shell--booking .bw-hero-headline {
-  font-size: clamp(2.75rem, 6.8vw, 5.2rem);
-  line-height: 0.92;
-}
-
-.site-shell--booking .bw-step-title {
-  margin-bottom: 1rem;
-}
-
-.site-shell--booking .bw-step-title-line-inner {
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-}
-
-.site-shell--booking .bw-step-title-line-inner--display {
-  font-size: clamp(2.6rem, 4.8vw, 4rem);
-}
-
-.site-shell--booking .bw-step-support {
-  margin-top: -0.25rem;
-  margin-bottom: 1rem;
-}
-
-.bw-content {
-  display: flex;
-  height: 100%;
-  flex-direction: column;
   width: min(100%, 1080px);
   margin: 0 auto;
+  /* Contain the oversized watermark numeral — it must never introduce a
+     horizontal scrollbar at narrow desktop widths. */
+  overflow-x: clip;
+  padding-bottom: clamp(4rem, 8vw, 7rem);
+  color: var(--bw-ink);
+  position: relative;
+}
+
+/* Ambient sage wash: same idiom as the body's white radial wash, recolored
+   toward --home-sage (#b8c8a0) and scoped to this route — ties booking into
+   the arch→deck sage material without reintroducing a panel. Top bloom sits
+   behind the hero and fades before the option rows; the fainter bottom bloom
+   lets the page resolve toward sage (and bleed behind the footer band) the
+   way Home resolves into the deck. Painted on a pseudo-element that bleeds
+   vertically past the column, with each ellipse's radii chosen to hit zero
+   alpha exactly at its own edges — no hard seam at any box boundary
+   (horizontal radius 50% = the column edge; vertical extents live inside the
+   bleed). Static CSS only — no scroll-linked opacity, no reduced-motion
+   branch needed. */
+.bw::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -34rem 0;
+  background:
+    radial-gradient(50% 34rem at 50% 34rem, rgba(184, 200, 160, 0.3), transparent 100%),
+    radial-gradient(50% 30rem at 50% calc(100% - 30rem), rgba(184, 200, 160, 0.18), transparent 100%);
+  pointer-events: none;
 }
 
 .bw-sr-only {
@@ -83,15 +57,14 @@
 /* ── Entrance hero ── */
 
 .bw-hero {
-  margin-bottom: clamp(2.5rem, 5.5vw, 4.5rem);
-  will-change: transform;
+  margin-bottom: clamp(2.25rem, 5vw, 4rem);
 }
 
 .bw-hero-headline {
   margin: 0;
   color: var(--home-sage-ink);
   font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: clamp(3.4rem, 9vw, 7.6rem);
+  font-size: clamp(3rem, 8vw, 6.4rem);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.01em;
@@ -121,124 +94,67 @@
   will-change: transform;
 }
 
-/* ── Dark canvas (services-deck treatment) ── */
-
-.bw-canvas {
-  position: relative;
-  display: flex;
-  flex: 1 1 0;
-  flex-direction: column;
-  overflow: hidden;
-  min-height: 0;
-  will-change: transform, opacity;
-  padding:
-    clamp(24px, 4svh, 48px)
-    clamp(20px, 4vw, 64px)
-    clamp(36px, 6svh, 72px);
-  border: 1px solid rgba(242, 234, 217, 0.16);
-  border-radius: clamp(24px, 3vw, 36px);
-  background: var(--bw-canvas);
-  box-shadow: 0 24px 56px rgba(13, 32, 24, 0.24);
+/* Everything below the hero rises in as one block on arrival, and step
+   changes scroll back to it — keep it clear of the fixed header. */
+.bw-below {
+  scroll-margin-top: clamp(88px, 12svh, 132px);
 }
 
-/* Scroll-linked amber swell lives on its own layer so GSAP can scrub its
-   opacity without repainting the whole canvas background. */
-.bw-canvas-glow {
-  position: absolute;
-  inset: 0;
-  background: transparent;
-  pointer-events: none;
-}
-
-.bw-canvas > *:not(.bw-canvas-glow) {
-  position: relative;
-  z-index: 1;
-}
-
-/* ── Progress (on dark canvas) ── */
+/* ── Progress rail: micro-caps labels over a hairline rule with a gold
+      fill segment. The ol carries the semantics; the rule is decorative. ── */
 
 .bw-progress {
   display: flex;
-  flex-shrink: 0;
-  gap: clamp(0.35rem, 1.1vw, 0.85rem);
-  margin: 0 0 clamp(2rem, 4vw, 3rem);
+  justify-content: space-between;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  margin: 0 0 0.85rem;
   padding: 0;
   list-style: none;
 }
 
 .bw-progress-step {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  min-height: clamp(5.4rem, 9vw, 7.1rem);
-  overflow: visible;
-  padding: clamp(0.65rem, 1.1vw, 0.9rem) clamp(0.25rem, 0.8vw, 0.65rem) 0.7rem;
-  border-top: 2px solid rgba(242, 234, 217, 0.16);
-  color: rgba(242, 234, 217, 0.38);
+  color: rgba(31, 29, 24, 0.38);
   font-size: var(--label-size);
   font-weight: 600;
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
-  transition: border-color 0.3s ease, color 0.3s ease;
-}
-
-.bw-progress-step.is-active {
-  border-top-color: var(--maui-gold);
-  color: var(--bw-cream);
-}
-
-.bw-progress-step.is-done {
-  border-top-color: rgba(242, 234, 217, 0.45);
-  color: rgba(242, 234, 217, 0.62);
-}
-
-/* Ghost numeral: oversized Fraunces watermark, matching the home deck and
-   About chapter motif while the label remains the readable progress text. */
-.bw-progress-numeral {
-  position: absolute;
-  left: clamp(-0.15rem, -0.2vw, 0rem);
-  bottom: 0;
-  z-index: 0;
-  color: rgba(242, 234, 217, 0.08);
-  font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: clamp(4rem, 8.4vw, 6.8rem);
-  font-style: italic;
-  font-weight: 650;
-  letter-spacing: -0.06em;
-  line-height: 1;
-  pointer-events: none;
-  user-select: none;
   transition: color 0.3s ease;
 }
 
-.bw-progress-step.is-active .bw-progress-numeral {
-  color: rgba(214, 158, 84, 0.22);
+.bw-progress-step.is-active {
+  color: var(--bw-ink);
 }
 
-.bw-progress-step.is-done .bw-progress-numeral {
-  color: rgba(242, 234, 217, 0.13);
+.bw-progress-step.is-done {
+  color: rgba(31, 29, 24, 0.62);
 }
 
-.bw-progress-label {
+.bw-progress-rule {
   position: relative;
-  z-index: 1;
-  display: flex;
-  min-height: 2.2em;
-  align-items: flex-end;
+  height: 1px;
+  background: var(--bw-hairline);
 }
+
+.bw-progress-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--maui-gold);
+  transform-origin: left center;
+  transition: transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ── Context line (aria-live) ── */
 
 .bw-context {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.6rem 1rem;
-  margin: 0 0 clamp(1.75rem, 3.5vw, 2.5rem);
-  padding-bottom: 0.9rem;
-  border-bottom: 1px solid rgba(242, 234, 217, 0.14);
+  gap: 0.5rem 0.9rem;
+  margin: clamp(1rem, 2vw, 1.4rem) 0 clamp(2.25rem, 4.5vw, 3.5rem);
 }
 
 .bw-context-label {
-  color: rgba(214, 170, 105, 0.82);
+  color: #7c5b2e;
   font-size: var(--label-size);
   font-weight: 600;
   letter-spacing: var(--label-tracking);
@@ -246,53 +162,47 @@
 }
 
 .bw-context-value {
-  color: rgba(242, 234, 217, 0.72);
+  color: rgba(31, 29, 24, 0.72);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   font-size: clamp(1.05rem, 1.8vw, 1.35rem);
-  line-height: 1.2;
+  font-style: italic;
+  line-height: 1.25;
 }
 
+/* ── Step panel + ghost watermark ── */
+
 .bw-panel {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;
-  justify-content: center;
+  position: relative;
   will-change: transform, opacity;
 }
 
-.site-shell--booking .bw-panel {
-  justify-content: flex-start;
+/* About-chapter watermark idiom, tuned for cream: the current progress
+   numeral, oversized low-alpha gold Fraunces italic, behind the heading.
+   Inert by construction — clipped by .bw's overflow-x, never interactive. */
+.bw-watermark {
+  position: absolute;
+  z-index: 0;
+  top: -0.12em;
+  right: clamp(-2rem, -1vw, 0rem);
+  color: rgba(184, 125, 44, 0.09);
+  font: italic 600 clamp(14rem, 30vw, 26rem) / 1 "Fraunces", "Cormorant Garamond", serif;
+  letter-spacing: -0.04em;
+  pointer-events: none;
+  user-select: none;
 }
 
-.site-shell--booking .bw-progress {
-  margin-bottom: 1.25rem;
-}
-
-.site-shell--booking .bw-progress-step {
-  min-height: 4.5rem;
-  padding-block: 0.5rem;
-}
-
-.site-shell--booking .bw-progress-numeral {
-  font-size: clamp(3rem, 5.5vw, 4.5rem);
-}
-
-.site-shell--booking .bw-context {
-  margin-bottom: 1rem;
-  padding-bottom: 0.6rem;
+.bw-panel > :not(.bw-watermark) {
+  position: relative;
+  z-index: 1;
 }
 
 .bw-step-heading {
-  margin: 0 0 clamp(1.25rem, 2.5vw, 2rem);
-  color: var(--bw-cream);
+  margin: 0 0 clamp(1rem, 2vw, 1.5rem);
+  color: var(--home-sage-ink);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-size: clamp(1.8rem, 3.4vw, 2.9rem);
   font-weight: 500;
-  line-height: 1.08;
+  line-height: 1.06;
 }
 
 .bw-step-heading:focus {
@@ -301,16 +211,16 @@
 
 .bw-step-support {
   max-width: 32rem;
-  margin: -0.55rem 0 clamp(1.25rem, 2.5vw, 2rem);
-  color: rgba(242, 234, 217, 0.74);
+  margin: -0.45rem 0 clamp(1.75rem, 3.5vw, 2.75rem);
+  color: rgba(31, 29, 24, 0.68);
   font-size: 1rem;
   line-height: 1.5;
 }
 
-/* ── Type-step title card (Fraunces display, OpeningScene tagline spirit) ── */
+/* ── Type-step title (Fraunces display, OpeningScene tagline spirit) ── */
 
 .bw-step-title {
-  margin-bottom: clamp(2rem, 4.5vw, 3.4rem);
+  margin-bottom: clamp(1.5rem, 3.5vw, 2.75rem);
 }
 
 .bw-step-title-lines {
@@ -327,9 +237,9 @@
 
 .bw-step-title-line-inner {
   display: inline-block;
-  color: rgba(242, 234, 217, 0.88);
+  color: rgba(31, 29, 24, 0.78);
   font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: clamp(1.9rem, 3.6vw, 3rem);
+  font-size: clamp(1.7rem, 3.2vw, 2.7rem);
   font-style: italic;
   font-weight: 400;
   letter-spacing: 0.005em;
@@ -338,198 +248,120 @@
 }
 
 .bw-step-title-line-inner--display {
-  color: var(--bw-cream);
-  font-size: clamp(3.1rem, 7vw, 5.6rem);
+  color: var(--home-sage-ink);
+  font-size: clamp(2.8rem, 6.2vw, 5rem);
   letter-spacing: -0.01em;
   line-height: 1;
 }
 
-/* ── Choice cards (deck card faces: warm off-white + accent media strip) ── */
+/* ── Editorial option rows (steps 1–2): hairline rules, no card chrome,
+      gold arrow slides in on hover/focus/selection (site CTA idiom). ── */
 
-.bw-choice-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(0.85rem, 1.8vw, 1.25rem);
+.bw-rows {
+  border-bottom: 1px solid var(--bw-hairline);
 }
 
-.bw-choice-grid--4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-.bw-choice-grid--pricing {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
-}
-
-.bw-choice {
+.bw-row {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding: 0;
-  background: var(--bw-face);
-  border: 1px solid rgba(31, 29, 24, 0.1);
-  /* Radius + layered shadow match the home services deck card verbatim:
-     same face color, same component family, same material. */
-  border-radius: 20px;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.25rem);
+  width: 100%;
+  padding: clamp(1.1rem, 2.2vw, 1.7rem) 0.25rem;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--bw-hairline);
   color: var(--bw-ink);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  box-shadow:
-    0 1px 2px rgba(6, 18, 13, 0.2),
-    0 30px 60px -28px rgba(6, 18, 13, 0.6);
-  transition:
-    transform 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
-    box-shadow 0.28s ease;
 }
 
-.bw-choice:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 1px 2px rgba(6, 18, 13, 0.24),
-    0 34px 64px -28px rgba(6, 18, 13, 0.68);
+.bw-row:focus-visible {
+  outline: 1px solid rgba(31, 29, 24, 0.42);
+  outline-offset: 0.3rem;
 }
 
-.bw-choice:focus-visible {
-  outline: 1px solid rgba(214, 170, 105, 0.7);
-  outline-offset: 0.35rem;
-}
-
-.bw-choice.is-selected {
-  outline: 2px solid rgba(184, 125, 44, 0.7);
-  outline-offset: 0;
-}
-
-/* Flat accent bands echo the site's existing solid color blocks. */
-.bw-choice-media {
-  display: block;
-  height: clamp(4.5rem, 9vw, 7rem);
-  flex-shrink: 0;
-}
-
-.bw-choice-media--thin {
-  height: 0.5rem;
-}
-
-.bw-choice-title-band {
+.bw-row-main {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  height: clamp(6.25rem, 10vw, 8rem);
-  padding: clamp(1.1rem, 2vw, 1.6rem);
-  color: #fbf7ee;
-  flex-shrink: 0;
-}
-
-.bw-choice-title-band .bw-choice-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.2em;
-  font-size: clamp(1.55rem, 2.4vw, 2.15rem);
-  line-height: 1.08;
-  text-align: center;
-  color: inherit;
-}
-
-.bw-choice[data-accent='green'] .bw-choice-media {
-  background: var(--bw-accent-green);
-}
-
-.bw-choice[data-accent='amber'] .bw-choice-media {
-  background: var(--bw-accent-amber);
-}
-
-.bw-choice[data-accent='teal'] .bw-choice-media {
-  background: var(--bw-accent-teal);
-}
-
-.bw-choice[data-accent='green'] .bw-choice-title-band {
-  background: var(--bw-accent-green);
-}
-
-.bw-choice[data-accent='amber'] .bw-choice-title-band {
-  background: var(--bw-accent-amber);
-}
-
-.bw-choice[data-accent='teal'] .bw-choice-title-band {
-  background: var(--bw-accent-teal);
-}
-
-.bw-choice-body {
-  display: flex;
+  flex: 1;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: clamp(1.1rem, 2vw, 1.6rem);
+  gap: 0.4rem;
+  min-width: 0;
 }
 
-.bw-choice--title-band .bw-choice-body {
-  min-height: clamp(6rem, 11vw, 8rem);
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.bw-choice-title {
+.bw-row-title {
+  color: rgba(31, 29, 24, 0.82);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: clamp(1.2rem, 1.9vw, 1.7rem);
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
   font-weight: 600;
   line-height: 1.05;
+  text-wrap: balance;
+  transition: color 0.22s ease;
 }
 
-.bw-choice-sub {
-  color: rgba(31, 29, 24, 0.55);
-  font-size: 0.82rem;
-  line-height: 1.45;
+.bw-row--major .bw-row-title {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
 }
 
-.bw-choice-price {
-  color: #7c5b2e;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+.bw-row-sub {
+  max-width: 46ch;
+  color: rgba(31, 29, 24, 0.6);
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
-/* ── Warm surface (shared card face for datetime / review / form) ── */
-
-.bw-surface {
-  padding: clamp(1.25rem, 2.4vw, 2rem);
-  background: var(--bw-face);
-  border: 1px solid rgba(31, 29, 24, 0.1);
-  border-radius: 20px;
-  color: var(--bw-ink);
-  box-shadow:
-    0 1px 2px rgba(6, 18, 13, 0.2),
-    0 30px 60px -28px rgba(6, 18, 13, 0.6);
-}
-
-.bw-surface-label {
-  margin: 0 0 0.9rem;
-  color: #7c5b2e;
-  font-size: var(--label-size);
+.bw-row-price {
+  color: rgba(31, 29, 24, 0.75);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.3rem, 1.8vw, 1.6rem);
   font-weight: 600;
-  letter-spacing: var(--label-tracking);
-  text-transform: uppercase;
+  transition: color 0.22s ease;
 }
 
-.bw-review-summary {
-  margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
-  will-change: transform;
+.bw-row-arrow {
+  color: var(--maui-gold);
+  font-size: 1.15rem;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-/* ── Date & time: one composed surface ── */
+.bw-row:hover .bw-row-title,
+.bw-row:focus-visible .bw-row-title,
+.bw-row.is-selected .bw-row-title {
+  color: var(--home-sage-ink);
+}
+
+.bw-row:hover .bw-row-arrow,
+.bw-row:focus-visible .bw-row-arrow,
+.bw-row.is-selected .bw-row-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.bw-row.is-selected .bw-row-price {
+  color: var(--maui-gold);
+}
+
+/* ── Date & time: calendar + slots in normal flow, hairline divider ── */
 
 .bw-datetime {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-  gap: clamp(1.5rem, 3.5vw, 3rem);
+  gap: clamp(1.75rem, 4vw, 3.5rem);
   align-items: start;
+  padding-top: 0.5rem;
 }
 
 .bw-datetime-side {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
-  padding-top: 0.35rem;
+  padding-left: clamp(1.5rem, 3vw, 3rem);
+  border-left: 1px solid var(--bw-hairline-soft);
 }
 
 .bw-datetime-chosen {
@@ -549,6 +381,52 @@
   font-weight: 600;
   letter-spacing: var(--label-tracking);
   text-transform: uppercase;
+}
+
+.bw-datetime-empty {
+  margin: 0;
+  color: rgba(31, 29, 24, 0.5);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Time slots: wrapped inline text pills with a hairline underline; the
+   selected slot earns the gold underline (11 slots — a vertical list would
+   run too long to scan). */
+.bw-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1.1rem;
+}
+
+.bw-slot {
+  padding: 0.3rem 0.1rem 0.35rem;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(31, 29, 24, 0.22);
+  color: rgba(31, 29, 24, 0.66);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.bw-slot:hover {
+  border-color: var(--maui-gold-soft);
+  color: var(--bw-ink);
+}
+
+.bw-slot:focus-visible {
+  outline: 1px solid rgba(31, 29, 24, 0.42);
+  outline-offset: 0.25rem;
+}
+
+.bw-slot.is-selected {
+  border-color: var(--maui-gold);
+  /* Second pixel of underline without shifting layout. */
+  box-shadow: 0 1px 0 var(--maui-gold);
+  color: var(--home-sage-ink);
+  font-weight: 600;
 }
 
 /* ── Calendar ── */
@@ -661,89 +539,36 @@
   cursor: default;
 }
 
-/* ── Time slots (on the warm surface) ── */
+/* ── Review summary + confirmation (rule rows, no card) ── */
 
-.bw-slot-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
+.bw-review {
+  max-width: 44rem;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  will-change: transform;
 }
 
-.bw-slot-list--hours {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.bw-block-label {
+  margin: 0 0 0.9rem;
+  color: #7c5b2e;
+  font-size: var(--label-size);
+  font-weight: 600;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
 }
-
-.bw-slot {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  padding: 0.85rem 1rem;
-  background: rgba(31, 29, 24, 0.035);
-  border: 1px solid rgba(31, 29, 24, 0.14);
-  border-radius: 12px;
-  color: rgba(31, 29, 24, 0.74);
-  font: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-align: left;
-  cursor: pointer;
-  transition:
-    transform 0.24s cubic-bezier(0.22, 0.61, 0.36, 1),
-    border-color 0.24s ease,
-    background-color 0.24s ease;
-}
-
-.bw-slot:hover {
-  transform: translateY(-2px);
-  background: var(--maui-gold-faint);
-  border-color: var(--maui-gold-soft);
-}
-
-.bw-slot:focus-visible {
-  outline: 1px solid rgba(31, 29, 24, 0.42);
-  outline-offset: 0.3rem;
-}
-
-.bw-slot.is-selected {
-  background: var(--maui-gold-faint);
-  border-color: var(--maui-gold);
-}
-
-.bw-slot-sub {
-  color: rgba(31, 29, 24, 0.42);
-  font-size: 0.72rem;
-  font-weight: 400;
-}
-
-.bw-slot--hour {
-  align-items: center;
-  min-height: 2.75rem;
-  justify-content: center;
-  padding: 0.7rem 0.85rem;
-  text-align: center;
-}
-
-.bw-datetime-empty {
-  margin: 0;
-  color: rgba(31, 29, 24, 0.5);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* ── Review summary ── */
 
 .bw-summary {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
   margin: 0;
+  border-top: 1px solid var(--bw-hairline-soft);
 }
 
 .bw-summary-row {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--bw-hairline-soft);
 }
 
 .bw-summary-row dt {
@@ -757,7 +582,7 @@
 
 .bw-summary-row dd {
   margin: 0;
-  color: rgba(31, 29, 24, 0.78);
+  color: rgba(31, 29, 24, 0.8);
   font-size: 0.9rem;
 }
 
@@ -786,7 +611,52 @@
 
 .bw-summary-change {
   display: inline-flex;
-  margin: 1.2rem 0 0;
+  margin: 1.1rem 0 0;
+}
+
+.bw-confirm-lede {
+  margin: 0 0 1.75rem;
+  max-width: 34rem;
+  color: rgba(31, 29, 24, 0.68);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+/* ── Contact form: calm underline fields, scoped overrides of the shared
+      cp- primitives (their boxed defaults stay untouched in index.css). ── */
+
+.bw-form {
+  max-width: 44rem;
+}
+
+.bw .cp-form-label {
+  color: rgba(31, 29, 24, 0.72);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.bw .cp-form-control {
+  min-height: 2.6rem;
+  padding: 0.35rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(31, 29, 24, 0.28);
+  border-radius: 0;
+  color: var(--bw-ink);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bw .cp-form-control:focus {
+  outline: none;
+  border-color: var(--maui-gold);
+  /* Second pixel of underline without shifting layout. */
+  box-shadow: 0 1px 0 var(--maui-gold);
+}
+
+.bw .cp-form-control--textarea {
+  padding-top: 0.5rem;
+  resize: vertical;
 }
 
 /* ── Footer nav ── */
@@ -798,11 +668,6 @@
   margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
 }
 
-.bw-footer--in-surface {
-  margin-top: 1.5rem;
-}
-
-/* Back sits on the dark canvas by default → cream; inside a warm surface → ink. */
 .bw-back {
   display: inline-flex;
   align-items: center;
@@ -810,7 +675,7 @@
   padding: 0;
   border: none;
   background: none;
-  color: rgba(242, 234, 217, 0.6);
+  color: rgba(31, 29, 24, 0.55);
   font: inherit;
   font-size: 0.82rem;
   cursor: pointer;
@@ -818,153 +683,33 @@
 }
 
 .bw-back:hover {
-  color: var(--bw-cream);
+  color: var(--bw-ink);
 }
 
 .bw-back:focus-visible {
-  outline: 1px solid rgba(214, 170, 105, 0.7);
+  outline: 1px solid rgba(31, 29, 24, 0.42);
   outline-offset: 0.35rem;
 }
 
-.bw-surface .bw-back {
-  color: rgba(31, 29, 24, 0.52);
-}
-
-.bw-surface .bw-back:hover {
-  color: var(--bw-ink);
-}
-
-.bw-surface .bw-back:focus-visible {
-  outline-color: rgba(31, 29, 24, 0.42);
-}
-
-/* cp-button (dark ink pill) is invisible against the dark canvas — swap to
-   the cream face with ink text when used inside the wizard. */
-.bw-cta {
-  min-height: 46px;
-  padding: 0 28px;
-  border-radius: 999px;
-  background: var(--bw-face);
-  color: var(--bw-ink);
-  font-weight: 600;
-  /* Same duration + curve as the choice cards and page-fade, so every
-     interactive element answers the cursor with one motion voice. */
-  transition:
-    background-color 0.22s ease,
-    color 0.22s ease,
-    transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.bw-cta:hover {
-  background: var(--maui-gold-light);
-  color: var(--bw-ink);
-  transform: translateY(-2px);
-}
-
-.bw-cta:active {
-  background: var(--maui-gold);
-  color: var(--bw-face);
-  transform: translateY(0);
-}
-
-.bw-cta:focus-visible {
-  outline: 1px solid rgba(214, 170, 105, 0.7);
-  outline-offset: 0.35rem;
-}
-
-.bw-surface .bw-cta {
-  background: rgba(31, 29, 24, 0.88);
-  color: #f5f0e7;
-}
-
-.bw-surface .bw-cta:hover {
-  background: var(--maui-gold);
-  color: #fffaf4;
-}
-
-.bw .cp-form-label {
-  color: rgba(31, 29, 24, 0.72);
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.bw .cp-form-control {
-  min-height: 46px;
-  background: #fffaf4;
-  border-color: rgba(31, 29, 24, 0.18);
-  color: var(--bw-ink);
-  font-size: 1rem;
-}
-
-.bw .cp-form-control:focus {
-  border-color: var(--maui-gold);
-  outline: 2px solid var(--maui-gold-faint);
-  outline-offset: 1px;
-}
-
-.bw-surface .bw-cta:focus-visible {
-  outline-color: rgba(31, 29, 24, 0.42);
-}
-
-/* ── Confirmation ── */
-
-.bw-confirm-lede {
-  margin: 0 0 1.75rem;
-  max-width: 34rem;
-  color: rgba(242, 234, 217, 0.66);
-  font-size: 0.95rem;
-  line-height: 1.55;
-}
+/* ── Mobile ── */
 
 @media (max-width: 760px) {
-  .site-shell--booking .bw,
-  .site-shell--booking .bw-sage-shelf,
-  .site-shell--booking .bw-content {
-    height: auto;
-  }
-
-  .site-shell--booking .bw-sage-shelf {
-    overflow: visible;
-  }
-
-  .site-shell--booking .bw-canvas {
-    display: block;
-    height: auto;
-    min-height: 0;
-    flex: none;
-  }
-
-  .site-shell--booking .bw-panel {
-    display: block;
-    height: auto;
-    flex: none;
-    overflow: visible;
-  }
-
-  .bw-sage-shelf {
-    padding:
-      clamp(2.5rem, 9vw, 4rem)
-      1rem
-      clamp(3rem, 10vw, 4.5rem);
-  }
-
-  .bw-choice-grid,
-  .bw-choice-grid--4,
-  .bw-choice-grid--pricing,
-  .bw-datetime {
-    grid-template-columns: 1fr;
-  }
-
-  .bw-canvas {
-    padding:
-      clamp(24px, 4.5svh, 40px)
-      16px
-      clamp(32px, 5.5svh, 52px);
-    border-radius: 22px;
-  }
-
   .bw-hero-headline {
     font-size: clamp(2.6rem, 13.5vw, 4.2rem);
+  }
+
+  .bw-progress {
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+  }
+
+  .bw-progress-step {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+  }
+
+  .bw-watermark {
+    font-size: clamp(8.5rem, 40vw, 12rem);
   }
 
   .bw-step-title-line-inner {
@@ -972,33 +717,31 @@
   }
 
   .bw-step-title-line-inner--display {
-    font-size: clamp(2.5rem, 12vw, 3.6rem);
+    font-size: clamp(2.4rem, 11.5vw, 3.4rem);
   }
 
-  .bw-progress-step {
-    font-size: 0.56rem;
-    letter-spacing: 0.08em;
-    min-height: 4.1rem;
-    padding-inline: 0.16rem;
+  .bw-row {
+    flex-wrap: wrap;
+    gap: 0.6rem 1rem;
   }
 
-  .bw-progress-numeral {
-    bottom: 0.04em;
-    font-size: clamp(2.9rem, 14vw, 4rem);
+  .bw-row-price {
+    order: 2;
   }
 
-  .bw-context {
-    gap: 0.35rem 0.7rem;
+  .bw-row-arrow {
+    order: 3;
   }
 
-  .bw-choice-media {
-    height: 3.2rem;
+  .bw-datetime {
+    grid-template-columns: 1fr;
   }
 
-  /* Deck cards drop to 16px at this breakpoint; same family, same step. */
-  .bw-choice,
-  .bw-surface {
-    border-radius: 16px;
+  .bw-datetime-side {
+    padding-left: 0;
+    border-left: none;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--bw-hairline-soft);
   }
 
   .bw-summary-row {
@@ -1010,27 +753,33 @@
   }
 }
 
+/* ── Reduced motion ── */
+
 @media (prefers-reduced-motion: reduce) {
-  .bw-hero,
   .bw-hero-word-inner,
   .bw-step-title-line-inner,
   .bw-panel,
-  .bw-review-summary,
-  .bw-canvas,
+  .bw-review,
   .bwc-grid {
     will-change: auto;
   }
 
-  .bw-choice,
-  .bw-slot,
+  .bw-progress-fill,
   .bw-progress-step,
+  .bw-row-title,
+  .bw-row-price,
+  .bw-row-arrow,
+  .bw-slot,
   .bwc-day,
-  .bwc-nav {
+  .bwc-nav,
+  .bw .cp-form-control {
     transition: none;
   }
 
-  .bw-choice:hover,
-  .bw-slot:hover {
+  /* Selection/hover affordance must not depend on motion: the arrow is
+     simply visible at rest. */
+  .bw-row-arrow {
+    opacity: 1;
     transform: none;
   }
 }

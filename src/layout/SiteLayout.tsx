@@ -12,7 +12,6 @@ export type SiteLayoutOutletContext = {
 export default function SiteLayout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const isBooking = location.pathname === '/book'
   const isTouristLessons = location.pathname === '/tourist-lessons'
   const isAbout = location.pathname === '/about'
   const isCinematic = isTouristLessons || isAbout
@@ -42,7 +41,7 @@ export default function SiteLayout() {
   }, [isHome])
 
   return (
-    <div className={`site-shell${isBooking ? ' site-shell--booking' : ''}`}>
+    <div className="site-shell">
       <div className={shellClassName}>
         {hasAtmosphericBackground ? <AtmosphericBackground /> : null}
         <GlobalNavigation isSuppressed={isHome && isHeaderSuppressed} />
@@ -54,7 +53,7 @@ export default function SiteLayout() {
       </div>
       {/* Home ends on HomeFinale, which already carries this same footer
           content (nav links + copyright) inside its closing band. */}
-      {isHome || isBooking ? null : <SiteFooter />}
+      {isHome ? null : <SiteFooter />}
     </div>
   )
 }

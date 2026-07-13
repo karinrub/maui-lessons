@@ -327,6 +327,9 @@ export default function SkillLevelSection() {
           <div ref={clipRef} className="skill-intro__clip" aria-hidden="true">
             <video
               className="skill-intro__clip-video"
+              // Investigated July 13, 2026 in a normal browser: this video
+              // reached readyState 4 and played on a fresh local load. The
+              // prior HAVE_NOTHING observation was an automated-test artifact.
               src={weeklyVideo}
               autoPlay
               muted

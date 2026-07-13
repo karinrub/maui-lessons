@@ -10,6 +10,7 @@ import { chromium } from 'playwright'
 import { preview } from 'vite'
 
 const ROUTES = ['', 'tourist-lessons', 'weekly-lessons', 'about', 'faq', 'book']
+const SITE_URL = 'https://karinrub.github.io/maui-lessons'
 
 // Longest known bounded stall-fallback across the site (Book's type-step
 // title reveal: 1.2s delay + 2.5s fallback = 3.7s) plus margin, so every
@@ -36,7 +37,8 @@ async function main() {
       })
       await page.waitForTimeout(SETTLE_MS)
 
-      const html = await page.content()
+      const previewOrigin = new URL(baseUrl).origin
+      const html = (await page.content()).replaceAll(previewOrigin, SITE_URL)
       const outDir = route === '' ? 'dist' : path.join('dist', route)
       await mkdir(outDir, { recursive: true })
       await writeFile(path.join(outDir, 'index.html'), html)

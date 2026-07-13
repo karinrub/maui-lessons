@@ -37,6 +37,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Run SEO checks
+        run: npm run check:seo
+
       - name: Prerender routes
         run: npm run prerender
 

@@ -1033,9 +1033,10 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
               ref={videoRef}
               className="opening-scene__video"
               src={heroVideo}
+              poster={landscapeImage}
               muted={isMuted}
               playsInline
-              preload="auto"
+              preload="metadata"
               tabIndex={isFocusAvailable || isFocusMode ? 0 : -1}
               role={isFocusAvailable || isFocusMode ? 'button' : undefined}
               aria-label={

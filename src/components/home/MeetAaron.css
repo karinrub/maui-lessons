@@ -105,7 +105,45 @@
   font-size: clamp(2.6rem, 6vw, 5.8rem);
   font-weight: 600;
   line-height: 0.94;
-  text-wrap: balance;
+}
+
+.meet-aaron__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Word masks for the scrubbed reveal: each word slides up from below its
+   own baseline inside an overflow-hidden box (OpeningScene tagline idiom).
+   The mask's bottom padding keeps descenders (p, y, g) unclipped at this
+   tight line-height; the negative margin gives the extra height back so
+   wrapped lines keep the statement's 0.94 rhythm. */
+.meet-aaron__statement-words {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.24em;
+}
+
+.meet-aaron__statement-word {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.meet-aaron__statement-word-inner {
+  display: inline-block;
+  will-change: transform;
+}
+
+.meet-aaron.is-reduced-motion .meet-aaron__statement-word-inner {
+  will-change: auto;
 }
 
 .meet-aaron__details {

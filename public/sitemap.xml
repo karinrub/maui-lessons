@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Manually maintained. If routes are ever added or renamed in src/App.tsx, update this file in the same PR. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://karinrub.github.io/maui-lessons/</loc></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/tourist-lessons</loc></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/weekly-lessons</loc></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/about</loc></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/faq</loc></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/book</loc></url>
+</urlset>

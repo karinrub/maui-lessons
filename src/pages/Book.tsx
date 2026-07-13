@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 're
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import BookingCalendar from '../components/booking/BookingCalendar'
+import useDocumentMeta from '../hooks/useDocumentMeta'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion'
 import './Book.css'
@@ -187,6 +188,15 @@ function formatBookingContext(booking: BookingData) {
   return parts.length > 0 ? parts.join(' · ') : 'Choose an experience to begin'
 }
 
+// Hard fallback for GSAP entrance/transition tweens below: if rAF stalls
+// (backgrounded tab, throttled device) a tween's onComplete/end-state may
+// never arrive, which would otherwise leave step content permanently
+// invisible. Mirrors the hero-video stall fallback in OpeningScene.tsx.
+function armStallFallback(ms: number, apply: () => void) {
+  const id = window.setTimeout(apply, ms)
+  return () => window.clearTimeout(id)
+}
+
 const INITIAL_DATA: BookingData = {
   lessonType: null,
   participants: null,
@@ -201,6 +211,12 @@ const INITIAL_DATA: BookingData = {
 
 export default function Book() {
   useDocumentTitle('Book | Maui Lessons')
+  useDocumentMeta({
+    title: 'Book a Lesson | Maui Lessons',
+    description:
+      "Book a private ukulele or guitar lesson with Aaron on Maui — choose a vacation lesson or an ongoing lesson, then pick your date and time.",
+    path: '/book',
+  })
 
   const prefersReducedMotion = usePrefersReducedMotion()
   const [step, setStep] = useState<StepId>('type')
@@ -246,7 +262,14 @@ export default function Book() {
       )
       .to(below, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.35')
 
+    const disarm = armStallFallback(2500, () => {
+      timeline.kill()
+      gsap.set(words, { yPercent: 0 })
+      gsap.set(below, { autoAlpha: 1, y: 0 })
+    })
+
     return () => {
+      disarm()
       timeline.kill()
     }
   }, [prefersReducedMotion])
@@ -289,7 +312,16 @@ export default function Book() {
       )
     }
 
+    const disarm = armStallFallback((firstArrival ? 1.2 : 0.1) * 1000 + 2500, () => {
+      timeline.kill()
+      gsap.set(lines, { yPercent: 0 })
+      if (rows) {
+        gsap.set(rows, { autoAlpha: 1, y: 0 })
+      }
+    })
+
     return () => {
+      disarm()
       timeline.kill()
     }
   }, [step, prefersReducedMotion])
@@ -329,13 +361,24 @@ export default function Book() {
     }
 
     transitionRef.current?.kill()
+    let advanced = false
+    const advance = () => {
+      if (advanced) {
+        return
+      }
+      advanced = true
+      setStep(next)
+    }
     transitionRef.current = gsap.to(panel, {
       autoAlpha: 0,
       y: -22 * directionRef.current,
       duration: 0.26,
       ease: 'power2.in',
-      onComplete: () => setStep(next),
+      onComplete: advance,
     })
+    // If this tween's onComplete never fires (stalled rAF), the wizard
+    // would otherwise be stuck unable to advance past the current step.
+    window.setTimeout(advance, 800)
   }
 
   useLayoutEffect(() => {
@@ -373,9 +416,15 @@ export default function Book() {
     // Focus only once the panel is visible again: autoAlpha starts the panel
     // at visibility:hidden, and focusing a hidden element silently falls
     // back to <body>, which would drop the heading announcement.
-    transitionRef.current.eventCallback('onComplete', () => {
+    let focused = false
+    const focusHeading = () => {
+      if (focused) {
+        return
+      }
+      focused = true
       headingRef.current?.focus({ preventScroll: true })
-    })
+    }
+    transitionRef.current.eventCallback('onComplete', focusHeading)
 
     const items = panel.querySelectorAll('[data-bw-item]')
     if (items.length > 0) {
@@ -386,7 +435,16 @@ export default function Book() {
       )
     }
 
+    const disarm = armStallFallback(1200, () => {
+      gsap.set(panel, { autoAlpha: 1, y: 0 })
+      if (items.length > 0) {
+        gsap.set(items, { autoAlpha: 1, y: 0 })
+      }
+      focusHeading()
+    })
+
     return () => {
+      disarm()
       transitionRef.current?.kill()
     }
   }, [step, prefersReducedMotion])

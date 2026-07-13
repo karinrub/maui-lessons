@@ -4,6 +4,7 @@ import AtmosphericBackground from '../components/atmospheric-background/Atmosphe
 import GlobalNavigation from '../components/GlobalNavigation'
 import PageTransition from '../components/PageTransition'
 import SiteFooter from '../components/SiteFooter'
+import StructuredData from '../components/StructuredData'
 
 export type SiteLayoutOutletContext = {
   setHeaderSuppressed: Dispatch<SetStateAction<boolean>>
@@ -42,6 +43,7 @@ export default function SiteLayout() {
 
   return (
     <div className="site-shell">
+      <StructuredData />
       <div className={shellClassName}>
         {hasAtmosphericBackground ? <AtmosphericBackground /> : null}
         <GlobalNavigation isSuppressed={isHome && isHeaderSuppressed} />

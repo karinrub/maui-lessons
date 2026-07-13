@@ -13,11 +13,17 @@ const portraitImage = new URL('../../../assets/images/aaron-playing-close-2.jpg'
 // rendering placeholder text: the section reads as complete either way.
 const MEET_AARON_VOICE: { quote: string; attribution: string } | null = null
 
+// Split for the word-mask scroll reveal (OpeningScene tagline idiom); the
+// full sentence stays in the DOM for screen readers via the sr-only span.
+const STATEMENT = 'Music should feel personal, playful, and easy to begin.'
+const STATEMENT_WORDS = STATEMENT.split(' ')
+
 export default function MeetAaron() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const cardRef = useRef<HTMLAnchorElement>(null)
   const contentSectionRef = useRef<HTMLDivElement>(null)
   const circlesRef = useRef<HTMLDivElement>(null)
+  const eyebrowRef = useRef<HTMLParagraphElement>(null)
   const statementRef = useRef<HTMLParagraphElement>(null)
   const detailsRef = useRef<HTMLDivElement>(null)
 
@@ -146,19 +152,24 @@ export default function MeetAaron() {
 
   useLayoutEffect(() => {
     const content = contentSectionRef.current
+    const eyebrow = eyebrowRef.current
     const statement = statementRef.current
     const details = detailsRef.current
     const card = cardRef.current
 
-    if (!content || !statement || !details || !card || prefersReducedMotion) {
+    if (!content || !eyebrow || !statement || !details || !card || prefersReducedMotion) {
       return
     }
+
+    const words = statement.querySelectorAll<HTMLElement>('.meet-aaron__statement-word-inner')
 
     const reveal = gsap.timeline({
       scrollTrigger: {
         trigger: content,
-        start: 'top 84%',
-        end: 'top 48%',
+        // Slightly longer travel than the old single-block reveal so the
+        // word stagger has scroll room to breathe.
+        start: 'top 86%',
+        end: 'top 42%',
         // Same smoothing as the deck's entrance trigger: entrances share one
         // glide feel; only the long pinned scenes use the longer 1.2 scrub.
         scrub: 0.9,
@@ -168,9 +179,18 @@ export default function MeetAaron() {
     })
 
     reveal
-      .fromTo(statement, { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' }, 0)
-      .fromTo(details, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' }, 0.14)
-      .fromTo(card, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' }, 0.28)
+      .fromTo(eyebrow, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.28, ease: 'power3.out' }, 0)
+      // Word-by-word rise out of overflow masks (OpeningScene tagline
+      // idiom): each word clears its own baseline in sequence as the
+      // section scrolls in.
+      .fromTo(
+        words,
+        { yPercent: 112 },
+        { yPercent: 0, duration: 0.5, ease: 'power3.out', stagger: 0.045 },
+        0.06,
+      )
+      .fromTo(details, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' }, 0.4)
+      .fromTo(card, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' }, 0.54)
 
     return () => {
       reveal.scrollTrigger?.kill()
@@ -200,9 +220,16 @@ export default function MeetAaron() {
               />
             </div>
             <div className="meet-aaron__copy">
-              <p className="meet-aaron__eyebrow">The teacher</p>
+              <p ref={eyebrowRef} className="meet-aaron__eyebrow">The teacher</p>
               <p ref={statementRef} className="meet-aaron__statement">
-                Music should feel personal, playful, and easy to begin.
+                <span className="meet-aaron__sr-only">{STATEMENT}</span>
+                <span aria-hidden="true" className="meet-aaron__statement-words">
+                  {STATEMENT_WORDS.map((word, index) => (
+                    <span key={index} className="meet-aaron__statement-word">
+                      <span className="meet-aaron__statement-word-inner">{word}</span>
+                    </span>
+                  ))}
+                </span>
               </p>
               <div ref={detailsRef} className="meet-aaron__details" aria-label="About Aaron">
                 <div>

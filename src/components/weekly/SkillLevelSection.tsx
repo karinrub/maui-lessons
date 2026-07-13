@@ -136,14 +136,21 @@ export default function SkillLevelSection() {
     gsap.set(tabs, { opacity: 0, y: 16, scale: 0.96 })
     gsap.set(panel, { opacity: 0, y: 16 })
 
-    let played = false
+    let triggered = false // IntersectionObserver has started playback
+    let revealed = false // final visible end-state has been reached
+
     // A distinct reveal idiom for this page: a solid curtain wipes off the
     // video (not a fade), title lines rise out of a clipped mask (not a
     // plain opacity fade), a drawn rule marks the intro/tabs boundary, and
     // tabs pop in with a slight overshoot — deliberately different from the
     // fade+translateY reveal used on Home/About/Vacation.
     const timeline = gsap
-      .timeline({ paused: true })
+      .timeline({
+        paused: true,
+        onComplete: () => {
+          revealed = true
+        },
+      })
       .to(curtain, { scaleY: 0, duration: 0.9, ease: 'power4.inOut' }, 0)
       .to(
         titleLines,
@@ -157,8 +164,8 @@ export default function SkillLevelSection() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !played) {
-          played = true
+        if (entry.isIntersecting && !triggered) {
+          triggered = true
           timeline.play()
           observer.disconnect()
         }
@@ -167,7 +174,27 @@ export default function SkillLevelSection() {
     )
     observer.observe(intro)
 
+    // Hard fallback: if the observer never fires, or the timeline starts but
+    // stalls mid-play (e.g. a backgrounded tab throttling rAF), force the
+    // fully-revealed end state so the curtain can never be stuck down.
+    // Mirrors the hero-video stall fallback in OpeningScene.tsx.
+    const fallback = window.setTimeout(() => {
+      if (revealed) {
+        return
+      }
+      revealed = true
+      observer.disconnect()
+      timeline.kill()
+      gsap.set(curtain, { scaleY: 0 })
+      gsap.set(titleLines, { yPercent: 0, opacity: 1 })
+      gsap.set(text, { opacity: 1, y: 0 })
+      gsap.set(divider, { scaleX: 1 })
+      gsap.set(tabs, { opacity: 1, y: 0, scale: 1 })
+      gsap.set(panel, { opacity: 1, y: 0 })
+    }, 3000)
+
     return () => {
+      window.clearTimeout(fallback)
       observer.disconnect()
       timeline.kill()
     }

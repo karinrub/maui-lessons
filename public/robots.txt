@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://karinrub.github.io/maui-lessons/sitemap.xml

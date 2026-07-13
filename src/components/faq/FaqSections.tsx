@@ -82,7 +82,7 @@ const faqCategories: FaqCategory[] = [
       {
         id: 'pricing',
         q: 'What does a lesson cost?',
-        a: 'Rates depend on the lesson type and how often you’d like to meet. Send a booking request and Aaron will confirm current pricing with you directly.',
+        a: 'Rates start at $35 for a 30-minute lesson. The exact rate depends on the lesson type and how often you’d like to meet — send a booking request and Aaron will confirm current pricing with you directly.',
       },
     ],
   },

@@ -8,6 +8,17 @@
      deliberate hue shift off the sage above it, blended in via a gradient
      at the section's own top edge rather than a hard color cut. */
   --home-tan: #dcb877;
+  /* The site's single gold: high-intent accent (nav overlay, Book page,
+     CTA arrows). One token family — never re-hardcode these values, and
+     keep them in sync with the amber stop in src/styles/mauiPalette.ts. */
+  --maui-gold: #b87d2c;
+  --maui-gold-light: #d69e54;
+  --maui-gold-soft: rgba(184, 125, 44, 0.32);
+  --maui-gold-faint: rgba(184, 125, 44, 0.14);
+  /* Uppercase micro-label scale (eyebrows, progress labels, surface labels)
+     shared across home, Meet Aaron, and the booking wizard. */
+  --label-size: 0.72rem;
+  --label-tracking: 0.16em;
   /* Shared paper-grain texture (static SVG noise) — used by the deck band,
      the hero arch, and the home finale so they read as one material. */
   --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -51,6 +62,38 @@ select {
   min-height: 100vh;
   background: transparent;
   animation: page-fade 680ms ease-out both;
+}
+
+.site-shell--booking,
+.site-shell--booking .route-shell,
+.site-shell--booking .site-footer {
+  background: var(--home-sage);
+}
+
+.site-shell--booking {
+  height: 100svh;
+  overflow: hidden;
+}
+
+.site-shell--booking .route-shell {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding:
+    clamp(76px, 10svh, 108px)
+    clamp(16px, 5.5vw, 88px)
+    clamp(16px, 3vw, 36px);
+}
+
+.site-shell--booking .page-main {
+  height: 100%;
+  width: 100%;
+  margin-top: 0;
+  overflow: hidden;
+}
+
+.site-shell--booking .page-transition {
+  height: 100%;
 }
 
 .home-hero {
@@ -517,9 +560,13 @@ select {
   background: rgba(45, 39, 29, 0.04);
   border: 1px solid rgba(45, 39, 29, 0.15);
   border-radius: 8px;
-  color: rgba(31, 29, 24, 0.32);
+  color: #1f1d18;
   font: inherit;
   font-size: 0.875rem;
+}
+
+.cp-form-control::placeholder {
+  color: rgba(31, 29, 24, 0.38);
 }
 
 .cp-form-control--textarea {
@@ -540,6 +587,20 @@ select {
 }
 
 @media (max-width: 760px) {
+  .site-shell--booking {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
+  .site-shell--booking .route-shell,
+  .site-shell--booking .page-main,
+  .site-shell--booking .page-transition {
+    height: auto;
+    min-height: 100svh;
+    overflow: visible;
+  }
+
   .home-hero,
   .route-shell {
     padding:

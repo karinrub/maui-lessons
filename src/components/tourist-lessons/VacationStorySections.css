@@ -393,22 +393,27 @@
   align-items: center;
   gap: 0.6rem;
   padding: clamp(0.9rem, 1.6vw, 1.15rem) clamp(1.8rem, 3.4vw, 2.6rem);
+  border: 1px solid rgba(184, 125, 44, 0.28);
   border-radius: 999px;
-  background: #fbf7ee;
+  background: linear-gradient(180deg, #fffaf4 0%, #fbf7ee 68%, #f4ead8 100%);
   color: #0d2018;
   font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-decoration: none;
   text-transform: uppercase;
-  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    0 18px 40px -18px rgba(0, 0, 0, 0.55),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.16);
   transition: transform 0.24s ease, box-shadow 0.24s ease;
 }
 
 .vacation-story__finale-cta:hover,
 .vacation-story__finale-cta:focus-visible {
   transform: translateY(-2px);
-  box-shadow: 0 24px 48px -18px rgba(0, 0, 0, 0.65);
+  box-shadow:
+    0 24px 48px -18px rgba(0, 0, 0, 0.65),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.22);
 }
 
 .vacation-story__finale-cta:focus-visible {
@@ -418,7 +423,7 @@
 
 .vacation-story__finale-cta-arrow {
   /* Book-page gold, foreshadowed on every primary CTA (audit P2). */
-  color: #b87d2c;
+  color: var(--maui-gold);
   transition: transform 0.22s ease;
 }
 

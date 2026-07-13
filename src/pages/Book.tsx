@@ -13,9 +13,12 @@ type StepId = 'type' | 'participants' | 'datetime' | 'contact' | 'confirm'
 
 type LessonType = 'vacation' | 'ongoing'
 
+type ProgressStepId = 'lesson' | 'datetime' | 'summary' | 'confirm'
+
 type BookingData = {
   lessonType: LessonType | null
   participants: string | null
+  duration: string | null
   date: string
   timeSlot: string | null
   name: string
@@ -24,7 +27,67 @@ type BookingData = {
   message: string
 }
 
-const PARTICIPANT_OPTIONS = ['Solo', '2-3 people', '4-5 people', '6-8 people']
+const VACATION_LESSON_OPTIONS = [
+  {
+    id: 'solo-30',
+    participants: '1 person',
+    duration: '30 minutes',
+    price: 35,
+    title: '1 person',
+    detail: '30 minutes',
+  },
+  {
+    id: 'solo-60',
+    participants: '1 person',
+    duration: '1 hour',
+    price: 60,
+    title: '1 person',
+    detail: '1 hour',
+  },
+  {
+    id: 'group-2-3',
+    participants: '2-3 people',
+    duration: '1 hour',
+    price: 80,
+    title: '2-3 people',
+    detail: '1 hour',
+  },
+  {
+    id: 'group-4-5',
+    participants: '4-5 people',
+    duration: '1 hour',
+    price: 100,
+    title: '4-5 people',
+    detail: '1 hour',
+  },
+  {
+    id: 'group-6-8',
+    participants: '6-8 people',
+    duration: '1 hour',
+    price: 120,
+    title: '6-8 people',
+    detail: '1 hour',
+  },
+] as const
+
+const ONGOING_LESSON_OPTIONS = [
+  {
+    id: 'ongoing-30',
+    participants: null,
+    duration: '30 minutes',
+    price: 35,
+    title: '30 minutes',
+    detail: 'Ongoing lesson',
+  },
+  {
+    id: 'ongoing-60',
+    participants: null,
+    duration: '1 hour',
+    price: 60,
+    title: '1 hour',
+    detail: 'Ongoing lesson',
+  },
+] as const
 
 const TIME_SLOTS = Array.from({ length: 11 }, (_, index) => {
   const hour24 = index + 7
@@ -42,21 +105,30 @@ const LESSON_TYPE_LABELS: Record<LessonType, string> = {
   ongoing: 'Ongoing Lessons',
 }
 
-const STEP_LABELS: Record<StepId, string> = {
-  type: 'Lesson',
-  participants: 'Group',
-  datetime: 'Date & Time',
-  contact: 'Details',
-  confirm: 'Done',
-}
-
 // Placeholder-friendly line only — real business voice TBD.
 const ENTRANCE_HEADLINE = "let's set up your lesson"
+const BOOKING_STEPS: StepId[] = ['type', 'participants', 'datetime', 'contact', 'confirm']
+const PROGRESS_STEPS: Array<{ id: ProgressStepId; label: string }> = [
+  { id: 'lesson', label: 'Lesson Type' },
+  { id: 'datetime', label: 'Date & Time' },
+  { id: 'summary', label: 'Booking Summary' },
+  { id: 'confirm', label: 'Confirmation' },
+]
 
-function stepsFor(lessonType: LessonType | null): StepId[] {
-  return lessonType === 'ongoing'
-    ? ['type', 'datetime', 'contact', 'confirm']
-    : ['type', 'participants', 'datetime', 'contact', 'confirm']
+function stepsFor(): StepId[] {
+  return BOOKING_STEPS
+}
+
+function progressStepFor(stepId: StepId): ProgressStepId {
+  if (stepId === 'type' || stepId === 'participants') {
+    return 'lesson'
+  }
+
+  if (stepId === 'contact') {
+    return 'summary'
+  }
+
+  return stepId === 'confirm' ? 'confirm' : 'datetime'
 }
 
 function formatDate(iso: string) {
@@ -71,9 +143,55 @@ function formatDate(iso: string) {
   })
 }
 
+function getLessonPrice(booking: BookingData) {
+  if (!booking.lessonType || !booking.duration) {
+    return null
+  }
+
+  const options =
+    booking.lessonType === 'vacation' ? VACATION_LESSON_OPTIONS : ONGOING_LESSON_OPTIONS
+
+  return options.find(
+    (option) =>
+      option.participants === booking.participants && option.duration === booking.duration,
+  )?.price ?? null
+}
+
+function formatPrice(price: number | null) {
+  return price === null ? '—' : `$${price}`
+}
+
+function formatBookingContext(booking: BookingData) {
+  const parts: string[] = []
+
+  if (booking.lessonType) {
+    parts.push(booking.lessonType === 'vacation' ? 'Vacation lesson' : 'Ongoing lesson')
+  }
+  if (booking.participants) {
+    parts.push(booking.participants)
+  }
+  if (booking.duration) {
+    parts.push(booking.duration)
+  }
+
+  const price = getLessonPrice(booking)
+  if (price !== null) {
+    parts.push(formatPrice(price))
+  }
+  if (booking.date) {
+    parts.push(formatDate(booking.date))
+  }
+  if (booking.timeSlot) {
+    parts.push(TIME_SLOTS.find((slot) => slot.id === booking.timeSlot)?.label ?? booking.timeSlot)
+  }
+
+  return parts.length > 0 ? parts.join(' · ') : 'Choose an experience to begin'
+}
+
 const INITIAL_DATA: BookingData = {
   lessonType: null,
   participants: null,
+  duration: null,
   date: '',
   timeSlot: null,
   name: '',
@@ -100,8 +218,10 @@ export default function Book() {
   const hasMountedRef = useRef(false)
   const lastAdvancedDatetimeRef = useRef<string | null>(null)
 
-  const steps = stepsFor(data.lessonType)
+  const steps = stepsFor()
   const stepIndex = steps.indexOf(step)
+  const progressStep = progressStepFor(step)
+  const progressIndex = PROGRESS_STEPS.findIndex(({ id }) => id === progressStep)
 
   /*
     Entrance: word-by-word headline reveal (OpeningScene tagline spirit) at
@@ -242,7 +362,7 @@ export default function Book() {
       return
     }
 
-    const nextSteps = stepsFor(updated?.lessonType ?? data.lessonType)
+    const nextSteps = stepsFor()
     directionRef.current = nextSteps.indexOf(next) >= nextSteps.indexOf(step) ? 1 : -1
 
     const panel = panelRef.current
@@ -266,6 +386,8 @@ export default function Book() {
     if (!panel) {
       return
     }
+
+    panel.scrollTop = 0
 
     if (!hasMountedRef.current) {
       hasMountedRef.current = true
@@ -332,9 +454,8 @@ export default function Book() {
   }, [step, data.date, data.timeSlot])
 
   function selectLessonType(lessonType: LessonType) {
-    // Switching type invalidates a vacation-only participants choice.
-    const participants = lessonType === 'ongoing' ? null : data.participants
-    goTo(lessonType === 'ongoing' ? 'datetime' : 'participants', { lessonType, participants })
+    // Switching type invalidates the selected length/group price option.
+    goTo('participants', { lessonType, participants: null, duration: null })
   }
 
   function goBack() {
@@ -355,24 +476,36 @@ export default function Book() {
     goTo('confirm')
   }
 
-  const summaryRows: Array<{ label: string; value: string; editStep: StepId }> = [
+  const quotedPrice = getLessonPrice(data)
+  const quotedPriceField = quotedPrice === null ? '' : formatPrice(quotedPrice)
+  const bookingContext = formatBookingContext(data)
+  const lessonOptions =
+    data.lessonType === 'ongoing' ? ONGOING_LESSON_OPTIONS : VACATION_LESSON_OPTIONS
+
+  const summaryRows: Array<{ label: string; value: string }> = [
     {
       label: 'Lesson',
       value: data.lessonType ? LESSON_TYPE_LABELS[data.lessonType] : '—',
-      editStep: 'type',
     },
     ...(data.lessonType === 'vacation'
-      ? [{ label: 'Group size', value: data.participants ?? '—', editStep: 'participants' as StepId }]
+      ? [
+          { label: 'Group size', value: data.participants ?? '—' },
+          { label: 'Duration', value: data.duration ?? '—' },
+          { label: 'Price', value: formatPrice(quotedPrice) },
+        ]
+      : data.lessonType === 'ongoing'
+        ? [
+            { label: 'Duration', value: data.duration ?? '—' },
+            { label: 'Price', value: formatPrice(quotedPrice) },
+          ]
       : []),
     {
       label: 'Date',
       value: formatDate(data.date),
-      editStep: 'datetime',
     },
     {
       label: 'Time',
       value: TIME_SLOTS.find((slot) => slot.id === data.timeSlot)?.label ?? '—',
-      editStep: 'datetime',
     },
   ]
 
@@ -383,37 +516,46 @@ export default function Book() {
       style={MAUI_PALETTE_CSS_VARS as CSSProperties}
       aria-label="Booking wizard"
     >
-      <header ref={heroRef} className="bw-hero">
-        <p className="cp-section-label">Book a Lesson</p>
-        <h1 className="bw-hero-headline">
-          <span className="bw-sr-only">{ENTRANCE_HEADLINE}</span>
-          <span aria-hidden="true" className="bw-hero-words">
-            {ENTRANCE_HEADLINE.split(' ').map((word, index) => (
-              <span key={index} className="bw-hero-word">
-                <span className="bw-hero-word-inner">{word}</span>
+      <div className="bw-sage-shelf">
+        <div className="bw-content">
+          <header ref={heroRef} className="bw-hero">
+            <p className="cp-section-label">Book a Lesson</p>
+            <h1 className="bw-hero-headline">
+              <span className="bw-sr-only">{ENTRANCE_HEADLINE}</span>
+              <span aria-hidden="true" className="bw-hero-words">
+                {ENTRANCE_HEADLINE.split(' ').map((word, index) => (
+                  <span key={index} className="bw-hero-word">
+                    <span className="bw-hero-word-inner">{word}</span>
+                  </span>
+                ))}
               </span>
-            ))}
-          </span>
-        </h1>
-      </header>
+            </h1>
+          </header>
 
-      <div ref={canvasRef} className="bw-canvas">
+          <div ref={canvasRef} className="bw-canvas">
         <div ref={glowRef} className="bw-canvas-glow" aria-hidden="true" />
 
         <ol className="bw-progress" aria-label="Booking progress">
-          {steps.map((id, index) => (
+          {PROGRESS_STEPS.map(({ id, label }, index) => (
             <li
               key={id}
-              className={`bw-progress-step${index === stepIndex ? ' is-active' : ''}${
-                index < stepIndex ? ' is-done' : ''
+              className={`bw-progress-step${index === progressIndex ? ' is-active' : ''}${
+                index < progressIndex ? ' is-done' : ''
               }`}
-              aria-current={index === stepIndex ? 'step' : undefined}
+              aria-current={index === progressIndex ? 'step' : undefined}
             >
-              <span className="bw-progress-numeral">0{index + 1}</span>
-              <span className="bw-progress-label">{STEP_LABELS[id]}</span>
+              <span className="bw-progress-numeral" aria-hidden="true">
+                {index + 1}
+              </span>
+              <span className="bw-progress-label">{label}</span>
             </li>
           ))}
         </ol>
+
+        <div className="bw-context" aria-live="polite" aria-atomic="true">
+          <span className="bw-context-label">Your lesson</span>
+          <span className="bw-context-value">{bookingContext}</span>
+        </div>
 
         <div ref={panelRef} className="bw-panel">
           {step === 'type' && (
@@ -431,6 +573,9 @@ export default function Book() {
                   </span>
                 </span>
               </h2>
+              <p className="bw-step-support">
+                Start with the kind of lesson you’re looking for.
+              </p>
               <div className="bw-choice-grid">
                 <button
                   type="button"
@@ -473,21 +618,37 @@ export default function Book() {
           {step === 'participants' && (
             <>
               <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
-                How many people are joining?
+                {data.lessonType === 'ongoing'
+                  ? 'Choose your ongoing lesson length'
+                  : 'Choose your vacation lesson'}
               </h2>
-              <div className="bw-choice-grid bw-choice-grid--4">
-                {PARTICIPANT_OPTIONS.map((option) => (
+              <p className="bw-step-support">
+                Choose the pace and group size that feels right.
+              </p>
+              <div className="bw-choice-grid bw-choice-grid--pricing">
+                {lessonOptions.map((option) => (
                   <button
-                    key={option}
+                    key={option.id}
                     type="button"
                     data-bw-item
                     data-accent="teal"
-                    className={`bw-choice${data.participants === option ? ' is-selected' : ''}`}
-                    onClick={() => goTo('datetime', { participants: option })}
+                    className={`bw-choice${
+                      data.participants === option.participants && data.duration === option.duration
+                        ? ' is-selected'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      goTo('datetime', {
+                        participants: option.participants,
+                        duration: option.duration,
+                      })
+                    }
                   >
                     <span className="bw-choice-media bw-choice-media--thin" aria-hidden="true" />
                     <span className="bw-choice-body">
-                      <span className="bw-choice-title">{option}</span>
+                      <span className="bw-choice-title">{option.title}</span>
+                      <span className="bw-choice-sub">{option.detail}</span>
+                      <span className="bw-choice-price">${option.price}</span>
                     </span>
                   </button>
                 ))}
@@ -505,6 +666,7 @@ export default function Book() {
               <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
                 When would you like to play?
               </h2>
+              <p className="bw-step-support">Find a time that feels easy.</p>
               {/* Calendar + slots share one warm card face so the step reads
                   as a single composed moment, not two stacked widgets. */}
               <div className="bw-surface bw-datetime" data-bw-item>
@@ -550,6 +712,9 @@ export default function Book() {
               <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
                 Almost there — your details
               </h2>
+              <p className="bw-step-support">
+                A few details, then Aaron will take it from here.
+              </p>
               <div ref={summaryCardRef} className="bw-surface bw-review-summary" data-bw-item>
                 <p className="bw-surface-label">Your request</p>
                 <dl className="bw-summary">
@@ -557,12 +722,12 @@ export default function Book() {
                     <div key={row.label} className="bw-summary-row">
                       <dt>{row.label}</dt>
                       <dd>{row.value}</dd>
-                      <button type="button" className="bw-change-link" onClick={() => goTo(row.editStep)}>
-                        Change
-                      </button>
                     </div>
                   ))}
                 </dl>
+                <button type="button" className="bw-change-link bw-summary-change" onClick={() => goTo('type')}>
+                  Change selections
+                </button>
               </div>
               <form
                 id="booking-request-form"
@@ -577,6 +742,8 @@ export default function Book() {
                     inputs. Names are stable — do not rename casually. */}
                 <input type="hidden" name="lessonType" value={data.lessonType ?? ''} />
                 <input type="hidden" name="participants" value={data.participants ?? ''} />
+                <input type="hidden" name="duration" value={data.duration ?? ''} />
+                <input type="hidden" name="price" value={quotedPriceField} />
                 <input type="hidden" name="date" value={data.date} />
                 <input type="hidden" name="timeSlot" value={data.timeSlot ?? ''} />
                 <div className="cp-form-row">
@@ -656,7 +823,7 @@ export default function Book() {
               </h2>
               <p className="bw-confirm-lede" data-bw-item>
                 Here’s your lesson request. Aaron will follow up by email to confirm the time and
-                current rates.
+                next steps.
               </p>
               <div className="bw-surface" data-bw-item>
                 <p className="bw-surface-label">Your request</p>
@@ -679,7 +846,9 @@ export default function Book() {
               </div>
             </>
           )}
+          </div>
         </div>
+      </div>
       </div>
     </section>
   )

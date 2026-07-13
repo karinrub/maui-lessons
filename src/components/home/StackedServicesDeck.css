@@ -245,9 +245,9 @@
 
 .stacked-services-deck__eyebrow {
   color: #7c5b2e;
-  font-size: 0.72rem;
+  font-size: var(--label-size);
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: var(--label-tracking);
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -279,7 +279,7 @@
   align-self: flex-start;
   margin-top: auto;
   padding-bottom: 0.2rem;
-  border-bottom: 1px solid rgba(23, 53, 42, 0.4);
+  border-bottom: 1px solid color-mix(in srgb, var(--maui-gold) 54%, #17352a);
   color: #17352a;
   font-size: 0.78rem;
   font-weight: 600;
@@ -302,7 +302,7 @@
 
 .stacked-services-deck__cta-arrow {
   /* Book-page gold, foreshadowed on every primary CTA (audit P2). */
-  color: #b87d2c;
+  color: var(--maui-gold);
   transition: transform 0.22s ease;
 }
 

@@ -301,12 +301,15 @@
   gap: 0.5rem;
   margin-top: 1.75rem;
   padding: 0.9rem 1.85rem;
+  border: 1px solid rgba(246, 218, 162, 0.38);
   border-radius: 999px;
   background: var(--story-amber);
   color: var(--story-ink);
   font: 600 1rem/1 'Inter', system-ui, sans-serif;
   text-decoration: none;
-  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.45);
+  box-shadow:
+    0 10px 30px -12px rgba(0, 0, 0, 0.45),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.18);
   transition:
     background-color 0.25s ease,
     box-shadow 0.25s ease;
@@ -315,7 +318,9 @@
 
 .aaron-story__cta:hover {
   background: #e6c88d;
-  box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    0 16px 40px -14px rgba(0, 0, 0, 0.55),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.24);
 }
 
 .aaron-story__cta:focus-visible {
@@ -325,7 +330,7 @@
 
 .aaron-story__cta-arrow {
   /* Book-page gold (lighter cut for the dusk panel), foreshadowed sitewide. */
-  color: #d69e54;
+  color: var(--maui-gold-light);
   transition: transform 0.2s ease;
 }
 
@@ -342,27 +347,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aaron-story__reveal {
-    filter: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .aaron-story__panel-media img {
-    transform: none;
-  }
-
-  .aaron-story__cta {
-    transition: none;
-  }
-
-  .aaron-story__cta-arrow {
-    transition: none;
-  }
-}
-
-/* ── Mobile: vertical stack, no horizontal scroll ── */
-@media (max-width: 760px) {
+  /* Static vertical fallback: no pinning or horizontal travel when motion is
+     reduced, regardless of viewport width. */
   .aaron-story {
     height: auto;
     overflow: visible;
@@ -382,7 +368,7 @@
     flex-basis: auto;
     width: 100%;
     height: auto;
-    min-height: 100vh;
+    min-height: 100svh;
     grid-template-columns: 1fr;
     padding: 3rem 1.5rem;
   }
@@ -391,24 +377,139 @@
     grid-template-columns: 1fr;
   }
 
-  .aaron-story__watermark {
-    font-size: 10rem;
-    top: auto;
-    bottom: -1.5rem;
-    right: -0.5rem;
-    transform: none;
+  .aaron-story__panel-media {
+    height: 50vh;
   }
 
   .aaron-story__beats {
     grid-template-columns: 1fr;
   }
 
+  .aaron-story__panel-copy,
+  .aaron-story__panel-copy--wide {
+    max-width: none;
+  }
+
+  .aaron-story__reveal {
+    filter: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .aaron-story__panel-media img {
+    transform: none;
+  }
+
+  .aaron-story__cta {
+    transition: none;
+  }
+
+  .aaron-story__cta-arrow {
+    transition: none;
+  }
+}
+
+/* ── Narrow screens: same horizontal chapter travel, compact panel layout ── */
+@media (max-width: 760px) {
+  .aaron-story {
+    overscroll-behavior: none;
+  }
+
+  .aaron-story__track {
+    height: 100svh;
+  }
+
+  .aaron-story__panel {
+    width: 100%;
+    height: 100svh;
+    min-height: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 0.46fr) minmax(0, 0.54fr);
+    gap: 1.25rem;
+    padding: 4.5rem 1.35rem 3.5rem;
+  }
+
+  .aaron-story__panel[data-panel-index='1'] {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .aaron-story__watermark {
+    right: -1.5rem;
+    font-size: clamp(9rem, 36vw, 13rem);
+  }
+
+  .aaron-story__progress {
+    left: 1.35rem;
+    right: 1.35rem;
+    bottom: 1.15rem;
+    gap: 0.6rem;
+    font-size: 0.68rem;
+  }
+
+  .aaron-story__progress-bar {
+    width: min(30vw, 110px);
+  }
+
   .aaron-story__panel-media {
-    height: 50vh;
+    height: auto;
+    min-height: 0;
+    border-radius: 18px;
   }
 
   .aaron-story__panel-copy,
   .aaron-story__panel-copy--wide {
     max-width: none;
+  }
+
+  .aaron-story__eyebrow {
+    font-size: 0.68rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .aaron-story__heading {
+    font-size: clamp(2.1rem, 9vw, 3.2rem);
+    margin-bottom: 0.85rem;
+  }
+
+  .aaron-story__body {
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .aaron-story__beats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+  }
+
+  .aaron-story__beat {
+    padding-top: 0.75rem;
+  }
+
+  .aaron-story__beat-numeral {
+    font-size: 1.7rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .aaron-story__beat-title {
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .aaron-story__beat-body {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .aaron-story__pull-line {
+    font-size: 1.15rem;
+    margin-top: 1.15rem;
+  }
+
+  .aaron-story__cta {
+    margin-top: 1rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.88rem;
   }
 }

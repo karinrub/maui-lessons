@@ -104,6 +104,11 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
         y: prefersReducedMotion ? 0 : 48,
         opacity: prefersReducedMotion ? 1 : 0,
       })
+      gsap.set(canvas, {
+        y: prefersReducedMotion ? 0 : 24,
+        scale: prefersReducedMotion ? 1 : 0.97,
+        transformOrigin: 'center center',
+      })
     }, sectionElement)
 
     if (!prefersReducedMotion) {
@@ -120,10 +125,11 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
               trigger: sectionElement,
               start: 'top bottom',
               end: 'top top',
-              scrub: 1,
+              scrub: 0.9,
             },
           })
-          .to(cardsShellElement, { y: 0, opacity: 1, duration: 1, ease: 'power2.out' }, 0)
+          .to(canvas, { y: 0, scale: 1, duration: 1, ease: 'power3.out' }, 0)
+          .to(cardsShellElement, { y: 0, opacity: 1, duration: 0.86, ease: 'power3.out' }, 0.08)
       }, sectionElement)
 
       // Registered outside gsap.context: the hook owns this ScrollTrigger's
@@ -132,42 +138,58 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
         sectionEl: sectionElement,
         pinEl: pinElement,
         end: '+=260%',
+        // Longest scrubbed scene on the page: a longer catch-up window turns
+        // discrete wheel/trackpad deltas into one continuous glide.
+        scrub: 1.2,
         buildTimeline: () => {
           const tl = gsap
             .timeline({ paused: true })
             .addLabel('start')
-            .to(secondCard, { ...stackPositions.second, duration: 0.58, ease: 'power2.out' }, 'start')
-            .to(thirdCard, { ...stackPositions.third, duration: 0.58, ease: 'power2.out' }, 'start+=0.08')
+            .to(secondCard, { ...stackPositions.second, duration: 0.62, ease: 'power3.out' }, 'start')
+            .to(thirdCard, { ...stackPositions.third, duration: 0.62, ease: 'power3.out' }, 'start+=0.12')
             .to({}, { duration: 0.5 })
             // The leaving card slides out fully opaque — the canvas edge
             // masks it — and only fades in the last stretch of its travel,
             // so its text never double-exposes over the card underneath.
+            // Cards below follow with a small stagger so the stack reads as
+            // three objects trading places, not one rigid block.
             .addLabel('swap1')
             .to(
               firstCard,
-              { x: 0, yPercent: stackPositions.exit.yPercent, duration: 1, ease: 'none' },
+              { x: 0, yPercent: stackPositions.exit.yPercent, duration: 1, ease: 'power2.inOut' },
               'swap1',
             )
             .to(firstCard, { opacity: 0, duration: 0.3, ease: 'none' }, 'swap1+=0.7')
             .to(
               secondCard,
-              { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'none' },
-              'swap1',
+              { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'power2.inOut' },
+              'swap1+=0.06',
             )
             .to(
               thirdCard,
-              { ...stackPositions.second, yPercent: 0, duration: 1, ease: 'none' },
-              'swap1',
+              { ...stackPositions.second, yPercent: 0, duration: 1, ease: 'power2.inOut' },
+              'swap1+=0.12',
             )
             .to({}, { duration: 0.12 })
             .addLabel('swap2')
             .to(
               secondCard,
-              { x: 0, yPercent: stackPositions.exit.yPercent, duration: 1, ease: 'none' },
+              { x: 0, yPercent: stackPositions.exit.yPercent, duration: 1, ease: 'power2.inOut' },
               'swap2',
             )
             .to(secondCard, { opacity: 0, duration: 0.3, ease: 'none' }, 'swap2+=0.7')
-            .to(thirdCard, { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'none' }, 'swap2')
+            .to(
+              thirdCard,
+              { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'power2.inOut' },
+              'swap2+=0.06',
+            )
+            // Closing beat: the settled stack drifts up a touch before the
+            // pin releases, so the section exits already moving in the same
+            // upward direction MeetAaron's reveals continue — a handoff, not
+            // a hard stop.
+            .to({}, { duration: 0.18 })
+            .addLabel('settle')
+            .to(canvas, { y: -18, scale: 0.99, duration: 0.42, ease: 'power1.inOut' }, 'settle')
 
           // Progress counter: crossfade 01→02 and 02→03 halfway through each
           // card swap, riding the same scrubbed timeline as the cards.
@@ -308,7 +330,11 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
                       className="stacked-services-deck__media-image"
                       src={service.image}
                       alt={service.imageAlt}
-                      loading="lazy"
+                      // Eager + async: all three cards enter the viewport one
+                      // scroll after the hero; a lazy decode landing mid-scrub
+                      // is a visible main-thread hitch while the cards move.
+                      loading="eager"
+                      decoding="async"
                       draggable={false}
                     />
                   </div>

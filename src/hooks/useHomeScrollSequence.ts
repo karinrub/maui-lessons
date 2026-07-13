@@ -8,6 +8,8 @@ export type HomeScrollSectionConfig = {
   sectionEl: HTMLElement
   pinEl: HTMLElement
   end: string
+  /** Scrub smoothing in seconds; longer pins want a longer glide. */
+  scrub?: number
   buildTimeline: () => gsap.core.Timeline
   onScrollUpdate?: (self: ScrollTrigger) => void
 }
@@ -29,12 +31,12 @@ function createSection(config: HomeScrollSectionConfig): SectionHandle {
     trigger: config.sectionEl,
     start: 'top top',
     end: config.end,
-    scrub: 1,
+    animation: timeline,
+    scrub: config.scrub ?? 0.85,
     pin: config.pinEl,
     anticipatePin: 1,
     invalidateOnRefresh: true,
     onUpdate: (self) => {
-      timeline.progress(self.progress)
       config.onScrollUpdate?.(self)
     },
   })
@@ -66,6 +68,7 @@ export default function useHomeScrollSequence(): HomeScrollSequenceApi {
     deckRef.current = createSection(deckConfig)
 
     ScrollTrigger.refresh()
+    window.dispatchEvent(new Event('home-scroll-sequence-ready'))
   }, [])
 
   const teardown = useCallback(() => {

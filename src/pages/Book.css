@@ -6,23 +6,66 @@
      booking page reads as part of the same family as the home services deck. */
 
 .bw {
-  /* Canvas + card faces sourced from StackedServicesDeck.css */
-  --bw-canvas-grad: linear-gradient(160deg, #17392c 0%, #0c211a 100%);
-  --bw-glow-amber: rgba(214, 170, 105, 0.26);
-  --bw-glow-teal: rgba(30, 74, 76, 0.5);
+  /* Flat surfaces keep the booking flow in the same visual family as the
+     site's editorial cream/sage sections. */
+  --bw-canvas: #17352a;
   --bw-face: #fbf7ee;
   --bw-ink: #1f1d18;
   --bw-cream: #f2ead9;
-  --bw-accent-green-a: #1c4432;
-  --bw-accent-green-b: #0d2018;
-  --bw-accent-amber-a: #b98a4e;
-  --bw-accent-amber-b: #77552a;
-  --bw-accent-teal-a: #1e4a4c;
-  --bw-accent-teal-b: #0d2426;
+  --bw-accent-green: #1c4432;
+  --bw-accent-amber: #b98a4e;
+  --bw-accent-teal: #1e4a4c;
 
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+/* The booking experience sits on the same sage material used by the Home and
+   About sections, while the dark wizard canvas remains the focused interactive
+   object inside it. */
+.bw-sage-shelf {
+  height: 100%;
+  overflow: hidden;
+  padding: clamp(3.5rem, 7vw, 6.5rem) clamp(1rem, 4vw, 4rem) clamp(4rem, 7vw, 6.5rem);
+}
+
+.site-shell--booking .bw-sage-shelf {
+  padding-block: clamp(1.25rem, 3svh, 2rem);
+}
+
+.site-shell--booking .bw-hero {
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.site-shell--booking .bw-hero-headline {
+  font-size: clamp(2.75rem, 6.8vw, 5.2rem);
+  line-height: 0.92;
+}
+
+.site-shell--booking .bw-step-title {
+  margin-bottom: 1rem;
+}
+
+.site-shell--booking .bw-step-title-line-inner {
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.site-shell--booking .bw-step-title-line-inner--display {
+  font-size: clamp(2.6rem, 4.8vw, 4rem);
+}
+
+.site-shell--booking .bw-step-support {
+  margin-top: -0.25rem;
+  margin-bottom: 1rem;
+}
+
+.bw-content {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
   width: min(100%, 1080px);
   margin: 0 auto;
-  padding-bottom: clamp(3rem, 6vw, 5rem);
 }
 
 .bw-sr-only {
@@ -46,13 +89,17 @@
 
 .bw-hero-headline {
   margin: 0;
-  color: rgba(31, 29, 24, 0.86);
+  color: var(--home-sage-ink);
   font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
   font-size: clamp(3.4rem, 9vw, 7.6rem);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.01em;
   line-height: 0.98;
+}
+
+.bw .cp-section-label {
+  color: rgba(23, 53, 42, 0.66);
 }
 
 .bw-hero-words {
@@ -79,22 +126,19 @@
 .bw-canvas {
   position: relative;
   display: flex;
+  flex: 1 1 0;
   flex-direction: column;
   overflow: hidden;
-  min-height: clamp(560px, 68svh, 760px);
+  min-height: 0;
   will-change: transform, opacity;
   padding:
     clamp(24px, 4svh, 48px)
     clamp(20px, 4vw, 64px)
     clamp(36px, 6svh, 72px);
-  border: 1px solid rgba(255, 250, 240, 0.08);
-  border-radius: clamp(24px, 3vw, 40px);
-  background:
-    radial-gradient(90% 75% at 8% 104%, var(--bw-glow-teal) 0%, rgba(30, 74, 76, 0) 60%),
-    var(--bw-canvas-grad);
-  box-shadow:
-    0 40px 90px -48px rgba(13, 32, 24, 0.55),
-    inset 0 1px 0 rgba(255, 250, 240, 0.08);
+  border: 1px solid rgba(242, 234, 217, 0.16);
+  border-radius: clamp(24px, 3vw, 36px);
+  background: var(--bw-canvas);
+  box-shadow: 0 24px 56px rgba(13, 32, 24, 0.24);
 }
 
 /* Scroll-linked amber swell lives on its own layer so GSAP can scrub its
@@ -102,7 +146,7 @@
 .bw-canvas-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(110% 90% at 82% -12%, var(--bw-glow-amber) 0%, rgba(214, 170, 105, 0) 55%);
+  background: transparent;
   pointer-events: none;
 }
 
@@ -116,26 +160,30 @@
 .bw-progress {
   display: flex;
   flex-shrink: 0;
-  gap: 0.5rem;
+  gap: clamp(0.35rem, 1.1vw, 0.85rem);
   margin: 0 0 clamp(2rem, 4vw, 3rem);
   padding: 0;
   list-style: none;
 }
 
 .bw-progress-step {
+  position: relative;
   flex: 1;
-  padding-top: 0.7rem;
+  min-width: 0;
+  min-height: clamp(5.4rem, 9vw, 7.1rem);
+  overflow: visible;
+  padding: clamp(0.65rem, 1.1vw, 0.9rem) clamp(0.25rem, 0.8vw, 0.65rem) 0.7rem;
   border-top: 2px solid rgba(242, 234, 217, 0.16);
   color: rgba(242, 234, 217, 0.38);
-  font-size: 0.68rem;
+  font-size: var(--label-size);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
   transition: border-color 0.3s ease, color 0.3s ease;
 }
 
 .bw-progress-step.is-active {
-  border-top-color: var(--maui-amber, #b87d2c);
+  border-top-color: var(--maui-gold);
   color: var(--bw-cream);
 }
 
@@ -144,38 +192,98 @@
   color: rgba(242, 234, 217, 0.62);
 }
 
-/* Ghost numeral: the site's recurring editorial device (home deck counter,
-   About watermarks, weekly steps), landing on the highest-intent page. */
+/* Ghost numeral: oversized Fraunces watermark, matching the home deck and
+   About chapter motif while the label remains the readable progress text. */
 .bw-progress-numeral {
-  display: block;
-  margin-bottom: 0.3rem;
-  color: rgba(242, 234, 217, 0.14);
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+  position: absolute;
+  left: clamp(-0.15rem, -0.2vw, 0rem);
+  bottom: 0;
+  z-index: 0;
+  color: rgba(242, 234, 217, 0.08);
+  font-family: "Fraunces", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(4rem, 8.4vw, 6.8rem);
   font-style: italic;
-  font-weight: 500;
+  font-weight: 650;
+  letter-spacing: -0.06em;
   line-height: 1;
+  pointer-events: none;
+  user-select: none;
   transition: color 0.3s ease;
 }
 
 .bw-progress-step.is-active .bw-progress-numeral {
-  color: rgba(214, 158, 84, 0.72);
+  color: rgba(214, 158, 84, 0.22);
 }
 
 .bw-progress-step.is-done .bw-progress-numeral {
-  color: rgba(242, 234, 217, 0.3);
+  color: rgba(242, 234, 217, 0.13);
 }
 
 .bw-progress-label {
-  display: block;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 2.2em;
+  align-items: flex-end;
+}
+
+.bw-context {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem 1rem;
+  margin: 0 0 clamp(1.75rem, 3.5vw, 2.5rem);
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid rgba(242, 234, 217, 0.14);
+}
+
+.bw-context-label {
+  color: rgba(214, 170, 105, 0.82);
+  font-size: var(--label-size);
+  font-weight: 600;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+}
+
+.bw-context-value {
+  color: rgba(242, 234, 217, 0.72);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  line-height: 1.2;
 }
 
 .bw-panel {
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   justify-content: center;
   will-change: transform, opacity;
+}
+
+.site-shell--booking .bw-panel {
+  justify-content: flex-start;
+}
+
+.site-shell--booking .bw-progress {
+  margin-bottom: 1.25rem;
+}
+
+.site-shell--booking .bw-progress-step {
+  min-height: 4.5rem;
+  padding-block: 0.5rem;
+}
+
+.site-shell--booking .bw-progress-numeral {
+  font-size: clamp(3rem, 5.5vw, 4.5rem);
+}
+
+.site-shell--booking .bw-context {
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
 }
 
 .bw-step-heading {
@@ -189,6 +297,14 @@
 
 .bw-step-heading:focus {
   outline: none;
+}
+
+.bw-step-support {
+  max-width: 32rem;
+  margin: -0.55rem 0 clamp(1.25rem, 2.5vw, 2rem);
+  color: rgba(242, 234, 217, 0.74);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 /* ── Type-step title card (Fraunces display, OpeningScene tagline spirit) ── */
@@ -222,10 +338,7 @@
 }
 
 .bw-step-title-line-inner--display {
-  color: transparent;
-  background: linear-gradient(115deg, var(--bw-cream) 30%, #dfb476 85%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: var(--bw-cream);
   font-size: clamp(3.1rem, 7vw, 5.6rem);
   letter-spacing: -0.01em;
   line-height: 1;
@@ -243,6 +356,10 @@
   grid-template-columns: repeat(4, 1fr);
 }
 
+.bw-choice-grid--pricing {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+}
+
 .bw-choice {
   display: flex;
   flex-direction: column;
@@ -250,6 +367,8 @@
   padding: 0;
   background: var(--bw-face);
   border: 1px solid rgba(31, 29, 24, 0.1);
+  /* Radius + layered shadow match the home services deck card verbatim:
+     same face color, same component family, same material. */
   border-radius: 20px;
   color: var(--bw-ink);
   font: inherit;
@@ -264,10 +383,10 @@
 }
 
 .bw-choice:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow:
-    0 1px 2px rgba(6, 18, 13, 0.2),
-    0 38px 70px -26px rgba(6, 18, 13, 0.72);
+    0 1px 2px rgba(6, 18, 13, 0.24),
+    0 34px 64px -28px rgba(6, 18, 13, 0.68);
 }
 
 .bw-choice:focus-visible {
@@ -276,11 +395,11 @@
 }
 
 .bw-choice.is-selected {
-  outline: 2px solid var(--maui-amber, #b87d2c);
+  outline: 2px solid rgba(184, 125, 44, 0.7);
   outline-offset: 0;
 }
 
-/* Accent gradients per StackedServicesDeck card media treatments. */
+/* Flat accent bands echo the site's existing solid color blocks. */
 .bw-choice-media {
   display: block;
   height: clamp(4.5rem, 9vw, 7rem);
@@ -310,27 +429,30 @@
   line-height: 1.08;
   text-align: center;
   color: inherit;
-  text-shadow: 0 1px 8px rgba(9, 20, 15, 0.32);
 }
 
 .bw-choice[data-accent='green'] .bw-choice-media {
-  background: linear-gradient(135deg, var(--bw-accent-green-a) 0%, var(--bw-accent-green-b) 100%);
+  background: var(--bw-accent-green);
 }
 
 .bw-choice[data-accent='amber'] .bw-choice-media {
-  background: linear-gradient(135deg, var(--bw-accent-amber-a) 0%, var(--bw-accent-amber-b) 100%);
+  background: var(--bw-accent-amber);
 }
 
 .bw-choice[data-accent='teal'] .bw-choice-media {
-  background: linear-gradient(135deg, var(--bw-accent-teal-a) 0%, var(--bw-accent-teal-b) 100%);
+  background: var(--bw-accent-teal);
 }
 
 .bw-choice[data-accent='green'] .bw-choice-title-band {
-  background: linear-gradient(135deg, var(--bw-accent-green-a) 0%, var(--bw-accent-green-b) 100%);
+  background: var(--bw-accent-green);
 }
 
 .bw-choice[data-accent='amber'] .bw-choice-title-band {
-  background: linear-gradient(135deg, var(--bw-accent-amber-a) 0%, var(--bw-accent-amber-b) 100%);
+  background: var(--bw-accent-amber);
+}
+
+.bw-choice[data-accent='teal'] .bw-choice-title-band {
+  background: var(--bw-accent-teal);
 }
 
 .bw-choice-body {
@@ -360,6 +482,13 @@
   line-height: 1.45;
 }
 
+.bw-choice-price {
+  color: #7c5b2e;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 /* ── Warm surface (shared card face for datetime / review / form) ── */
 
 .bw-surface {
@@ -376,9 +505,9 @@
 .bw-surface-label {
   margin: 0 0 0.9rem;
   color: #7c5b2e;
-  font-size: 0.7rem;
+  font-size: var(--label-size);
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -416,9 +545,9 @@
 .bw-datetime-label {
   margin: 0;
   color: #7c5b2e;
-  font-size: 0.7rem;
+  font-size: var(--label-size);
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: var(--label-tracking);
   text-transform: uppercase;
 }
 
@@ -507,8 +636,8 @@
 }
 
 .bwc-day:hover:not(:disabled) {
-  background: var(--maui-amber-faint, rgba(184, 125, 45, 0.14));
-  border-color: var(--maui-amber-soft, rgba(184, 125, 45, 0.32));
+  background: var(--maui-gold-faint);
+  border-color: var(--maui-gold-soft);
 }
 
 .bwc-day:focus-visible {
@@ -521,8 +650,8 @@
 }
 
 .bwc-day.is-selected {
-  background: var(--maui-amber, #b87d2c);
-  border-color: var(--maui-amber, #b87d2c);
+  background: var(--maui-gold);
+  border-color: var(--maui-gold);
   color: #fbf7ee;
   font-weight: 600;
 }
@@ -567,8 +696,8 @@
 
 .bw-slot:hover {
   transform: translateY(-2px);
-  background: var(--maui-amber-faint, rgba(184, 125, 45, 0.14));
-  border-color: var(--maui-amber-soft, rgba(184, 125, 45, 0.32));
+  background: var(--maui-gold-faint);
+  border-color: var(--maui-gold-soft);
 }
 
 .bw-slot:focus-visible {
@@ -577,8 +706,8 @@
 }
 
 .bw-slot.is-selected {
-  background: var(--maui-amber-faint, rgba(184, 125, 45, 0.14));
-  border-color: var(--maui-amber, #b87d2c);
+  background: var(--maui-gold-faint);
+  border-color: var(--maui-gold);
 }
 
 .bw-slot-sub {
@@ -655,6 +784,11 @@
   outline-offset: 0.25rem;
 }
 
+.bw-summary-change {
+  display: inline-flex;
+  margin: 1.2rem 0 0;
+}
+
 /* ── Footer nav ── */
 
 .bw-footer {
@@ -707,8 +841,30 @@
 /* cp-button (dark ink pill) is invisible against the dark canvas — swap to
    the cream face with ink text when used inside the wizard. */
 .bw-cta {
+  min-height: 46px;
+  padding: 0 28px;
+  border-radius: 999px;
   background: var(--bw-face);
   color: var(--bw-ink);
+  font-weight: 600;
+  /* Same duration + curve as the choice cards and page-fade, so every
+     interactive element answers the cursor with one motion voice. */
+  transition:
+    background-color 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.bw-cta:hover {
+  background: var(--maui-gold-light);
+  color: var(--bw-ink);
+  transform: translateY(-2px);
+}
+
+.bw-cta:active {
+  background: var(--maui-gold);
+  color: var(--bw-face);
+  transform: translateY(0);
 }
 
 .bw-cta:focus-visible {
@@ -719,6 +875,31 @@
 .bw-surface .bw-cta {
   background: rgba(31, 29, 24, 0.88);
   color: #f5f0e7;
+}
+
+.bw-surface .bw-cta:hover {
+  background: var(--maui-gold);
+  color: #fffaf4;
+}
+
+.bw .cp-form-label {
+  color: rgba(31, 29, 24, 0.72);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.bw .cp-form-control {
+  min-height: 46px;
+  background: #fffaf4;
+  border-color: rgba(31, 29, 24, 0.18);
+  color: var(--bw-ink);
+  font-size: 1rem;
+}
+
+.bw .cp-form-control:focus {
+  border-color: var(--maui-gold);
+  outline: 2px solid var(--maui-gold-faint);
+  outline-offset: 1px;
 }
 
 .bw-surface .bw-cta:focus-visible {
@@ -736,8 +917,40 @@
 }
 
 @media (max-width: 760px) {
+  .site-shell--booking .bw,
+  .site-shell--booking .bw-sage-shelf,
+  .site-shell--booking .bw-content {
+    height: auto;
+  }
+
+  .site-shell--booking .bw-sage-shelf {
+    overflow: visible;
+  }
+
+  .site-shell--booking .bw-canvas {
+    display: block;
+    height: auto;
+    min-height: 0;
+    flex: none;
+  }
+
+  .site-shell--booking .bw-panel {
+    display: block;
+    height: auto;
+    flex: none;
+    overflow: visible;
+  }
+
+  .bw-sage-shelf {
+    padding:
+      clamp(2.5rem, 9vw, 4rem)
+      1rem
+      clamp(3rem, 10vw, 4.5rem);
+  }
+
   .bw-choice-grid,
   .bw-choice-grid--4,
+  .bw-choice-grid--pricing,
   .bw-datetime {
     grid-template-columns: 1fr;
   }
@@ -765,14 +978,27 @@
   .bw-progress-step {
     font-size: 0.56rem;
     letter-spacing: 0.08em;
+    min-height: 4.1rem;
+    padding-inline: 0.16rem;
   }
 
   .bw-progress-numeral {
-    font-size: 1.15rem;
+    bottom: 0.04em;
+    font-size: clamp(2.9rem, 14vw, 4rem);
+  }
+
+  .bw-context {
+    gap: 0.35rem 0.7rem;
   }
 
   .bw-choice-media {
     height: 3.2rem;
+  }
+
+  /* Deck cards drop to 16px at this breakpoint; same family, same step. */
+  .bw-choice,
+  .bw-surface {
+    border-radius: 16px;
   }
 
   .bw-summary-row {

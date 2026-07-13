@@ -13,7 +13,9 @@ export const MAUI_STOPS = {
   emerald: [0.038, 0.145, 0.105], // deep emerald
   jungle: [0.052, 0.255, 0.19], // tropical green (Maui jungle)
   bay: [0.065, 0.365, 0.292], // teal-green (Maui bays)
-  amber: [0.72, 0.49, 0.175], // warm amber-gold (sunset / site accent)
+  // Exactly #b87d2c (184/255, 125/255, 44/255) — must match --maui-gold in
+  // src/index.css so the shader's sunset stop and the CSS accent are one hue.
+  amber: [0.7216, 0.4902, 0.1725], // warm amber-gold (sunset / site accent)
 } as const
 
 export type MauiStop = keyof typeof MAUI_STOPS

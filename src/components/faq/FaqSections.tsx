@@ -8,11 +8,20 @@ import './FaqSections.css'
 gsap.registerPlugin(ScrollTrigger)
 
 type FaqItem = { id: string; q: string; a: string }
-type FaqCategory = { label: string; items: FaqItem[] }
+type FaqCategory = {
+  id: string
+  label: string
+  descriptor: string
+  ghostWord: string
+  items: FaqItem[]
+}
 
 const faqCategories: FaqCategory[] = [
   {
+    id: 'getting-started',
     label: 'Getting started',
+    descriptor: 'Before your first lesson',
+    ghostWord: 'begin',
     items: [
       {
         id: 'experience',
@@ -32,7 +41,10 @@ const faqCategories: FaqCategory[] = [
     ],
   },
   {
+    id: 'the-lessons',
     label: 'The lessons',
+    descriptor: 'While you’re here',
+    ghostWord: 'play',
     items: [
       {
         id: 'vacation',
@@ -57,7 +69,10 @@ const faqCategories: FaqCategory[] = [
     ],
   },
   {
+    id: 'booking',
     label: 'Booking',
+    descriptor: 'Making it regular',
+    ghostWord: 'book',
     items: [
       {
         id: 'how-to-book',
@@ -76,7 +91,33 @@ const faqCategories: FaqCategory[] = [
 export default function FaqSections() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
+  const compassRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState<string | null>('experience')
+  const [activeCategory, setActiveCategory] = useState(faqCategories[0].id)
+
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+
+    const categories = gsap.utils.toArray<HTMLElement>('.faq-category', root)
+    if (categories.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+
+        if (visible) {
+          setActiveCategory(visible.target.getAttribute('data-category') ?? faqCategories[0].id)
+        }
+      },
+      { rootMargin: '-35% 0px -45% 0px', threshold: [0, 0.25, 0.5, 0.75] },
+    )
+
+    categories.forEach((category) => observer.observe(category))
+    return () => observer.disconnect()
+  }, [])
 
   useLayoutEffect(() => {
     const root = rootRef.current
@@ -95,6 +136,19 @@ export default function FaqSections() {
         { autoAlpha: 0, y: 16 },
         { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power2.out', stagger: 0.1, delay: 0.5 },
       )
+
+      const compass = compassRef.current
+      const compassRings = compass?.querySelectorAll<HTMLElement>('.faq-compass__ring')
+
+      if (compass && compassRings) {
+        gsap.set(compassRings, { scale: 0.72, autoAlpha: 0 })
+
+        const compassEntrance = gsap.timeline({ defaults: { ease: 'power3.out' } })
+        compassEntrance
+          .to(compassRings[2], { scale: 1, autoAlpha: 1, duration: 0.38 }, 0.2)
+          .to(compassRings[1], { scale: 1, autoAlpha: 1, duration: 0.38 }, 0.38)
+          .to(compassRings[0], { scale: 1, autoAlpha: 1, duration: 0.38 }, 0.56)
+      }
 
       // Intro drifts up slightly faster than the scroll as the shelf takes
       // over — a quiet parallax handoff between the two surfaces.
@@ -130,6 +184,23 @@ export default function FaqSections() {
         },
       )
 
+      if (compass) {
+        gsap.fromTo(
+          compass,
+          { y: 0 },
+          {
+            y: -34,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: root.querySelector('.faq-shelf'),
+              start: 'top bottom',
+              end: 'top top',
+              scrub: 1,
+            },
+          },
+        )
+      }
+
       // Each category: its rule draws across, then label and rows fade up
       // in a short stagger.
       for (const category of gsap.utils.toArray<HTMLElement>('.faq-category', root)) {
@@ -155,10 +226,10 @@ export default function FaqSections() {
         }
 
         gsap.fromTo(
-          category.querySelectorAll('.faq-category__label, .faq-row'),
-          { autoAlpha: 0, y: 22 },
+          category.querySelectorAll('.faq-category__index, .faq-category__label, .faq-category__descriptor, .faq-row'),
+          { opacity: 0, y: 22 },
           {
-            autoAlpha: 1,
+            opacity: 1,
             y: 0,
             duration: 0.7,
             ease: 'power3.out',
@@ -203,63 +274,101 @@ export default function FaqSections() {
           </span>
         </h1>
         <p className="faq-intro__lede">
-          The things people usually want to know before their first lesson. Anything else —
-          just ask when you book.
+          Everything you might want to know before picking up an instrument with Aaron. Anything
+          else — just ask when you book.
         </p>
+        <div className="faq-intro__compass-window" aria-hidden="true">
+          <div ref={compassRef} className="faq-compass">
+            <span className="faq-compass__ring faq-compass__ring--outer" />
+            <span className="faq-compass__ring faq-compass__ring--middle" />
+            <span className="faq-compass__ring faq-compass__ring--inner" />
+          </div>
+        </div>
       </section>
 
       <div className="faq-shelf">
         <span className="faq-shelf__ghost" aria-hidden="true">
-          curious
+          {faqCategories.find((category) => category.id === activeCategory)?.ghostWord ?? 'begin'}
         </span>
-        {faqCategories.map((category) => (
-        <section key={category.label} className="faq-category" aria-label={category.label}>
-          <span className="faq-category__rule" aria-hidden="true" />
-          <p className="faq-category__label">{category.label}</p>
-          <div className="faq-category__rows">
-            {category.items.map((item) => {
-              const isOpen = open === item.id
-              return (
-                <div key={item.id} className={`faq-row${isOpen ? ' is-open' : ''}`}>
-                  <button
-                    type="button"
-                    className="faq-row__question"
-                    aria-expanded={isOpen}
-                    aria-controls={`faq-answer-${item.id}`}
-                    id={`faq-question-${item.id}`}
-                    onClick={() => setOpen(isOpen ? null : item.id)}
-                  >
-                    <span className="faq-row__question-text">{item.q}</span>
-                    <span className="faq-row__icon" aria-hidden="true" />
-                  </button>
-                  <div
-                    className="faq-row__answer"
-                    id={`faq-answer-${item.id}`}
-                    role="region"
-                    aria-labelledby={`faq-question-${item.id}`}
-                  >
-                    <div className="faq-row__answer-clip">
-                      <p className="faq-row__answer-text">{item.a}</p>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </section>
-      ))}
+        <div className="faq-shelf__layout">
+          <nav className="faq-category-nav" aria-label="FAQ categories">
+            <p className="faq-category-nav__eyebrow">In this guide</p>
+            {faqCategories.map((category, index) => (
+              <a
+                key={category.id}
+                href={`#faq-category-${category.id}`}
+                className={`faq-category-nav__link${activeCategory === category.id ? ' is-active' : ''}`}
+                aria-current={activeCategory === category.id ? 'location' : undefined}
+              >
+                <span className="faq-category-nav__index">0{index + 1}</span>
+                <span>{category.label}</span>
+              </a>
+            ))}
+          </nav>
 
-        <section className="faq-close" aria-label="Book a lesson">
-          <div className="faq-close__inner">
-            <p className="faq-close__line">Still wondering about something?</p>
-            <Link to="/book" className="faq-close__cta">
-              Book a Lesson
-              <span className="faq-close__cta-arrow" aria-hidden="true">
-                →
-              </span>
-            </Link>
+          <div className="faq-shelf__content">
+            {faqCategories.map((category, index) => (
+              <section
+                key={category.id}
+                id={`faq-category-${category.id}`}
+                data-category={category.id}
+                className={`faq-category${activeCategory === category.id ? ' is-active' : ''}`}
+                aria-label={category.label}
+              >
+                <span className="faq-category__rule" aria-hidden="true" />
+                <div className="faq-category__meta">
+                  <span className="faq-category__index">0{index + 1}</span>
+                  <p className="faq-category__label">{category.label}</p>
+                  <p className="faq-category__descriptor">{category.descriptor}</p>
+                </div>
+                <div className="faq-category__rows">
+                  {category.items.map((item) => {
+                    const isOpen = open === item.id
+                    return (
+                      <div key={item.id} className={`faq-row${isOpen ? ' is-open' : ''}`}>
+                        <button
+                          type="button"
+                          className="faq-row__question"
+                          aria-expanded={isOpen}
+                          aria-controls={`faq-answer-${item.id}`}
+                          id={`faq-question-${item.id}`}
+                          onClick={() => setOpen(isOpen ? null : item.id)}
+                        >
+                          <span className="faq-row__question-text">{item.q}</span>
+                          <span className="faq-row__icon" aria-hidden="true" />
+                        </button>
+                        <div
+                          className="faq-row__answer"
+                          id={`faq-answer-${item.id}`}
+                          role="region"
+                          aria-labelledby={`faq-question-${item.id}`}
+                        >
+                          <div className="faq-row__answer-clip">
+                            <span className="faq-row__answer-kicker">Aaron’s note</span>
+                            <p className="faq-row__answer-text">{item.a}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </section>
+            ))}
+
+            <section className="faq-close" aria-label="Book a lesson">
+              <div className="faq-close__inner">
+                <p className="faq-close__line">Still wondering about something?</p>
+                <p className="faq-close__promise">Bring the questions. Leave with a song.</p>
+                <Link to="/book" className="faq-close__cta">
+                  Book a Lesson
+                  <span className="faq-close__cta-arrow" aria-hidden="true">
+                    →
+                  </span>
+                </Link>
+              </div>
+            </section>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   )

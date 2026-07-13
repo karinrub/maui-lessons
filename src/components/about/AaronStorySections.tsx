@@ -86,36 +86,9 @@ export default function AaronStorySections() {
         .fromTo(body, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.6')
     })
 
-    mm.add('(prefers-reduced-motion: no-preference) and (max-width: 760px)', () => {
-      const reveals = gsap.utils
-        .toArray<HTMLElement>('.aaron-story__reveal', root)
-        .filter((el) => !el.closest('[data-panel-index="0"]'))
-
-      reveals.forEach((reveal) => {
-        /* opacity (not autoAlpha) so links inside unrevealed panels stay
-           keyboard-focusable. */
-        gsap.fromTo(
-          reveal,
-          { opacity: 0, y: 24, filter: 'blur(14px)', scale: 1.06 },
-          {
-            opacity: 1,
-            y: 0,
-            filter: 'blur(0px)',
-            scale: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: reveal,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-          },
-        )
-      })
-    })
-
-    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 761px)', () => {
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
       const panels = gsap.utils.toArray<HTMLElement>('.aaron-story__panel', root)
+      const isMobile = window.matchMedia('(max-width: 760px)').matches
       /* Re-measured on every ScrollTrigger refresh so window resizes never
          leave the tween distance and the pin distance out of sync. Derived
          from panel width, not track.scrollWidth — the watermark numerals
@@ -127,7 +100,17 @@ export default function AaronStorySections() {
       const lenis = new Lenis({
         duration: 1.15,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        gestureOrientation: 'vertical',
+        syncTouch: true,
       })
+
+      if (isMobile) {
+        // Touch-sync can restore the browser's previous scroll offset while
+        // the pinned sequence is being created. The story must begin at its
+        // horizontal chapter 01 position every time it loads.
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+        lenis.scrollTo(0, { immediate: true })
+      }
       const tickLenis = (time: number) => {
         lenis.raf(time * 1000)
       }
@@ -137,7 +120,8 @@ export default function AaronStorySections() {
 
       /* Extra pinned scroll after the final chapter so the page rests on
          the dusk panel instead of immediately unpinning into the footer. */
-      const HOLD_RATIO = 0.35
+      const HOLD_RATIO = isMobile ? 1.25 : 0.35
+      const MOBILE_TRAVEL_SCALE = 1.85
 
       /* True document-space top of the section, measured directly (pins
          are reverted during ScrollTrigger refresh, so this is stable).
@@ -179,7 +163,8 @@ export default function AaronStorySections() {
           /* Numeric positions, self-measured — a 'top top' string here
              would get pin-compensated and land past the hold. */
           start: () => getSectionTop(),
-          end: () => getSectionTop() + getScrollDistance(),
+          end: () =>
+            getSectionTop() + getScrollDistance() * (isMobile ? MOBILE_TRAVEL_SCALE : 1),
           scrub: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
@@ -232,10 +217,10 @@ export default function AaronStorySections() {
           }
 
           lenis.scrollTo(nearest, {
-            duration: 0.9,
+            duration: isMobile ? 1.15 : 0.9,
             easing: (t) => 1 - Math.pow(1 - t, 3),
           })
-        }, 180)
+        }, isMobile ? 300 : 180)
       }
 
       lenis.on('scroll', scheduleSnap)

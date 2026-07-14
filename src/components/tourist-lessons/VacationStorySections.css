@@ -49,8 +49,8 @@
   display: block;
   overflow: hidden;
   /* Room for descenders inside the clip row. */
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+  padding-bottom: 0.18em;
+  margin-bottom: -0.18em;
 }
 
 .vacation-statement__line-inner {

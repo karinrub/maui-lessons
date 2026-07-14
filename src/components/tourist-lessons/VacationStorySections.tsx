@@ -316,7 +316,8 @@ export default function VacationStorySections() {
             <h3 className="vacation-collage__title">Made for beginners</h3>
             <p className="vacation-collage__body">
               Never held a ukulele before? That is exactly the point. The whole hour moves at your
-              pace, one chord at a time.
+              pace, one chord at a time. Aaron has plenty of ukuleles for visitors, so there is no
+              need to bring or buy one.
             </p>
           </div>
 
@@ -409,7 +410,7 @@ export default function VacationStorySections() {
       {/* ── Finale CTA ── */}
       <section className="vacation-story__finale" aria-label="Book a vacation lesson">
         <div className="vacation-story__finale-inner" data-vacation-reveal data-vacation-reveal-group>
-          <p className="vacation-story__finale-line">One morning. One song. Yours for good.</p>
+          <p className="vacation-story__finale-line">Long after the tan fades, the music stays.</p>
           <p className="vacation-story__finale-note">
             Lessons meet at Maipoina Beach Park and along the coast through Kihei and Wailea — or
             Aaron will come to you, wherever you're staying.

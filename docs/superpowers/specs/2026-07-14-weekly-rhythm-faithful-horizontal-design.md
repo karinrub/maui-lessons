@@ -8,13 +8,21 @@ files. The July 14 screen recording confirms this full-viewport treatment.
 
 ## Scope
 
-Replace only the `weekly-rhythm` portion of `WeeklyJourneySections`.
+Replace the entire `/weekly-lessons` page body with the Claude prototype's
+timeline and close sequence.
 
 Do not change:
 
-- `SkillLevelSection`, including its existing video, tabs, and images.
-- `weekly-close` markup, styling, copy, or motion.
-- The page route, header, footer, palette, type system, or dependencies.
+- The page route, global header, global footer, palette, type system, or dependencies.
+
+Remove from the route:
+
+- `SkillLevelSection`, including its existing video, tabs, images, and all related page body content.
+
+Render in this order:
+
+1. The Claude `weekly-rhythm` timeline.
+2. The Claude `weekly-close` section, matching its visible copy, background, CTA, and spacing.
 
 ## Desktop behavior (min-width: 761px, motion allowed)
 
@@ -37,6 +45,7 @@ Do not change:
 - Preserve the cream/sage/deep-green palette and Fraunces/Inter typography.
 - Keep the oversized Fraunces italic ghost numerals at opacity 0.16.
 - Add no cards, gold decoration, new controls, media, copy, or image sections.
+- Do not retain the current page's intro, skill-level selector, bridge image, or its alternate close treatment.
 
 ## Verification
 

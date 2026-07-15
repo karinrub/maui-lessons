@@ -38,6 +38,43 @@ export default function WeeklyJourneySections() {
     const mm = gsap.matchMedia(root)
 
     mm.add('(prefers-reduced-motion: no-preference) and (min-width: 761px)', () => {
+      const entrance = root.querySelector<HTMLElement>('.weekly-entrance')
+      const content = root.querySelector<HTMLElement>('.weekly-entrance__content')
+      const label = root.querySelector<HTMLElement>('.weekly-entrance__label')
+      const sage = root.querySelector<HTMLElement>('.weekly-entrance__sage')
+      const lines = gsap.utils.toArray<HTMLElement>('.weekly-entrance__title-line', root)
+      if (!entrance || !content || !label || !sage || lines.length === 0) return
+
+      const intro = gsap.timeline({ defaults: { ease: 'power3.out' } })
+      intro
+        .fromTo(label, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.65 })
+        .fromTo(
+          lines,
+          { yPercent: 115 },
+          { yPercent: 0, duration: 1, stagger: 0.12 },
+          0.12,
+        )
+
+      const transition = gsap.timeline({
+        scrollTrigger: {
+          trigger: entrance,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.8,
+        },
+      })
+      transition
+        .to(content, { yPercent: -20, autoAlpha: 0.12, ease: 'none' }, 0)
+        .fromTo(sage, { scaleY: 0.65 }, { scaleY: 1, ease: 'none' }, 0)
+
+      return () => {
+        intro.kill()
+        transition.scrollTrigger?.kill()
+        transition.kill()
+      }
+    })
+
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 761px)', () => {
       const stage = root.querySelector<HTMLElement>('.weekly-rhythm__stage')
       const track = root.querySelector<HTMLElement>('.weekly-rhythm__track')
       const spine = root.querySelector<HTMLElement>('.weekly-rhythm__spine-line')
@@ -147,23 +184,25 @@ export default function WeeklyJourneySections() {
 
   return (
     <div ref={rootRef} className="weekly-journey">
-      <div className="weekly-rhythm__prelude" aria-hidden="true" />
-      <section className="weekly-rhythm" aria-label="How ongoing lessons work">
-        <div className="weekly-rhythm__band" aria-hidden="true" />
-        <div className="weekly-rhythm__head">
-          <p className="weekly-rhythm__eyebrow">How it works</p>
-          <h2 className="weekly-rhythm__title">
-            <span className="weekly-rhythm__title-mask">
-              <span className="weekly-rhythm__title-line">A rhythm,</span>
+      <section className="weekly-entrance" aria-labelledby="weekly-entrance-title">
+        <div className="weekly-entrance__sage" aria-hidden="true" />
+        <div className="weekly-entrance__content">
+          <p className="weekly-entrance__label">How it works</p>
+          <h1 id="weekly-entrance-title" className="weekly-entrance__title">
+            <span className="weekly-entrance__title-mask">
+              <span className="weekly-entrance__title-line">A rhythm,</span>
             </span>
-            <span className="weekly-rhythm__title-mask">
-              <span className="weekly-rhythm__title-line weekly-rhythm__title-line--em">
+            <span className="weekly-entrance__title-mask">
+              <span className="weekly-entrance__title-line weekly-entrance__title-line--em">
                 not a routine.
               </span>
             </span>
-          </h2>
+          </h1>
         </div>
+      </section>
 
+      <section className="weekly-rhythm" aria-label="How ongoing lessons work">
+        <div className="weekly-rhythm__band" aria-hidden="true" />
         <div className="weekly-rhythm__stage">
           <span className="weekly-rhythm__spine-line" aria-hidden="true" />
           <ol className="weekly-rhythm__track">

@@ -1,41 +1,40 @@
-.weekly-rhythm__prelude {
-  height: 46vh;
-}
-
-.weekly-rhythm {
+.weekly-entrance {
   position: relative;
-  isolation: isolate;
-  padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 8vw, 7rem);
+  width: 100vw;
+  min-height: 100svh;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+  background: #f5f0e7;
 }
 
-.weekly-rhythm__band {
+.weekly-entrance__sage {
   position: absolute;
-  z-index: 0;
-  top: -140px;
-  bottom: -90px;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 42%;
+  transform-origin: bottom center;
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(160, 178, 135, 0) 0px,
-    #a0b287 120px,
-    #96aa7c 55%,
-    #8aa06f 100%
+    rgba(160, 178, 135, 0) 0%,
+    rgba(160, 178, 135, 0.62) 55%,
+    #a0b287 100%
   );
 }
 
-.weekly-rhythm__head {
-  position: relative;
+.weekly-entrance__content {
+  position: absolute;
   z-index: 1;
-  max-width: 1280px;
-  margin: 0 auto;
+  bottom: clamp(13rem, 25vh, 17rem);
+  left: 50%;
+  width: min(100%, 1280px);
   padding: 0 clamp(1.5rem, 4vw, 3rem);
+  transform: translateX(-50%);
 }
 
-.weekly-rhythm__eyebrow {
-  margin: 0 0 0.9rem;
+.weekly-entrance__label {
+  margin: 0 0 1rem;
   color: rgba(23, 53, 42, 0.6);
   font-size: clamp(0.72rem, 0.9vw, 0.8rem);
   font-weight: 600;
@@ -43,27 +42,50 @@
   text-transform: uppercase;
 }
 
-.weekly-rhythm__title {
-  margin: 0 0 clamp(2.5rem, 5vw, 4rem);
+.weekly-entrance__title {
+  margin: 0;
   color: var(--home-sage-ink);
   font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(2rem, 4.6vw, 3.9rem);
+  font-size: clamp(3rem, 6.6vw, 6.4rem);
   font-style: italic;
   font-weight: 500;
-  line-height: 1.08;
+  line-height: 0.98;
 }
 
-.weekly-rhythm__title-mask {
+.weekly-entrance__title-mask {
   display: block;
   overflow: hidden;
 }
 
-.weekly-rhythm__title-line {
+.weekly-entrance__title-line {
   display: block;
 }
 
-.weekly-rhythm__title-line--em {
-  padding-left: clamp(1.5rem, 5vw, 4.5rem);
+.weekly-entrance__title-line--em {
+  padding-left: clamp(1.75rem, 7vw, 7rem);
+}
+
+.weekly-rhythm {
+  position: relative;
+  isolation: isolate;
+  padding: 0 0 clamp(4rem, 8vw, 7rem);
+}
+
+.weekly-rhythm__band {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: -90px;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #a0b287 0,
+    #96aa7c 55%,
+    #8aa06f 100%
+  );
 }
 
 /* Base: normal document-flow timeline for mobile, reduced motion, and no JS. */
@@ -289,6 +311,26 @@
 }
 
 @media (max-width: 760px) {
+  .weekly-entrance {
+    min-height: 75svh;
+  }
+
+  .weekly-entrance__sage {
+    height: 36%;
+  }
+
+  .weekly-entrance__content {
+    bottom: clamp(4.5rem, 12vh, 6.5rem);
+  }
+
+  .weekly-entrance__title {
+    font-size: clamp(2.7rem, 14vw, 4.3rem);
+  }
+
+  .weekly-entrance__title-line--em {
+    padding-left: clamp(1rem, 8vw, 2.5rem);
+  }
+
   .weekly-rhythm__stage {
     margin-right: 1.5rem;
     margin-left: 1.5rem;

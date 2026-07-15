@@ -404,22 +404,35 @@ export default function WeeklyJourneySections() {
       </section>
 
       <section className="weekly-close" aria-label="Book an ongoing lesson">
-        <p className="weekly-close__quote">
-          Nobody learns a song in one sitting. You learn it a little every week — until one day,
-          it’s simply yours.
-        </p>
-        <p className="weekly-close__line">Ready to make it a rhythm?</p>
-        <p className="weekly-close__note">
-          Lessons meet across Kihei and Wailea, and at Maipoina Beach Park.
-        </p>
-        <div className="weekly-close__cta-wrap">
-          <Link to="/book" className="weekly-close__cta">
-            Book a lesson <span className="weekly-close__cta-arrow" aria-hidden="true">→</span>
-          </Link>
+        {/* Same closing mechanic as HomeFinale: the section above bulges down
+            into the ink field as an arch — sage here instead of the home tan. */}
+        <div className="weekly-close__arch" aria-hidden="true" />
+        <div className="weekly-close__inner">
+          <p className="weekly-close__quote">
+            Nobody learns a song in one sitting. You learn it a little every week — until one
+            day, it’s simply yours.
+          </p>
+          <p className="weekly-close__line">Ready to make it a rhythm?</p>
+          <p className="weekly-close__note">
+            Lessons meet across Kihei and Wailea, and at Maipoina Beach Park.
+          </p>
+          <div className="weekly-close__cta-wrap">
+            <Link to="/book" className="weekly-close__cta">
+              Book a lesson <span className="weekly-close__cta-arrow" aria-hidden="true">→</span>
+            </Link>
+          </div>
+          <p className="weekly-close__aside">
+            Questions first? <Link to="/faq">Read the FAQ</Link>
+          </p>
+          <nav className="weekly-close__links" aria-label="Footer navigation">
+            <Link to="/tourist-lessons">Vacation Lessons</Link>
+            <Link to="/weekly-lessons">Ongoing Lessons</Link>
+            <Link to="/about">About</Link>
+            <Link to="/faq">FAQ</Link>
+          </nav>
+          <p className="weekly-close__copyright">© {new Date().getFullYear()} Maui Lessons</p>
         </div>
-        <p className="weekly-close__aside">
-          Questions first? <Link to="/faq">Read the FAQ</Link>
-        </p>
+        <div className="weekly-close__grain" aria-hidden="true" />
       </section>
     </div>
   )

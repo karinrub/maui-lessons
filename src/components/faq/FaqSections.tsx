@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -88,12 +88,87 @@ const faqCategories: FaqCategory[] = [
   },
 ]
 
+// FAQPage structured data, generated once from the same source of truth the
+// accordion renders — eligible for rich results without a second copy.
+const faqStructuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqCategories.flatMap((category) =>
+    category.items.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  ),
+})
+
+const allFaqItems = faqCategories.flatMap((category) => category.items)
+
 export default function FaqSections() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
   const compassRef = useRef<HTMLDivElement>(null)
+  const ghostRef = useRef<HTMLSpanElement>(null)
   const [open, setOpen] = useState<string | null>('experience')
   const [activeCategory, setActiveCategory] = useState(faqCategories[0].id)
+  const [ghostWord, setGhostWord] = useState(faqCategories[0].ghostWord)
+
+  // Deep links: /faq#pricing opens that row; /faq#faq-category-booking lands
+  // on the category. Runs once, after SiteLayout's scroll-to-top.
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '')
+    if (!hash) return
+
+    const item = allFaqItems.find((i) => i.id === hash || `faq-answer-${i.id}` === hash)
+    const categoryId = item
+      ? faqCategories.find((c) => c.items.some((i) => i.id === item.id))?.id
+      : faqCategories.find((c) => c.id === hash || `faq-category-${c.id}` === hash)?.id
+    if (!categoryId) return
+
+    if (item) setOpen(item.id)
+    requestAnimationFrame(() => {
+      const target = item
+        ? document.getElementById(`faq-question-${item.id}`)?.closest('.faq-row')
+        : document.getElementById(`faq-category-${categoryId}`)
+      target?.scrollIntoView({ behavior: 'auto', block: 'start' })
+    })
+  }, [])
+
+  // Ghost word crossfade: dip out, swap, ease back — the hard text cut was
+  // the page's least designed transition.
+  useEffect(() => {
+    const next =
+      faqCategories.find((category) => category.id === activeCategory)?.ghostWord ?? 'begin'
+    if (next === ghostWord) return
+    const ghost = ghostRef.current
+    if (prefersReducedMotion || !ghost) {
+      setGhostWord(next)
+      return
+    }
+    const tween = gsap.to(ghost, {
+      opacity: 0,
+      duration: 0.22,
+      ease: 'power2.in',
+      onComplete: () => setGhostWord(next),
+    })
+    return () => {
+      tween.kill()
+    }
+  }, [activeCategory, ghostWord, prefersReducedMotion])
+
+  useLayoutEffect(() => {
+    const ghost = ghostRef.current
+    if (!ghost || prefersReducedMotion) return
+    const tween = gsap.to(ghost, {
+      opacity: 1,
+      duration: 0.45,
+      ease: 'power2.out',
+      clearProps: 'opacity',
+    })
+    return () => {
+      tween.kill()
+    }
+  }, [ghostWord, prefersReducedMotion])
 
   useLayoutEffect(() => {
     const root = rootRef.current
@@ -201,40 +276,53 @@ export default function FaqSections() {
         )
       }
 
-      // Each category: its rule draws across, then label and rows fade up
-      // in a short stagger.
+      // Each category: one timeline so the drawn rule "delivers" its content —
+      // rows start while the rule is still travelling instead of racing it
+      // from a second trigger.
       for (const category of gsap.utils.toArray<HTMLElement>('.faq-category', root)) {
-        const trigger = {
-          trigger: category,
-          start: 'top 84%',
-          toggleActions: 'play none none none' as const,
-        }
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: category,
+            start: 'top 84%',
+            toggleActions: 'play none none none',
+          },
+        })
 
         const rule = category.querySelector('.faq-category__rule')
         if (rule) {
-          gsap.fromTo(
+          tl.fromTo(
             rule,
             { scaleX: 0 },
-            {
-              scaleX: 1,
-              duration: 0.9,
-              ease: 'power3.inOut',
-              transformOrigin: 'left',
-              scrollTrigger: trigger,
-            },
+            { scaleX: 1, duration: 0.9, ease: 'power3.inOut', transformOrigin: 'left' },
+            0,
           )
         }
 
-        gsap.fromTo(
+        tl.fromTo(
           category.querySelectorAll('.faq-category__index, .faq-category__label, .faq-category__descriptor, .faq-row'),
           { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
+          0.35,
+        )
+      }
+
+      // Warm gold drift scrubbed in as the Booking category approaches — the
+      // same high-intent foreshadowing device as the weekly journey.
+      const shelf = root.querySelector('.faq-shelf')
+      const bookingCategory = root.querySelector('#faq-category-booking')
+      if (shelf && bookingCategory) {
+        gsap.fromTo(
+          shelf,
+          { '--faq-warm': 0 },
           {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            ease: 'power3.out',
-            stagger: 0.08,
-            scrollTrigger: trigger,
+            '--faq-warm': 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: bookingCategory,
+              start: 'top 92%',
+              end: 'top 38%',
+              scrub: 0.8,
+            },
           },
         )
       }
@@ -261,8 +349,20 @@ export default function FaqSections() {
     }
   }, [prefersReducedMotion])
 
+  const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, categoryId: string) => {
+    event.preventDefault()
+    const target = document.getElementById(`faq-category-${categoryId}`)
+    if (!target) return
+    target.scrollIntoView({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    })
+    window.history.replaceState(null, '', `#faq-category-${categoryId}`)
+  }
+
   return (
     <div ref={rootRef} className="faq-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqStructuredData }} />
       <section className="faq-intro" aria-label="Frequently asked questions">
         <p className="faq-intro__eyebrow">FAQ</p>
         <h1 className="faq-intro__title">
@@ -287,8 +387,8 @@ export default function FaqSections() {
       </section>
 
       <div className="faq-shelf">
-        <span className="faq-shelf__ghost" aria-hidden="true">
-          {faqCategories.find((category) => category.id === activeCategory)?.ghostWord ?? 'begin'}
+        <span ref={ghostRef} className="faq-shelf__ghost" aria-hidden="true">
+          {ghostWord}
         </span>
         <div className="faq-shelf__layout">
           <nav className="faq-category-nav" aria-label="FAQ categories">
@@ -299,6 +399,7 @@ export default function FaqSections() {
                 href={`#faq-category-${category.id}`}
                 className={`faq-category-nav__link${activeCategory === category.id ? ' is-active' : ''}`}
                 aria-current={activeCategory === category.id ? 'location' : undefined}
+                onClick={(event) => handleNavClick(event, category.id)}
               >
                 <span className="faq-category-nav__index">0{index + 1}</span>
                 <span>{category.label}</span>

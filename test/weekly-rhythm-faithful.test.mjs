@@ -15,6 +15,10 @@ const visual = await readFile(
   new URL('../src/components/weekly/WeeklyStepVisual.tsx', import.meta.url),
   'utf8',
 ).catch(() => '')
+const layout = await readFile(
+  new URL('../src/layout/SiteLayout.tsx', import.meta.url),
+  'utf8',
+)
 
 test('renders Claude’s standalone Ongoing Lessons page body', () => {
   assert.doesNotMatch(page, /SkillLevelSection/)
@@ -54,7 +58,17 @@ test('locks the full viewport desktop layout and vertical fallback', () => {
   assert.match(css, /height: 100svh/)
   assert.match(css, /flex: 0 0 88vw/)
   assert.match(css, /gap: 0/)
-  assert.match(css, /background: radial-gradient\(130% 100% at 50% 22%/)
+})
+
+test('closes with the home-finale footer treatment, no cream strip below', () => {
+  assert.match(css, /\.weekly-close__arch\s*\{[^}]*border-radius: 0 0 50% 50% \/ 0 0 100% 100%/s)
+  assert.match(css, /\.weekly-close__arch\s*\{[^}]*background: #8aa06f/s)
+  assert.match(css, /\.weekly-close\s*\{[^}]*#0d2018/s)
+  assert.match(css, /calc\(-1 \* clamp\(34px, 4vw, 64px\)\)/)
+  assert.match(css, /\.weekly-close__grain\s*\{[^}]*var\(--grain-url\)/s)
+  assert.match(tsx, /className="weekly-close__links"/)
+  assert.match(tsx, /className="weekly-close__copyright"/)
+  assert.match(layout, /isHome \|\| isWeeklyLessons \? null : <SiteFooter \/>/)
 })
 
 test('weaves the three approved lesson images into the journey', () => {

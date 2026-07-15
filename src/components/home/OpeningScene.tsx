@@ -99,7 +99,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
   const focusScrollStateRef = useRef<FocusScrollState | null>(null)
   const isFocusModeRef = useRef(false)
   const introCompleteRef = useRef(false)
-  const isMutedRef = useRef(false)
+  const isMutedRef = useRef(true)
   const hasPlaybackStartedRef = useRef(false)
   const isVideoVisibleRef = useRef(false)
   const isFocusAvailableRef = useRef(false)
@@ -117,18 +117,25 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
   const [landscapeReady, setLandscapeReady] = useState(false)
   const [landscapeVisible, setLandscapeVisible] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useState(true)
   const [isFocusMode, setIsFocusMode] = useState(false)
   const [hasPlaybackStarted, setHasPlaybackStarted] = useState(false)
   const [isVideoVisible, setIsVideoVisible] = useState(false)
   const [isFocusAvailable, setIsFocusAvailable] = useState(false)
   const [videoLoadTimedOut, setVideoLoadTimedOut] = useState(false)
+  const [introComplete, setIntroComplete] = useState(false)
 
   // The hero registration effect gates on this instead of raw videoReady so
   // a video that becomes ready AFTER the fallback timeout doesn't re-run the
   // effect (its cleanup would tear down both hero and deck triggers via the
-  // hook's shared teardown, with no path to rebuild them).
-  const heroMediaSettled = videoReady || videoLoadTimedOut
+  // hook's shared teardown, with no path to rebuild them). It also waits for
+  // the load-time intro fade to finish (not just for the video to decode):
+  // registering the scroll-scrub ScrollTrigger renders its timeline at
+  // progress 0 immediately, which captures the frame/video's *current*
+  // opacity as that resting state. If the intro fade is still mid-flight,
+  // that capture freezes the frame at whatever fractional opacity the fade
+  // had reached, permanently hiding the video until the user scrolls.
+  const heroMediaSettled = introComplete || videoLoadTimedOut
 
   const updateMutedState = useCallback((muted: boolean) => {
     const video = videoRef.current
@@ -180,10 +187,13 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
 
     autoplayAttemptedRef.current = true
 
-    video.defaultMuted = false
-    video.muted = false
+    // The initial hero play must be muted. Browsers can block an unmuted
+    // autoplay request before a frame has been decoded, which otherwise
+    // prevents the load intro from ever revealing the video on localhost.
+    video.defaultMuted = true
+    video.muted = true
     video.volume = 1
-    updateMutedState(false)
+    updateMutedState(true)
 
     void video
       .play()
@@ -193,11 +203,6 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
       })
       .catch(() => {
         autoplayBlockedRef.current = true
-        updateMutedState(true)
-
-        void video.play().then(markPlaybackStarted).catch(() => {
-          // Autoplay policy can still block playback; the visible scene remains renderable.
-        })
       })
   }, [markPlaybackStarted, updateMutedState])
 
@@ -244,6 +249,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
 
   const markIntroComplete = useCallback(() => {
     introCompleteRef.current = true
+    setIntroComplete(true)
   }, [])
 
   // Scroll-controlled audio: sound plays while the video is the featured
@@ -1034,9 +1040,10 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
               className="opening-scene__video"
               src={heroVideo}
               poster={landscapeImage}
+              autoPlay
               muted={isMuted}
               playsInline
-              preload="metadata"
+              preload="auto"
               tabIndex={isFocusAvailable || isFocusMode ? 0 : -1}
               role={isFocusAvailable || isFocusMode ? 'button' : undefined}
               aria-label={
@@ -1047,6 +1054,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
                     : 'Ukulele lesson video'
               }
               onLoadedMetadata={handleVideoLoadedMetadata}
+              onLoadedData={handleVideoCanPlay}
               onCanPlay={handleVideoCanPlay}
               onPlay={handleVideoPlay}
               onEnded={handleVideoEnded}

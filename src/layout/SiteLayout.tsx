@@ -13,6 +13,7 @@ export type SiteLayoutOutletContext = {
 export default function SiteLayout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const isWeeklyLessons = location.pathname === '/weekly-lessons'
   const isTouristLessons = location.pathname === '/tourist-lessons'
   const isAbout = location.pathname === '/about'
   const isCinematic = isTouristLessons || isAbout
@@ -53,9 +54,10 @@ export default function SiteLayout() {
           </main>
         </PageTransition>
       </div>
-      {/* Home ends on HomeFinale, which already carries this same footer
-          content (nav links + copyright) inside its closing band. */}
-      {isHome ? null : <SiteFooter />}
+      {/* Home ends on HomeFinale and Ongoing on its weekly-close band — both
+          already carry this same footer content (nav links + copyright), so a
+          cream SiteFooter strip below would break their ink fields. */}
+      {isHome || isWeeklyLessons ? null : <SiteFooter />}
     </div>
   )
 }

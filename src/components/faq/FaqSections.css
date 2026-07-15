@@ -104,6 +104,14 @@
   border: clamp(0.7rem, 1.35vw, 1.2rem) solid rgba(184, 200, 160, 0.74);
 }
 
+/* Mid widths: compass sits partly behind the title — quiet the rings so the
+   italic Fraunces stays effortless to read. */
+@media (min-width: 761px) and (max-width: 1140px) {
+  .faq-intro__compass-window {
+    opacity: 0.55;
+  }
+}
+
 /* ── Sage shelf ──
    The accordion body sits on the site's sage material: a full-bleed band
    with the same generous rounded top corners as the weekly shelf, so the
@@ -201,6 +209,29 @@
   background: linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
 }
 
+/* Warm gold drift, scrubbed in from the bottom as the Booking category
+   approaches — GSAP drives --faq-warm. Gold stays reserved for high intent;
+   heading toward "book" qualifies. */
+.faq-shelf::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  border-radius: clamp(28px, 4vw, 56px) clamp(28px, 4vw, 56px) 0 0;
+  pointer-events: none;
+  opacity: var(--faq-warm, 0);
+  background: linear-gradient(
+    0deg,
+    rgba(211, 154, 66, 0.16) 0%,
+    rgba(211, 154, 66, 0.05) 45%,
+    rgba(211, 154, 66, 0) 72%
+  );
+}
+
 /* Oversized ghost word drifting counter-scroll behind the accordion —
    quiet cousin of the home deck's "experiences". */
 .faq-shelf__ghost {
@@ -223,6 +254,7 @@
 .faq-category {
   position: relative;
   display: grid;
+  scroll-margin-top: clamp(5.5rem, 12vh, 8.5rem);
   grid-template-columns: clamp(110px, 18%, 170px) 1fr;
   gap: clamp(1.5rem, 2.8vw, 2.5rem);
   padding: clamp(1.75rem, 3.5vw, 2.75rem) 0;
@@ -280,6 +312,7 @@
 .faq-row {
   position: relative;
   border-bottom: 1px solid rgba(23, 53, 42, 0.16);
+  scroll-margin-top: clamp(5.5rem, 12vh, 8.5rem);
   transition: background-color 0.35s ease;
 }
 
@@ -369,14 +402,24 @@
   transform: rotate(45deg);
 }
 
+/* Asymmetric timing: open unhurried (0.42s), close snappy (0.3s) — symmetric
+   collapse reads sluggish. `visibility` flips after the collapse finishes so
+   closed answers leave the accessibility tree (0fr only hides visually). */
 .faq-row__answer {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+    visibility 0s linear 0.3s;
 }
 
 .faq-row.is-open .faq-row__answer {
   grid-template-rows: 1fr;
+  visibility: visible;
+  transition:
+    grid-template-rows 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+    visibility 0s;
 }
 
 .faq-row__answer-clip {
@@ -396,27 +439,28 @@
   text-transform: uppercase;
 }
 
-/* Open answer sits on a soft cream sheet — the site's card material laid
-   onto the sage, echoing the deck cards and booking panels. */
+/* Answer sits directly on the sage material — kicker + gold rule carry the
+   framing; the cream sheet was a third frame too many. Text fade is delayed
+   only on open; on close it drops fast so it never lingers over the collapse. */
 .faq-row__answer-text {
   max-width: 58ch;
   margin: 0 0 clamp(1.1rem, 2vw, 1.5rem);
-  padding: clamp(0.9rem, 1.6vw, 1.2rem) clamp(1.1rem, 2vw, 1.5rem);
-  background: rgba(251, 247, 238, 0.6);
-  border-radius: clamp(10px, 1.2vw, 16px);
   color: rgba(23, 53, 42, 0.8);
   font-size: clamp(0.95rem, 1.15vw, 1.05rem);
   line-height: 1.65;
   opacity: 0;
   transform: translateY(6px);
   transition:
-    opacity 0.34s ease 0.08s,
-    transform 0.34s ease 0.08s;
+    opacity 0.18s ease,
+    transform 0.18s ease;
 }
 
 .faq-row.is-open .faq-row__answer-text {
   opacity: 1;
   transform: translateY(0);
+  transition:
+    opacity 0.34s ease 0.08s,
+    transform 0.34s ease 0.08s;
 }
 
 .faq-close {
@@ -532,7 +576,9 @@
 
   .faq-category-nav {
     position: sticky;
-    top: 0;
+    /* Pin below the fixed site header (same clearance as .page-main) so the
+       pills never slide under the logo/menu text. */
+    top: clamp(58px, 9svh, 86px);
     z-index: 4;
     flex-direction: row;
     gap: 0;
@@ -626,9 +672,22 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .faq-row,
   .faq-row__answer,
   .faq-row__answer-text,
-  .faq-row__icon {
+  .faq-row__icon,
+  .faq-row__question-text,
+  .faq-category-nav__link,
+  .faq-category-nav__link::before,
+  .faq-close__cta,
+  .faq-close__cta-arrow {
     transition: none;
+  }
+
+  .faq-row__question:hover .faq-row__question-text,
+  .faq-category-nav__link:hover,
+  .faq-category-nav__link:focus-visible,
+  .faq-category-nav__link.is-active {
+    transform: none;
   }
 }

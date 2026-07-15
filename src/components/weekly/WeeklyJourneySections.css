@@ -151,6 +151,65 @@
   user-select: none;
 }
 
+.weekly-step__visual {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 22rem);
+  aspect-ratio: 1;
+  margin: 0 0 1.75rem;
+  pointer-events: none;
+}
+
+.weekly-step__ring,
+.weekly-step__lens {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 50%;
+}
+
+.weekly-step__ring {
+  z-index: 0;
+  border-style: solid;
+}
+
+.weekly-step__ring--outer {
+  inset: 0;
+  border-width: clamp(0.8rem, 1.7vw, 1.45rem);
+  border-color: var(--weekly-ring-outer);
+}
+
+.weekly-step__ring--middle {
+  inset: 10%;
+  border-width: clamp(0.7rem, 1.45vw, 1.2rem);
+  border-color: var(--weekly-ring-middle);
+}
+
+.weekly-step__ring--inner {
+  inset: 20%;
+  border-width: clamp(0.6rem, 1.2vw, 1rem);
+  border-color: var(--weekly-ring-inner);
+}
+
+.weekly-step__lens {
+  z-index: 1;
+  inset: 18%;
+  overflow: hidden;
+  border: 1px solid rgba(245, 240, 231, 0.46);
+  background: rgba(245, 240, 231, 0.2);
+  box-shadow: 0 1.4rem 3rem rgba(35, 60, 39, 0.2);
+}
+
+.weekly-step__image {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
 .weekly-step__content {
   position: relative;
   z-index: 1;
@@ -159,9 +218,11 @@
 .weekly-step__title {
   margin: 0 0 0.7rem;
   color: var(--home-sage-ink);
-  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.7rem, 2.6vw, 2.3rem);
   font-weight: 500;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
+  line-height: 1.12;
 }
 
 .weekly-step__body {
@@ -172,8 +233,9 @@
   line-height: 1.65;
 }
 
-@media (min-width: 761px) and (prefers-reduced-motion: no-preference) {
-  .weekly-rhythm__stage {
+@media (prefers-reduced-motion: no-preference) {
+  .weekly-journey--horizontal .weekly-rhythm__stage {
+    --weekly-warm: 0;
     max-width: none;
     width: 100vw;
     height: 100vh;
@@ -184,8 +246,24 @@
     background: linear-gradient(180deg, #9aac81 0%, #93a778 48%, #8aa06f 100%);
   }
 
-  .weekly-rhythm__spine-line {
-    top: 46%;
+  /* Warm gold drift, scrubbed toward the final "hear it add up" chapter. */
+  .weekly-journey--horizontal .weekly-rhythm__stage::after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--weekly-warm, 0);
+    background: linear-gradient(
+      180deg,
+      rgba(211, 154, 66, 0.14) 0%,
+      rgba(211, 154, 66, 0.06) 42%,
+      rgba(138, 160, 111, 0) 78%
+    );
+  }
+
+  .weekly-journey--horizontal .weekly-rhythm__spine-line {
+    top: 52%;
     right: clamp(2rem, 6vw, 6rem);
     bottom: auto;
     left: clamp(2rem, 6vw, 6rem);
@@ -194,7 +272,7 @@
     transform-origin: left center;
   }
 
-  .weekly-rhythm__track {
+  .weekly-journey--horizontal .weekly-rhythm__track {
     flex-direction: row;
     flex-wrap: nowrap;
     height: 100%;
@@ -203,35 +281,70 @@
     will-change: transform;
   }
 
-  .weekly-step {
+  .weekly-journey--horizontal .weekly-step {
+    /* Copy sits opposite the visual so the asymmetry reads deliberate. */
+    --weekly-copy-x: 57%;
     flex: 0 0 min(72vw, 880px);
     height: 100%;
   }
 
-  .weekly-step__dot {
-    top: 46%;
+  .weekly-journey--horizontal .weekly-step:nth-child(2) {
+    --weekly-copy-x: 43%;
+  }
+
+  .weekly-journey--horizontal .weekly-step:nth-child(3) {
+    --weekly-copy-x: 56%;
+  }
+
+  .weekly-journey--horizontal .weekly-step__dot {
+    top: 52%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
 
-  .weekly-step__numeral {
-    top: calc(46% + 0.4rem);
-    left: 50%;
+  .weekly-journey--horizontal .weekly-step__numeral {
+    top: calc(52% + 0.4rem);
+    left: var(--weekly-copy-x);
     width: min(44ch, 78%);
-    transform: translateX(-50%);
+    /* -0.35em gives the ghost numeral clearance from the title's first glyph. */
+    transform: translateX(calc(-50% - 0.35em));
     font-size: clamp(4.5rem, 8vw, 7rem);
     text-align: left;
+  }
+
+  .weekly-journey--horizontal .weekly-step__visual {
+    --weekly-visual-x: 38%;
+    position: absolute;
+    top: clamp(4.75rem, 9vh, 5.5rem);
+    left: var(--weekly-visual-x);
+    width: clamp(17rem, 25vw, 22rem);
+    margin: 0;
+    transform: translateX(-50%);
+  }
+
+  .weekly-journey--horizontal .weekly-step:nth-child(2) .weekly-step__visual {
+    --weekly-visual-x: 62%;
+  }
+
+  .weekly-journey--horizontal .weekly-step:nth-child(3) .weekly-step__visual {
+    --weekly-visual-x: 42%;
+  }
+
+  .weekly-journey--horizontal .weekly-step__ring {
     will-change: transform, opacity;
   }
 
-  .weekly-step__content {
+  .weekly-journey--horizontal .weekly-step__lens {
+    will-change: transform, opacity, clip-path;
+  }
+
+  .weekly-journey--horizontal .weekly-step__content {
     position: absolute;
-    top: calc(46% + 2.6rem);
-    left: 50%;
+    top: calc(52% + 2.6rem);
+    left: var(--weekly-copy-x);
     width: min(44ch, 78%);
     transform: translateX(-50%);
     text-align: left;
-    will-change: transform, opacity;
   }
 }
 
@@ -345,5 +458,57 @@
 
   .weekly-step__numeral {
     top: -0.4em;
+  }
+}
+
+@media (max-width: 760px) and (prefers-reduced-motion: no-preference) {
+  .weekly-journey--horizontal .weekly-rhythm__stage {
+    height: 100svh;
+    margin: 0;
+    margin-left: calc(50% - 50vw);
+  }
+
+  .weekly-journey--horizontal .weekly-rhythm__track {
+    gap: 0;
+    padding-right: 6vw;
+    padding-left: 6vw;
+  }
+
+  .weekly-journey--horizontal .weekly-step,
+  .weekly-journey--horizontal .weekly-step:nth-child(2),
+  .weekly-journey--horizontal .weekly-step:nth-child(3) {
+    --weekly-copy-x: 50%;
+    flex: 0 0 88vw;
+  }
+
+  .weekly-journey--horizontal .weekly-step__dot {
+    top: 46%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .weekly-journey--horizontal .weekly-step__numeral,
+  .weekly-journey--horizontal .weekly-step__content {
+    width: 82%;
+  }
+
+  .weekly-journey--horizontal .weekly-rhythm__spine-line {
+    top: 46%;
+  }
+
+  .weekly-journey--horizontal .weekly-step__numeral {
+    top: calc(46% + 0.4rem);
+  }
+
+  .weekly-journey--horizontal .weekly-step__content {
+    top: calc(46% + 2.6rem);
+  }
+
+  .weekly-journey--horizontal .weekly-step__visual,
+  .weekly-journey--horizontal .weekly-step:nth-child(2) .weekly-step__visual,
+  .weekly-journey--horizontal .weekly-step:nth-child(3) .weekly-step__visual {
+    --weekly-visual-x: 50%;
+    top: clamp(3.75rem, 8svh, 5rem);
+    width: min(70vw, 17rem);
   }
 }

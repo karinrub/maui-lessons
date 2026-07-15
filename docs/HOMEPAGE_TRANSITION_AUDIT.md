@@ -1,3 +1,5 @@
+> **RESOLVED — July 15 2026.** The root cause named here (issues 1/2/3/6: two independently-pinned sections with no shared orchestrator, synced via a `MutationObserver`/`data-intro-complete` race) was fixed by `src/hooks/useHomeScrollSequence.ts` — confirmed live: it is the single authority that creates the hero and deck `ScrollTrigger`s together once both register, then runs one shared refresh. The `MutationObserver`/`data-intro-complete` pattern this audit describes no longer exists in the codebase. Kept for history/context on why that hook exists; do not treat this as an open bug.
+
 # Homepage Transition Audit: OpeningScene → StackedServicesDeck
 
 Repository note: this project is now a local Git repository connected to `origin` at `https://github.com/karinrub/maui-lessons.git`. The connected GitHub Pages URL is `https://karinrub.github.io/maui-lessons/`. The deployment source path is `/Users/karinrubin/Developer/maui-lessons`.

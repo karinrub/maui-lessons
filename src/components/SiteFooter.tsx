@@ -6,6 +6,7 @@ export default function SiteFooter() {
   return (
     <footer className="site-footer">
       <nav aria-label="Footer navigation">
+        <Link to="/">Home</Link>
         <Link to="/tourist-lessons">Vacation Lessons</Link>
         <Link to="/weekly-lessons">Ongoing Lessons</Link>
         <Link to="/about">About</Link>

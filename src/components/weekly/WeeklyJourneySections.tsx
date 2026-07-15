@@ -425,6 +425,7 @@ export default function WeeklyJourneySections() {
             Questions first? <Link to="/faq">Read the FAQ</Link>
           </p>
           <nav className="weekly-close__links" aria-label="Footer navigation">
+            <Link to="/">Home</Link>
             <Link to="/tourist-lessons">Vacation Lessons</Link>
             <Link to="/weekly-lessons">Ongoing Lessons</Link>
             <Link to="/about">About</Link>

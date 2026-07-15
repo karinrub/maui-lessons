@@ -1,3 +1,5 @@
+> **STALE — DONE, July 15 2026.** All 5 tasks below shipped and merged to `main` (see `.superpowers/sdd/progress.md`, `src/components/home/StackedServicesDeck.tsx`, `MeetAaron.tsx`, `HomeFinale.tsx` — all live per `CLAUDE.md`). Kept for history; do not re-execute.
+
 # Handoff — Maui Lessons home page awwwards redesign
 
 ## Repo / branch

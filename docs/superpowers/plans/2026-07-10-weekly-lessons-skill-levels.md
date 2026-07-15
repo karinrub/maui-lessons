@@ -1,3 +1,5 @@
+> **SHIPPED, THEN SUPERSEDED.** `SkillLevelSection.tsx` was built per this plan and shipped, then dropped from the page entirely in the 2026-07-15 `WeeklyJourneySections.tsx` redesign (see `docs/superpowers/specs/2026-07-15-weekly-journey-polish-design.md`). The file still exists in the tree but is not imported/rendered anywhere — confirmed dead code as of 2026-07-15. The Beginner/Intermediate/Advanced pill selector it held was not carried into the redesign. Kept for history; do not treat as a live target.
+
 # Ongoing Lessons Skill-Level Section Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

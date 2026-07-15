@@ -1,8 +1,6 @@
-/* ── The Sage Descent ──
-   These two sections continue the skill shelf's sage and deepen it toward
-   the page's deep-green close, so the whole route reads as one material
-   that darkens as the story goes deeper. Each band's ::before overlaps the
-   previous section with a transparent-to-opaque fade — no hairline seams. */
+.weekly-rhythm__prelude {
+  height: 46vh;
+}
 
 .weekly-rhythm {
   position: relative;
@@ -10,19 +8,15 @@
   padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(4rem, 8vw, 7rem);
 }
 
-/* Full-bleed sage that starts transparent over the shelf band above it,
-   turns opaque before the section's own box begins, then deepens. Extends
-   below the section so the close band's rounded top corners reveal sage,
-   not the cream page background. */
-.weekly-rhythm::before {
-  content: '';
+.weekly-rhythm__band {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   top: -140px;
   bottom: -90px;
   left: 50%;
   width: 100vw;
   transform: translateX(-50%);
+  pointer-events: none;
   background: linear-gradient(
     180deg,
     rgba(160, 178, 135, 0) 0px,
@@ -30,6 +24,14 @@
     #96aa7c 55%,
     #8aa06f 100%
   );
+}
+
+.weekly-rhythm__head {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
 }
 
 .weekly-rhythm__eyebrow {
@@ -58,73 +60,64 @@
 
 .weekly-rhythm__title-line {
   display: block;
-  will-change: transform;
 }
 
 .weekly-rhythm__title-line--em {
   padding-left: clamp(1.5rem, 5vw, 4.5rem);
 }
 
-/* Timeline: a drawn spine on the left, steps hanging off it. */
-.weekly-rhythm__steps {
+/* Base: normal document-flow timeline for mobile, reduced motion, and no JS. */
+.weekly-rhythm__stage {
   position: relative;
-  display: flex;
-  gap: clamp(1.5rem, 3.5vw, 3rem);
+  z-index: 1;
   max-width: 880px;
-  /* Steps step in from under the title's indented second line, continuing
-     the diagonal descent across the band instead of hugging the left rail. */
-  margin-left: clamp(0px, 16vw, 300px);
-}
-
-.weekly-rhythm__spine {
-  flex: 0 0 2px;
-  position: relative;
+  margin: 0 auto 0 clamp(1.5rem, 16vw, 300px);
+  padding-left: 2rem;
 }
 
 .weekly-rhythm__spine-line {
   position: absolute;
-  inset: 0.4rem 0;
-  display: block;
+  z-index: 0;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  left: 2rem;
   width: 2px;
-  background: rgba(23, 53, 42, 0.34);
   border-radius: 2px;
-  will-change: transform;
+  background: rgba(23, 53, 42, 0.34);
 }
 
-.weekly-rhythm__list {
+.weekly-rhythm__track {
+  position: relative;
+  z-index: 1;
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
   gap: clamp(2.5rem, 5.5vw, 4.5rem);
   margin: 0;
-  padding: 0;
+  padding: 0 0 0 1.5rem;
   list-style: none;
 }
 
 .weekly-step {
   position: relative;
-  padding-left: clamp(0.25rem, 1vw, 0.75rem);
 }
 
-/* Milestone dot sits back on the spine itself. */
 .weekly-step__dot {
   position: absolute;
+  z-index: 2;
   top: 0.42em;
-  left: calc(-1 * clamp(1.5rem, 3.5vw, 3rem) - 6px);
+  left: calc(-1.5rem - 6px);
   width: 14px;
   height: 14px;
-  background: var(--home-sage-ink);
   border-radius: 50%;
+  background: var(--home-sage-ink);
   box-shadow: 0 0 0 5px rgba(184, 200, 160, 0.45);
 }
 
-/* Oversized ghost numeral floating behind the step copy — quieter cousin of
-   the vacation collage's solid numerals. GSAP settles it to 0.16 alpha. */
 .weekly-step__numeral {
   position: absolute;
+  z-index: 0;
   top: -0.55em;
-  left: clamp(-0.5rem, -0.5vw, -0.25rem);
-  z-index: -1;
+  left: -0.5rem;
   color: var(--home-sage-ink);
   opacity: 0.16;
   font-family: 'Fraunces', Georgia, serif;
@@ -134,6 +127,11 @@
   line-height: 1;
   pointer-events: none;
   user-select: none;
+}
+
+.weekly-step__content {
+  position: relative;
+  z-index: 1;
 }
 
 .weekly-step__title {
@@ -152,179 +150,148 @@
   line-height: 1.65;
 }
 
-/* ── Deep-green close ──
-   Rounded top and bottom corners bookend the skill shelf's rounded top: the
-   page ends as a nested stack of shelves, cream → sage → deep green. */
+@media (min-width: 761px) and (prefers-reduced-motion: no-preference) {
+  .weekly-rhythm__stage {
+    max-width: none;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    margin-left: calc(50% - 50vw);
+    padding: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, #9aac81 0%, #93a778 48%, #8aa06f 100%);
+  }
+
+  .weekly-rhythm__spine-line {
+    top: 46%;
+    right: clamp(2rem, 6vw, 6rem);
+    bottom: auto;
+    left: clamp(2rem, 6vw, 6rem);
+    width: auto;
+    height: 2px;
+    transform-origin: left center;
+  }
+
+  .weekly-rhythm__track {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100%;
+    padding-right: calc((100vw - min(72vw, 880px)) / 2);
+    padding-left: calc((100vw - min(72vw, 880px)) / 2);
+    will-change: transform;
+  }
+
+  .weekly-step {
+    flex: 0 0 min(72vw, 880px);
+    height: 100%;
+  }
+
+  .weekly-step__dot {
+    top: 46%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .weekly-step__numeral {
+    top: calc(46% + 0.4rem);
+    left: 50%;
+    width: min(44ch, 78%);
+    transform: translateX(-50%);
+    font-size: clamp(4.5rem, 8vw, 7rem);
+    text-align: left;
+    will-change: transform, opacity;
+  }
+
+  .weekly-step__content {
+    position: absolute;
+    top: calc(46% + 2.6rem);
+    left: 50%;
+    width: min(44ch, 78%);
+    transform: translateX(-50%);
+    text-align: left;
+    will-change: transform, opacity;
+  }
+}
+
 .weekly-close {
   position: relative;
-  isolation: isolate;
-  margin-top: clamp(1rem, 2.5vw, 2rem);
-  padding: clamp(4rem, 8vw, 7rem) 0 clamp(3.5rem, 7vw, 6rem);
+  margin-top: -1px;
+  padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 3rem) clamp(4rem, 8vw, 7rem);
+  border-top-left-radius: clamp(28px, 4vw, 52px);
+  border-top-right-radius: clamp(28px, 4vw, 52px);
+  background: radial-gradient(130% 100% at 50% 22%, #2c4c36 0%, #1c3325 55%, #14261b 100%);
+  color: #f5f0e7;
   text-align: center;
 }
 
-.weekly-close::before {
-  content: '';
-  position: absolute;
-  z-index: -2;
-  inset: 0;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-  border-radius: clamp(28px, 4vw, 56px);
-  background: var(--home-sage-ink);
-}
-
-/* Pool of sage light behind the CTA — same device as the home deck's
-   radial lift, inverted for a dark field. */
-.weekly-close::after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-  border-radius: clamp(28px, 4vw, 56px);
-  background: radial-gradient(
-    70% 55% at 50% 78%,
-    rgba(184, 200, 160, 0.18) 0%,
-    rgba(184, 200, 160, 0) 68%
-  );
-  pointer-events: none;
-}
-
 .weekly-close__quote {
-  margin: 0 auto clamp(3rem, 6vw, 5rem);
-  max-width: 30ch;
-  color: rgba(250, 245, 238, 0.94);
+  max-width: 22ch;
+  margin: 0 auto;
+  color: #f3efe4;
   font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(1.55rem, 3.4vw, 2.9rem);
+  font-size: clamp(1.75rem, 3.6vw, 3.1rem);
   font-style: italic;
   font-weight: 500;
-  line-height: 1.28;
-}
-
-.weekly-close__quote-line {
-  display: block;
-  overflow: hidden;
-}
-
-.weekly-close__quote-line-inner {
-  display: block;
-  will-change: transform;
-}
-
-.weekly-close__cta-wrap {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(1.1rem, 2.5vw, 1.6rem);
+  line-height: 1.18;
 }
 
 .weekly-close__line {
-  margin: 0;
-  color: rgba(250, 245, 238, 0.9);
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  margin: clamp(3rem, 6vw, 5rem) 0 0;
+  color: #eef0e2;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
   font-style: italic;
-  font-weight: 600;
-  line-height: 1.2;
+  font-weight: 500;
 }
 
 .weekly-close__note {
-  margin: -0.4rem 0 0;
-  max-width: 34rem;
-  color: rgba(250, 245, 238, 0.68);
-  font-size: clamp(0.85rem, 1vw, 0.95rem);
-  line-height: 1.6;
-  text-wrap: balance;
+  margin: 1rem 0 0;
+  color: rgba(238, 240, 226, 0.72);
+  font-size: clamp(0.95rem, 1.1vw, 1.05rem);
+}
+
+.weekly-close__cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin: clamp(2rem, 4vw, 2.75rem) 0 0;
 }
 
 .weekly-close__cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: clamp(0.9rem, 1.6vw, 1.15rem) clamp(1.8rem, 3.4vw, 2.6rem);
-  border: 1px solid rgba(184, 125, 44, 0.28);
+  gap: 0.7rem;
+  padding: 1rem 1.9rem;
   border-radius: 999px;
-  background: linear-gradient(180deg, #fffaf4 0%, #fbf7ee 68%, #f4ead8 100%);
-  color: var(--home-sage-ink);
-  font-size: 0.9rem;
+  background: #f5f0e7;
+  color: #1f1d18;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+  font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-decoration: none;
   text-transform: uppercase;
-  box-shadow:
-    0 18px 40px -18px rgba(0, 0, 0, 0.55),
-    inset 0 -2px 0 rgba(184, 125, 44, 0.16);
-  transition:
-    transform 0.24s ease,
-    box-shadow 0.24s ease;
-}
-
-.weekly-close__cta:hover,
-.weekly-close__cta:focus-visible {
-  transform: translateY(-2px);
-  box-shadow:
-    0 24px 48px -18px rgba(0, 0, 0, 0.65),
-    inset 0 -2px 0 rgba(184, 125, 44, 0.22);
-}
-
-.weekly-close__cta:focus-visible {
-  outline: 1px solid rgba(250, 245, 238, 0.78);
-  outline-offset: 0.3rem;
 }
 
 .weekly-close__cta-arrow {
-  /* Book-page gold (lighter cut for dark surfaces), foreshadowed sitewide. */
-  color: var(--maui-gold-light);
-  transition: transform 0.22s ease;
-}
-
-.weekly-close__cta:hover .weekly-close__cta-arrow {
-  transform: translateX(0.25rem);
+  color: var(--maui-gold);
 }
 
 .weekly-close__aside {
-  margin: 0;
-  color: rgba(250, 245, 238, 0.55);
-  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  margin: 1.4rem 0 0;
+  color: rgba(238, 240, 226, 0.72);
+  font-size: 0.95rem;
 }
 
 .weekly-close__aside a {
-  color: rgba(250, 245, 238, 0.85);
+  color: #eef0e2;
   text-decoration: underline;
-  text-underline-offset: 0.2em;
-  transition: color 0.22s ease;
-}
-
-.weekly-close__aside a:hover,
-.weekly-close__aside a:focus-visible {
-  color: #faf5ee;
-}
-
-/* Same grain material as the deck band, hero arch, and home finale. */
-.weekly-close__grain {
-  position: absolute;
-  inset: 0;
-  left: 50%;
-  width: 100vw;
-  transform: translateX(-50%);
-  border-radius: clamp(28px, 4vw, 56px);
-  background-image: var(--grain-url);
-  background-repeat: repeat;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  pointer-events: none;
+  text-underline-offset: 3px;
 }
 
 @media (max-width: 760px) {
-  .weekly-rhythm__steps {
-    gap: 1.4rem;
-    margin-left: 0.4rem;
+  .weekly-rhythm__stage {
+    margin-right: 1.5rem;
+    margin-left: 1.5rem;
   }
 
   .weekly-step__dot {
@@ -336,9 +303,5 @@
 
   .weekly-step__numeral {
     top: -0.4em;
-  }
-
-  .weekly-close__quote {
-    max-width: 24ch;
   }
 }

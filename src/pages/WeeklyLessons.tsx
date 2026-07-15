@@ -1,6 +1,5 @@
 import useDocumentMeta from '../hooks/useDocumentMeta'
 import useDocumentTitle from '../hooks/useDocumentTitle'
-import SkillLevelSection from '../components/weekly/SkillLevelSection'
 import WeeklyJourneySections from '../components/weekly/WeeklyJourneySections'
 
 export default function WeeklyLessons() {
@@ -12,10 +11,5 @@ export default function WeeklyLessons() {
     path: '/weekly-lessons',
   })
 
-  return (
-    <>
-      <SkillLevelSection />
-      <WeeklyJourneySections />
-    </>
-  )
+  return <WeeklyJourneySections />
 }

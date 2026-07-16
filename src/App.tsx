@@ -1,11 +1,16 @@
+import { lazy } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SiteLayout from './layout/SiteLayout'
-import About from './pages/About'
-import Book from './pages/Book'
-import FAQ from './pages/FAQ'
 import Home from './pages/Home'
-import TouristLessons from './pages/TouristLessons'
-import WeeklyLessons from './pages/WeeklyLessons'
+
+// Home stays eager: it's the landing route and its prerendered HTML would
+// otherwise wait on an extra chunk round-trip before becoming interactive.
+// Everything else splits per route (SiteLayout owns the Suspense boundary).
+const About = lazy(() => import('./pages/About'))
+const Book = lazy(() => import('./pages/Book'))
+const FAQ = lazy(() => import('./pages/FAQ'))
+const TouristLessons = lazy(() => import('./pages/TouristLessons'))
+const WeeklyLessons = lazy(() => import('./pages/WeeklyLessons'))
 
 export default function App() {
   return (

@@ -182,10 +182,24 @@ export default function AaronStorySections() {
          for the scroll to settle and glide to the nearest chapter through
          Lenis itself. Targets come from the horizontal trigger so they
          land exactly on chapter positions; the pin's end is the final
-         resting point after the hold. */
+         resting point after the hold.
+
+         The snap is direction-biased: it only ever completes the journey
+         the user started, never pulls the page back against their last
+         input — a nearest-target snap yanked the scroll backwards whenever
+         a wheel burst crossed a chapter midpoint, which read as the page
+         resisting the wheel. */
       let snapTimer: number | undefined
+      let lastScroll = window.scrollY
+      let scrollDirection = 1
 
       const scheduleSnap = () => {
+        const current = window.scrollY
+        if (current !== lastScroll) {
+          scrollDirection = current > lastScroll ? 1 : -1
+          lastScroll = current
+        }
+
         window.clearTimeout(snapTimer)
         snapTimer = window.setTimeout(() => {
           const hst = horizontalTween.scrollTrigger
@@ -208,16 +222,30 @@ export default function AaronStorySections() {
             hst.end,
             pinTrigger.end,
           ]
-          const nearest = targets.reduce((a, b) =>
+          /* Prefer targets ahead of the travel direction; fall back to the
+             plain nearest only when already past the last one that way. */
+          const ahead = targets.filter((t) =>
+            scrollDirection > 0 ? t >= scroll : t <= scroll,
+          )
+          const pool = ahead.length > 0 ? ahead : targets
+          const nearest = pool.reduce((a, b) =>
             Math.abs(b - scroll) < Math.abs(a - scroll) ? b : a,
           )
 
-          if (Math.abs(nearest - scroll) < 2) {
+          const distance = Math.abs(nearest - scroll)
+
+          if (distance < 2) {
             return
           }
 
+          /* Glide time scales with how far there is left to travel, so a
+             short settle doesn't take the same near-second as a full
+             chapter and the sequence stays responsive under the wheel. */
+          const chapterSpan = travel / 3
+          const durationScale = Math.min(Math.max(distance / chapterSpan, 0.35), 1)
+
           lenis.scrollTo(nearest, {
-            duration: isMobile ? 1.15 : 0.9,
+            duration: (isMobile ? 1.15 : 0.9) * durationScale,
             easing: (t) => 1 - Math.pow(1 - t, 3),
           })
         }, isMobile ? 300 : 180)
@@ -256,7 +284,13 @@ export default function AaronStorySections() {
         if (index > 0 && revealTarget) {
           /* opacity (not autoAlpha) so links inside unrevealed panels stay
              keyboard-focusable — visibility:hidden would break the focusin
-             chapter-jump below. */
+             chapter-jump below.
+
+             The window leads the travel ('left 92%' → 'left 48%'): the
+             incoming chapter is already substantially legible while it
+             slides in, and fully so by mid-viewport. The old 75% → 25%
+             window kept copy-only chapters blank deep into the travel —
+             the blank sage frames between chapters. */
           gsap.fromTo(
             revealTarget,
             { filter: 'blur(14px)', opacity: 0, scale: 1.06 },
@@ -268,8 +302,8 @@ export default function AaronStorySections() {
               scrollTrigger: {
                 containerAnimation: horizontalTween,
                 trigger: panel,
-                start: 'left 75%',
-                end: 'left 25%',
+                start: 'left 92%',
+                end: 'left 48%',
                 scrub: true,
               },
             },
@@ -296,6 +330,8 @@ export default function AaronStorySections() {
         }
 
         if (beats.length > 0) {
+          /* Same leading bias as the panel reveal: beats begin rising while
+             the chapter is still travelling in, not after it has parked. */
           gsap.fromTo(
             beats,
             { autoAlpha: 0, y: 32 },
@@ -307,8 +343,8 @@ export default function AaronStorySections() {
               scrollTrigger: {
                 containerAnimation: horizontalTween,
                 trigger: panel,
-                start: 'left 65%',
-                end: 'left 15%',
+                start: 'left 84%',
+                end: 'left 34%',
                 scrub: true,
               },
             },

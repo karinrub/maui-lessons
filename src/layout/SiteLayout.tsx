@@ -1,5 +1,6 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
+import { Suspense, useEffect, useState, type Dispatch, type SetStateAction } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import AtmosphericBackground from '../components/atmospheric-background/AtmosphericBackground'
 import GlobalNavigation from '../components/GlobalNavigation'
 import PageTransition from '../components/PageTransition'
@@ -36,6 +37,21 @@ export default function SiteLayout() {
     window.scrollTo({ top: 0, left: 0 })
   }, [location.pathname])
 
+  // Webfonts settle after first paint and shift the geometry every route's
+  // ScrollTriggers were measured from — one site-wide re-measure once they
+  // load. Lives here (not per page) so every route gets it for free.
+  useEffect(() => {
+    let cancelled = false
+    document.fonts?.ready.then(() => {
+      if (!cancelled) {
+        ScrollTrigger.refresh()
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   useEffect(() => {
     if (!isHome) {
       setHeaderSuppressed(false)
@@ -50,7 +66,11 @@ export default function SiteLayout() {
         <GlobalNavigation isSuppressed={isHome && isHeaderSuppressed} />
         <PageTransition>
           <main className={mainClassName}>
-            <Outlet context={{ setHeaderSuppressed } satisfies SiteLayoutOutletContext} />
+            {/* Lazy route chunks load behind the persistent header; null
+                fallback keeps the cream canvas rather than flashing a spinner. */}
+            <Suspense fallback={null}>
+              <Outlet context={{ setHeaderSuppressed } satisfies SiteLayoutOutletContext} />
+            </Suspense>
           </main>
         </PageTransition>
       </div>

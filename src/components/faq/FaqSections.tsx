@@ -1,9 +1,13 @@
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
+import { Fragment, useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
+import playIfInView from '../../utils/playIfInView'
 import './FaqSections.css'
+
+const faqBreakImage = new URL('../../../assets/images/aaron-beach-dance-1.jpg', import.meta.url)
+  .href
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -37,6 +41,11 @@ const faqCategories: FaqCategory[] = [
         id: 'instruments',
         q: 'Ukulele or guitar?',
         a: 'Both. The ukulele has been Aaron’s focus for the last eight years; guitar lessons come with the same one-on-one attention.',
+      },
+      {
+        id: 'bring-instrument',
+        q: 'Do I need to bring my own instrument?',
+        a: 'No. Aaron brings a ukulele for every lesson, so there’s nothing to own or pack — just show up and play.',
       },
     ],
   },
@@ -83,6 +92,11 @@ const faqCategories: FaqCategory[] = [
         id: 'pricing',
         q: 'What does a lesson cost?',
         a: 'Rates start at $35 for a 30-minute lesson. The exact rate depends on the lesson type and how often you’d like to meet — send a booking request and Aaron will confirm current pricing with you directly.',
+      },
+      {
+        id: 'payment',
+        q: 'How do I pay?',
+        a: 'Venmo or cash on the day of your lesson. Card payments through Square are coming soon.',
       },
     ],
   },
@@ -207,7 +221,7 @@ export default function FaqSections() {
         { yPercent: 0, duration: 0.85, ease: 'expo.out', stagger: 0.12, delay: 0.1 },
       )
       gsap.fromTo(
-        root.querySelectorAll('.faq-intro__eyebrow, .faq-intro__lede'),
+        root.querySelectorAll('.faq-intro__eyebrow, .faq-intro__lede, .faq-intro__reassurance'),
         { autoAlpha: 0, y: 16 },
         { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power2.out', stagger: 0.1, delay: 0.5 },
       )
@@ -304,6 +318,28 @@ export default function FaqSections() {
           { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
           0.35,
         )
+
+        playIfInView(tl, category)
+      }
+
+      const faqBreak = root.querySelector('.faq-break__inner')
+      if (faqBreak) {
+        const breakTween = gsap.fromTo(
+          faqBreak,
+          { opacity: 0, y: 22 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: faqBreak,
+              start: 'top 88%',
+              toggleActions: 'play none none none',
+            },
+          },
+        )
+        playIfInView(breakTween, faqBreak)
       }
 
       // Warm gold drift scrubbed in as the Booking category approaches — the
@@ -327,7 +363,8 @@ export default function FaqSections() {
         )
       }
 
-      gsap.fromTo(
+      const closeSection = root.querySelector('.faq-close')
+      const closeTween = gsap.fromTo(
         root.querySelector('.faq-close__inner'),
         { autoAlpha: 0, y: 24 },
         {
@@ -336,12 +373,15 @@ export default function FaqSections() {
           duration: 0.8,
           ease: 'power3.out',
           scrollTrigger: {
-            trigger: root.querySelector('.faq-close'),
+            trigger: closeSection,
             start: 'top 85%',
             toggleActions: 'play none none none',
           },
         },
       )
+      if (closeSection) {
+        playIfInView(closeTween, closeSection)
+      }
     }, root)
 
     return () => {
@@ -377,6 +417,10 @@ export default function FaqSections() {
           Everything you might want to know before picking up an instrument with Aaron. Anything
           else — just ask when you book.
         </p>
+        <p className="faq-intro__reassurance">
+          Whether you’re here for a week or you’ve called Maui home for years, a lesson is meant to
+          feel like an experience worth having — not one more thing on the list.
+        </p>
         <div className="faq-intro__compass-window" aria-hidden="true">
           <div ref={compassRef} className="faq-compass">
             <span className="faq-compass__ring faq-compass__ring--outer" />
@@ -409,51 +453,67 @@ export default function FaqSections() {
 
           <div className="faq-shelf__content">
             {faqCategories.map((category, index) => (
-              <section
-                key={category.id}
-                id={`faq-category-${category.id}`}
-                data-category={category.id}
-                className={`faq-category${activeCategory === category.id ? ' is-active' : ''}`}
-                aria-label={category.label}
-              >
-                <span className="faq-category__rule" aria-hidden="true" />
-                <div className="faq-category__meta">
-                  <span className="faq-category__index">0{index + 1}</span>
-                  <p className="faq-category__label">{category.label}</p>
-                  <p className="faq-category__descriptor">{category.descriptor}</p>
-                </div>
-                <div className="faq-category__rows">
-                  {category.items.map((item) => {
-                    const isOpen = open === item.id
-                    return (
-                      <div key={item.id} className={`faq-row${isOpen ? ' is-open' : ''}`}>
-                        <button
-                          type="button"
-                          className="faq-row__question"
-                          aria-expanded={isOpen}
-                          aria-controls={`faq-answer-${item.id}`}
-                          id={`faq-question-${item.id}`}
-                          onClick={() => setOpen(isOpen ? null : item.id)}
-                        >
-                          <span className="faq-row__question-text">{item.q}</span>
-                          <span className="faq-row__icon" aria-hidden="true" />
-                        </button>
-                        <div
-                          className="faq-row__answer"
-                          id={`faq-answer-${item.id}`}
-                          role="region"
-                          aria-labelledby={`faq-question-${item.id}`}
-                        >
-                          <div className="faq-row__answer-clip">
-                            <span className="faq-row__answer-kicker">Aaron’s note</span>
-                            <p className="faq-row__answer-text">{item.a}</p>
+              <Fragment key={category.id}>
+                <section
+                  id={`faq-category-${category.id}`}
+                  data-category={category.id}
+                  className={`faq-category${activeCategory === category.id ? ' is-active' : ''}`}
+                  aria-label={category.label}
+                >
+                  <span className="faq-category__rule" aria-hidden="true" />
+                  <div className="faq-category__meta">
+                    <span className="faq-category__index">0{index + 1}</span>
+                    <p className="faq-category__label">{category.label}</p>
+                    <p className="faq-category__descriptor">{category.descriptor}</p>
+                  </div>
+                  <div className="faq-category__rows">
+                    {category.items.map((item) => {
+                      const isOpen = open === item.id
+                      return (
+                        <div key={item.id} className={`faq-row${isOpen ? ' is-open' : ''}`}>
+                          <button
+                            type="button"
+                            className="faq-row__question"
+                            aria-expanded={isOpen}
+                            aria-controls={`faq-answer-${item.id}`}
+                            id={`faq-question-${item.id}`}
+                            onClick={() => setOpen(isOpen ? null : item.id)}
+                          >
+                            <span className="faq-row__question-text">{item.q}</span>
+                            <span className="faq-row__icon" aria-hidden="true" />
+                          </button>
+                          <div
+                            className="faq-row__answer"
+                            id={`faq-answer-${item.id}`}
+                            role="region"
+                            aria-labelledby={`faq-question-${item.id}`}
+                          >
+                            <div className="faq-row__answer-clip">
+                              <span className="faq-row__answer-kicker">Aaron’s note</span>
+                              <p className="faq-row__answer-text">{item.a}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </section>
+                      )
+                    })}
+                  </div>
+                </section>
+
+                {category.id === 'the-lessons' && (
+                  <div className="faq-break">
+                    <figure className="faq-break__inner">
+                      <img
+                        src={faqBreakImage}
+                        alt="Aaron dancing on the beach with a ukulele in hand"
+                        width={2400}
+                        height={1603}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </figure>
+                  </div>
+                )}
+              </Fragment>
             ))}
 
             <section className="faq-close" aria-label="Book a lesson">
@@ -466,6 +526,9 @@ export default function FaqSections() {
                     →
                   </span>
                 </Link>
+                <p className="faq-close__note">
+                  Lessons meet across Kihei and Wailea, and at Maipoina Beach Park.
+                </p>
               </div>
             </section>
           </div>

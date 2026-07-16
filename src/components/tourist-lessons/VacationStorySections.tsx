@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import playIfInView from '../../utils/playIfInView'
 import './VacationStorySections.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -39,7 +40,7 @@ export default function VacationStorySections() {
       const statement = root.querySelector('.vacation-statement')
 
       // Statement lines rise out of their clipped rows one after another.
-      gsap.fromTo(
+      const statementTween = gsap.fromTo(
         gsap.utils.toArray<HTMLElement>('.vacation-statement__line-inner', root),
         { yPercent: 110 },
         {
@@ -54,6 +55,9 @@ export default function VacationStorySections() {
           },
         },
       )
+      if (statement) {
+        playIfInView(statementTween, statement)
+      }
 
       // After the entrance, the lines stay live: each row drifts sideways at
       // its own rate while the statement crosses the viewport. Drift sits on
@@ -82,7 +86,7 @@ export default function VacationStorySections() {
       for (const frame of gsap.utils.toArray<HTMLElement>('.vacation-collage__frame', root)) {
         const image = frame.querySelector('img')
 
-        gsap.fromTo(
+        const frameTween = gsap.fromTo(
           frame,
           { clipPath: 'inset(14% 10% 14% 10% round 22px)', autoAlpha: 0 },
           {
@@ -100,9 +104,10 @@ export default function VacationStorySections() {
             },
           },
         )
+        playIfInView(frameTween, frame)
 
         if (image) {
-          gsap.fromTo(
+          const imageTween = gsap.fromTo(
             image,
             { scale: 1.22 },
             {
@@ -118,6 +123,7 @@ export default function VacationStorySections() {
               },
             },
           )
+          playIfInView(imageTween, frame)
         }
       }
 
@@ -166,7 +172,7 @@ export default function VacationStorySections() {
           ? Array.from(group.children)
           : [group]
 
-        gsap.fromTo(
+        const revealTween = gsap.fromTo(
           items,
           { autoAlpha: 0, y: 30 },
           {
@@ -182,6 +188,7 @@ export default function VacationStorySections() {
             },
           },
         )
+        playIfInView(revealTween, group)
       }
 
       // Pull-quote fills in word by word as the band scrolls through.

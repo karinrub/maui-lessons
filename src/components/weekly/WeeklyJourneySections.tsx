@@ -22,7 +22,7 @@ const weeklyPerformanceImage = new URL(
 ).href
 
 const CHAPTER_STARTS = [0, 1.55, 3.1] as const
-const CHAPTER_END = 4.3
+const CHAPTER_END = 4.15
 
 type JourneyStep = {
   id: string
@@ -127,9 +127,13 @@ export default function WeeklyJourneySections() {
           scrub: 0.8,
         },
       })
+      // The title drifts for the whole exit but only dims in the back half,
+      // so "A rhythm, not a routine." stays readable until it is genuinely
+      // leaving instead of washing out on the first wheel tick.
       transition
-        .to(content, { yPercent: -20, autoAlpha: 0.12, ease: 'none' }, 0)
-        .fromTo(sage, { scaleY: 0.65 }, { scaleY: 1, ease: 'none' }, 0)
+        .to(content, { yPercent: -20, ease: 'none', duration: 1 }, 0)
+        .to(content, { autoAlpha: 0.12, ease: 'none', duration: 0.55 }, 0.45)
+        .fromTo(sage, { scaleY: 0.65 }, { scaleY: 1, ease: 'none', duration: 1 }, 0)
 
       return () => {
         intro.kill()
@@ -147,6 +151,13 @@ export default function WeeklyJourneySections() {
 
       root.classList.add('weekly-journey--horizontal')
 
+      // All lens images are already eager-loaded; decoding them up front as
+      // well means the clip-path reveal never waits on a decode and the
+      // aperture always opens onto pixels, not an empty ring.
+      for (const image of gsap.utils.toArray<HTMLImageElement>('.weekly-step__image', root)) {
+        void image.decode().catch(() => undefined)
+      }
+
       const n = panels.length
       // Travel is based on panel width, not track.scrollWidth: the oversized
       // ghost numerals intentionally overflow their panel bounds.
@@ -163,8 +174,12 @@ export default function WeeklyJourneySections() {
       gsap.ticker.add(tick)
       gsap.ticker.lagSmoothing(0)
 
+      // Trimmed 2026-07-15 polish pass: the old 1.6×/3.1× pin left long
+      // stretches of scroll where nothing on screen changed between
+      // chapters. 1.3×/2.6× keeps the chapter-stepped rhythm with the dead
+      // travel squeezed out.
       const getPinnedDistance = () =>
-        Math.max(getScrollDistance() * 1.6, window.innerHeight * 3.1)
+        Math.max(getScrollDistance() * 1.3, window.innerHeight * 2.6)
       // Numeric, pin-spacer-aware positions avoid refresh compensation drift.
       const getSectionTop = () => {
         const spacer = stage.parentElement?.classList.contains('pin-spacer')
@@ -219,7 +234,10 @@ export default function WeeklyJourneySections() {
         // Later chapters bloom 0.35 early, while still traveling into view —
         // kills the empty-viewport dead frame between chapters.
         const revealAt = index === 0 ? chapterAt : chapterAt - 0.35
-        const imageAt = revealAt + 0.48
+        // The lens follows the rings closely (+0.24, was +0.48): at scrub
+        // pace the old gap held fully-drawn rings empty for a third of a
+        // viewport of scroll before the photo arrived.
+        const imageAt = revealAt + 0.24
         const travelAt = chapterAt + 0.95
         const rings = panel.querySelectorAll<HTMLElement>('.weekly-step__ring')
         const lens = panel.querySelector<HTMLElement>('.weekly-step__lens')
@@ -344,6 +362,10 @@ export default function WeeklyJourneySections() {
         master.scrollTrigger?.kill()
         master.kill()
         gsap.ticker.remove(tick)
+        // Restore GSAP's default lag smoothing (the About page's Lenis
+        // cleanup does the same); leaving it at 0 penalizes every route
+        // visited after this one on a busy main thread.
+        gsap.ticker.lagSmoothing(500, 33)
         lenis.destroy()
       }
     })

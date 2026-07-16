@@ -70,11 +70,15 @@ export function getVacationSceneVisualState(progress: number): VacationSceneVisu
   const softenedProgress = smoothstep(safeProgress)
   const surfaceProgress = smoothstep(progressThroughRange(safeProgress, 0.08, 0.82))
   const environmentProgress = smoothstep(progressThroughRange(safeProgress, 0.32, 1))
-  const headlineQuietProgress = smoothstep(progressThroughRange(safeProgress, 0, 0.2))
-  const headlineBuildProgress = smoothstep(progressThroughRange(safeProgress, 0.2, 0.55))
-  const headlineDominanceProgress = smoothstep(progressThroughRange(safeProgress, 0.55, 0.8))
-  const headlineSettleProgress = smoothstep(progressThroughRange(safeProgress, 0.8, 1))
-  const headlineProgress = smoothstep(progressThroughRange(safeProgress, 0.12, 0.82))
+  // Phases front-loaded (2026-07-15 polish): the headline reaches its
+  // settled, fully legible state by ~60% of the pin instead of 80–100%,
+  // so the readable state dominates the scrub and the in-between scramble
+  // stays brief.
+  const headlineQuietProgress = smoothstep(progressThroughRange(safeProgress, 0, 0.14))
+  const headlineBuildProgress = smoothstep(progressThroughRange(safeProgress, 0.14, 0.4))
+  const headlineDominanceProgress = smoothstep(progressThroughRange(safeProgress, 0.4, 0.62))
+  const headlineSettleProgress = smoothstep(progressThroughRange(safeProgress, 0.62, 0.85))
+  const headlineProgress = smoothstep(progressThroughRange(safeProgress, 0.1, 0.62))
   const headlineColorProgress =
     0.04 +
     headlineBuildProgress * 0.28 +
@@ -109,11 +113,13 @@ export function getVacationSceneVisualState(progress: number): VacationSceneVisu
       headlineBuildProgress * 0.16 +
       headlineDominanceProgress * 0.18 +
       headlineSettleProgress * 0.01,
+    // Floor raised 0.62 → 0.72: the headline never drops below comfortably
+    // readable, even at the very start of the scrub.
     headlineOpacity:
-      0.62 +
+      0.72 +
       headlineQuietProgress * 0.08 +
-      headlineBuildProgress * 0.2 +
-      headlineDominanceProgress * 0.1,
+      headlineBuildProgress * 0.14 +
+      headlineDominanceProgress * 0.06,
     headlineX: 0,
     headlineY: 0,
     headlineTracking: Math.max(

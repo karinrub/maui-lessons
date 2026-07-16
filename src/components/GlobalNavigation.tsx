@@ -36,6 +36,7 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
   const navigate = useNavigate()
   const prefersReducedMotion = usePrefersReducedMotion()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuInteractive, setIsMenuInteractive] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
@@ -76,6 +77,24 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
     return () => {
       timelineRef.current?.kill()
     }
+  }, [])
+
+  // Past ~24px the fixed wordmark/hamburger start crossing body headings; a
+  // blur veil (CSS .is-scrolled) keeps them readable without giving the
+  // header a solid bar. The ref gate means React sees a setState only on the
+  // threshold crossing itself, not on every scroll frame.
+  useEffect(() => {
+    let wasScrolled: boolean | null = null
+    const onScroll = () => {
+      const scrolled = window.scrollY > 24
+      if (scrolled !== wasScrolled) {
+        wasScrolled = scrolled
+        setIsScrolled(scrolled)
+      }
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   function getMenuElements() {
@@ -342,6 +361,7 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
         'site-header',
         isSuppressed ? 'is-suppressed' : '',
         isMenuOpen ? 'is-menu-open' : '',
+        isScrolled ? 'is-scrolled' : '',
       ]
         .filter(Boolean)
         .join(' ')}

@@ -61,6 +61,18 @@
   line-height: 1.6;
 }
 
+.faq-intro__reassurance {
+  position: relative;
+  z-index: 1;
+  max-width: 46ch;
+  margin: 0.9rem 0 0;
+  color: rgba(31, 29, 24, 0.62);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  font-style: italic;
+  line-height: 1.5;
+}
+
 /* ── Curiosity compass ── */
 .faq-intro__compass-window {
   position: absolute;
@@ -463,6 +475,32 @@
     transform 0.34s ease 0.08s;
 }
 
+/* Full-bleed pause between "The lessons" and "Booking" — the page's only
+   photograph, dropped in as a quiet break in the accordion rhythm rather
+   than a captioned card. */
+.faq-break {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin: clamp(1rem, 3vw, 2rem) 0 clamp(1.5rem, 3.5vw, 2.5rem);
+  transform: translateX(-50%);
+  overflow: hidden;
+}
+
+.faq-break__inner {
+  margin: 0;
+  border-radius: clamp(16px, 2vw, 28px);
+  overflow: hidden;
+}
+
+.faq-break__inner img {
+  display: block;
+  width: 100%;
+  height: clamp(14rem, 32vw, 24rem);
+  object-fit: cover;
+  object-position: center 30%;
+}
+
 .faq-close {
   padding: clamp(3rem, 6vw, 5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
   border-top: 1px solid rgba(23, 53, 42, 0.2);
@@ -543,6 +581,13 @@
   transform: translateX(0.25rem);
 }
 
+.faq-close__note {
+  margin: -0.4rem 0 0;
+  color: rgba(23, 53, 42, 0.55);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+
 @media (max-width: 760px) {
   .faq-page {
     width: 100%;
@@ -555,6 +600,14 @@
 
   .faq-intro__lede {
     max-width: 22ch;
+  }
+
+  .faq-intro__reassurance {
+    max-width: 26ch;
+  }
+
+  .faq-break__inner img {
+    height: 12rem;
   }
 
   .faq-compass {

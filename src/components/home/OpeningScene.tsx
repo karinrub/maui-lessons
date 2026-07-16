@@ -707,11 +707,15 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
 
     gsap.set(media, { visibility: 'visible' })
     gsap.set(tagline, { opacity: 0 })
-    gsap.set(words, { color: 'rgba(250,245,238,0.12)' })
+    // 0.22 (was 0.12): unlit words stay faintly present instead of vanishing
+    // into the bright stretch of the beach photo mid-scrub.
+    gsap.set(words, { color: 'rgba(250,245,238,0.22)' })
     gsap.set(arch, { scaleY: 0.32, opacity: 0, transformOrigin: 'center bottom' })
-    // Dramatic entrance: the title starts well below full size and drops
-    // in with a punchy overshoot past 100%, instead of a modest fade-up.
-    gsap.set(archTitle, { scale: 0.5, y: 50, opacity: 0, transformOrigin: '50% 50%' })
+    // Dramatic entrance: the title starts below full size and drops in
+    // with a punchy overshoot past 100%. Range tightened (0.5/50 → 0.72/30)
+    // so the curved text is near-legible for most of the scrubbed entrance
+    // instead of arriving as a scramble.
+    gsap.set(archTitle, { scale: 0.72, y: 30, opacity: 0, transformOrigin: '50% 50%' })
 
     // Registered outside gsap.context: the hook owns this ScrollTrigger's
     // lifecycle (see useHomeScrollSequence), not this component's context revert.

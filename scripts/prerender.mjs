@@ -37,8 +37,15 @@ async function main() {
       })
       await page.waitForTimeout(SETTLE_MS)
 
-      const previewOrigin = new URL(baseUrl).origin
-      const html = (await page.content()).replaceAll(previewOrigin, SITE_URL)
+      // Rewrite the preview server's origin+base prefix (not the origin
+      // alone) to the deployed origin+base. The build's base differs by
+      // environment — '/' locally, '/maui-lessons/' in CI where
+      // GITHUB_REPOSITORY is set (see vite.config.ts) — and an origin-only
+      // rewrite doubled the base in CI output
+      // (…github.io/maui-lessons/maui-lessons/assets/…, 404 for crawlers).
+      const previewUrl = new URL(baseUrl)
+      const previewPrefix = previewUrl.origin + previewUrl.pathname.replace(/\/$/, '')
+      const html = (await page.content()).replaceAll(previewPrefix, SITE_URL)
       const outDir = route === '' ? 'dist' : path.join('dist', route)
       await mkdir(outDir, { recursive: true })
       await writeFile(path.join(outDir, 'index.html'), html)

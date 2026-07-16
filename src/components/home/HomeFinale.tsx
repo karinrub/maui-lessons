@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
+import playIfInView from '../../utils/playIfInView'
 import './HomeFinale.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -37,6 +38,7 @@ export default function HomeFinale() {
         },
       },
     )
+    playIfInView(tween, section)
 
     return () => {
       tween.scrollTrigger?.kill()

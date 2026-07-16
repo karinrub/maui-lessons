@@ -118,6 +118,12 @@ export default function WeeklyJourneySections() {
           { yPercent: 0, duration: 1, stagger: 0.12 },
           0.12,
         )
+        .fromTo(
+          root.querySelector('.weekly-entrance__lede'),
+          { autoAlpha: 0, y: 18 },
+          { autoAlpha: 1, y: 0, duration: 0.7 },
+          0.55,
+        )
 
       const transition = gsap.timeline({
         scrollTrigger: {
@@ -389,6 +395,10 @@ export default function WeeklyJourneySections() {
               </span>
             </span>
           </h1>
+          <p className="weekly-entrance__lede">
+            Private ukulele and guitar lessons that build week over week — whether you’ve
+            called Maui home for years or you’re here for a long stay.
+          </p>
         </div>
       </section>
 

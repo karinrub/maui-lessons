@@ -180,3 +180,8 @@ test('syncs each text layer to its matching ring reveal', () => {
     /panel\.querySelector\('\.weekly-step__body'\),\s+\{ autoAlpha: 1, y: 0, duration: 0\.18, ease: 'power3\.out' \},\s+revealAt \+ 0\.14/,
   )
 })
+
+test('entrance carries a descriptive lede', () => {
+  assert.match(tsx, /weekly-entrance__lede/)
+  assert.match(tsx, /build week over week/)
+})

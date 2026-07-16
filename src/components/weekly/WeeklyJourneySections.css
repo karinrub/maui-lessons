@@ -26,7 +26,10 @@
 .weekly-entrance__content {
   position: absolute;
   z-index: 1;
-  bottom: clamp(13rem, 25vh, 17rem);
+  /* Raised toward optical center (was 13rem/25vh/17rem): headline + lede
+     hold the middle of the first viewport instead of hugging the fold and
+     leaving the upper half empty. */
+  bottom: clamp(15rem, 34vh, 22rem);
   left: 50%;
   width: min(100%, 1280px);
   padding: 0 clamp(1.5rem, 4vw, 3rem);
@@ -63,6 +66,16 @@
 
 .weekly-entrance__title-line--em {
   padding-left: clamp(1.75rem, 7vw, 7rem);
+}
+
+.weekly-entrance__lede {
+  max-width: 44ch;
+  margin: 1.4rem 0 0;
+  color: rgba(31, 29, 24, 0.66);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+  font-style: italic;
+  line-height: 1.5;
 }
 
 .weekly-rhythm {

@@ -199,3 +199,15 @@ test('pathways section revives skill levels as accessible tabs', () => {
   assert.match(pathways, /Guidance shaped by twenty-two years in music/)
   assert.match(tsx, /<WeeklyPathways \/>/)
 })
+
+const month = await readFile(
+  new URL('../src/components/weekly/WeeklyMonthRhythm.tsx', import.meta.url),
+  'utf8',
+).catch(() => '')
+
+test('month rhythm lays four beats on a spine', () => {
+  assert.match(month, /A month in rhythm/)
+  assert.match(month, /weekly-month__beat/)
+  assert.match(month, /The song is yours/)
+  assert.match(tsx, /<WeeklyMonthRhythm \/>/)
+})

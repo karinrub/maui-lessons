@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import WeeklyStepVisual, { type WeeklyStepRingColors } from './WeeklyStepVisual'
 import WeeklyPathways from './WeeklyPathways'
+import WeeklyMonthRhythm from './WeeklyMonthRhythm'
 import './WeeklyJourneySections.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -437,6 +438,8 @@ export default function WeeklyJourneySections() {
       </section>
 
       <WeeklyPathways />
+
+      <WeeklyMonthRhythm />
 
       <section className="weekly-close" aria-label="Book an ongoing lesson">
         {/* Same closing mechanic as HomeFinale: the section above bulges down

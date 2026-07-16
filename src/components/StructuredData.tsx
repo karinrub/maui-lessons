@@ -42,7 +42,11 @@ const ROUTE_BREADCRUMBS: Record<string, string> = {
   '/book': 'Book',
 }
 
-function buildBreadcrumbData(pathname: string) {
+function buildBreadcrumbData(rawPathname: string) {
+  // Direct loads from GitHub Pages carry a trailing slash ('/about/') that
+  // client-side navigation never adds; without normalizing, the lookup
+  // misses and the breadcrumb baked into the prerendered HTML gets removed.
+  const pathname = rawPathname.replace(/\/+$/, '') || '/'
   const label = ROUTE_BREADCRUMBS[pathname]
   if (!label) {
     return null

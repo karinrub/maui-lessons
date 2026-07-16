@@ -13,10 +13,15 @@ export type SiteLayoutOutletContext = {
 
 export default function SiteLayout() {
   const location = useLocation()
-  const isHome = location.pathname === '/'
-  const isWeeklyLessons = location.pathname === '/weekly-lessons'
-  const isTouristLessons = location.pathname === '/tourist-lessons'
-  const isAbout = location.pathname === '/about'
+  // GitHub Pages serves each prerendered route at a directory URL
+  // ('/about/'), so direct loads arrive with a trailing slash that
+  // client-side navigation never adds — normalize before the exact
+  // matches below or every flag is false on a hard load.
+  const pathname = location.pathname.replace(/\/+$/, '') || '/'
+  const isHome = pathname === '/'
+  const isWeeklyLessons = pathname === '/weekly-lessons'
+  const isTouristLessons = pathname === '/tourist-lessons'
+  const isAbout = pathname === '/about'
   const isCinematic = isTouristLessons || isAbout
   const hasAtmosphericBackground = isTouristLessons
   const [isHeaderSuppressed, setHeaderSuppressed] = useState(false)
@@ -35,7 +40,7 @@ export default function SiteLayout() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 })
-  }, [location.pathname])
+  }, [pathname])
 
   // Webfonts settle after first paint and shift the geometry every route's
   // ScrollTriggers were measured from — one site-wide re-measure once they

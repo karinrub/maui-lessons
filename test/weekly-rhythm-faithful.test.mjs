@@ -185,3 +185,17 @@ test('entrance carries a descriptive lede', () => {
   assert.match(tsx, /weekly-entrance__lede/)
   assert.match(tsx, /build week over week/)
 })
+
+const pathways = await readFile(
+  new URL('../src/components/weekly/WeeklyPathways.tsx', import.meta.url),
+  'utf8',
+).catch(() => '')
+
+test('pathways section revives skill levels as accessible tabs', () => {
+  assert.match(pathways, /role="tablist"/)
+  assert.match(pathways, /aria-selected/)
+  assert.match(pathways, /Just starting out/)
+  assert.match(pathways, /First chords and basic strumming, from zero/)
+  assert.match(pathways, /Guidance shaped by twenty-two years in music/)
+  assert.match(tsx, /<WeeklyPathways \/>/)
+})

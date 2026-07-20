@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import BookingCalendar from '../components/booking/BookingCalendar'
@@ -219,6 +220,7 @@ export default function Book() {
   })
 
   const prefersReducedMotion = usePrefersReducedMotion()
+  const [searchParams] = useSearchParams()
   const [step, setStep] = useState<StepId>('type')
   const [data, setData] = useState<BookingData>(INITIAL_DATA)
   const heroRef = useRef<HTMLElement>(null)
@@ -484,6 +486,20 @@ export default function Book() {
     // Switching type invalidates the selected length/group price option.
     goTo('participants', { lessonType, participants: null, duration: null })
   }
+
+  // Prefill from a referring page's query params (e.g. the weekly-lessons
+  // pathways panel links here with ?type=ongoing&level=…). `level` has no
+  // field in BookingData yet, so it's read but not stored — inert context
+  // for now rather than an invented data-model field.
+  useEffect(() => {
+    const type = searchParams.get('type')
+    if ((type === 'ongoing' || type === 'vacation') && data.lessonType === null) {
+      setData((prev) => ({ ...prev, lessonType: type }))
+      setStep('participants')
+    }
+    // Only ever meant to run once, off the URL present on arrival.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function goBack() {
     if (stepIndex > 0) {

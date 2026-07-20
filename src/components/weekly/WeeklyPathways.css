@@ -47,6 +47,30 @@
   line-height: 1.5;
 }
 
+.weekly-pathways__lede--price {
+  margin-top: 0.4rem;
+  font-size: clamp(0.92rem, 1.1vw, 1rem);
+  font-style: normal;
+}
+
+.weekly-pathways__aside {
+  margin: 0.85rem 0 0;
+  color: rgba(23, 53, 42, 0.55);
+  font-size: 0.85rem;
+}
+
+.weekly-pathways__aside a {
+  color: #17352a;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.22s ease;
+}
+
+.weekly-pathways__aside a:hover,
+.weekly-pathways__aside a:focus-visible {
+  color: #d39a42;
+}
+
 .weekly-pathways__grid {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);

@@ -160,6 +160,12 @@ export default function WeeklyPathways() {
         <p className="weekly-pathways__lede">
           Lessons meet your level from the first strum — pick the door that sounds like you.
         </p>
+        <p className="weekly-pathways__lede weekly-pathways__lede--price">
+          Rates start at $35 for a 30-minute lesson.
+        </p>
+        <p className="weekly-pathways__aside">
+          Just visiting? <Link to="/tourist-lessons">See Vacation Lessons →</Link>
+        </p>
         <div className="weekly-pathways__grid">
           <div className="weekly-pathways__tabs" role="tablist" aria-label="Skill level">
             {pathways.map((pathway, index) => {
@@ -215,7 +221,10 @@ export default function WeeklyPathways() {
                 <li key={bullet}>{bullet}</li>
               ))}
             </ul>
-            <Link to="/book" className="weekly-pathways__cta">
+            <Link
+              to={`/book?type=ongoing&level=${activePathway.id}`}
+              className="weekly-pathways__cta"
+            >
               Book a Lesson{' '}
               <span className="weekly-pathways__cta-arrow" aria-hidden="true">
                 →

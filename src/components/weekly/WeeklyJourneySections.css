@@ -380,14 +380,28 @@
 }
 
 .weekly-redesign__progression h2 {
-  margin-bottom: clamp(3.8rem, 8vw, 5.8rem);
+  margin-bottom: clamp(2.8rem, 5vw, 4.5rem);
+}
+
+.weekly-redesign__progress-heading span {
+  display: block;
+}
+
+.weekly-redesign__progress-stage {
+  position: relative;
+  min-height: 600px;
 }
 
 .weekly-redesign__progression-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);
   align-items: start;
   gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+.weekly-redesign__fretboard-photo {
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .weekly-redesign__fretboard-photo img {
@@ -397,76 +411,107 @@
 
 .weekly-redesign__chart {
   position: relative;
-  min-height: 430px;
+  min-height: 560px;
+}
+
+.weekly-redesign__progress-graphic {
+  position: absolute;
+  top: 28px;
+  right: 0;
+  left: 0;
+  height: 360px;
+  transform-origin: center;
+}
+
+.weekly-redesign__progress-graphic svg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 .weekly-redesign__chart-guide {
   position: absolute;
   right: 0;
   left: 0;
+  z-index: 0;
   height: 1px;
   background: rgba(23, 53, 42, 0.12);
 }
 
 .weekly-redesign__chart-guide--one {
-  top: 55px;
+  top: 16%;
 }
 
 .weekly-redesign__chart-guide--two {
-  top: 115px;
+  top: 48%;
 }
 
 .weekly-redesign__chart-guide--three {
-  top: 175px;
+  top: 80%;
 }
 
-.weekly-redesign__progress-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 250px;
-  overflow: visible;
-}
-
-.weekly-redesign__progress-line-path {
+.weekly-redesign__progress-path {
   fill: none;
   stroke: var(--maui-gold);
   stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
 }
 
-.weekly-redesign__progress-step {
+.weekly-redesign__mobile-progress-line {
+  display: none;
+}
+
+.weekly-redesign__progress-active-dot {
   position: absolute;
-  width: 30%;
+  top: calc(79.45% - 8px);
+  left: calc(6.28% - 8px);
+  z-index: 3;
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--weekly-paper);
+  border-radius: 50%;
+  background: var(--maui-gold);
+  box-shadow: 0 0 0 1px rgba(184, 125, 44, 0.58), 0 3px 12px rgba(23, 53, 42, 0.2);
+  will-change: transform;
 }
 
-.weekly-redesign__progress-step--one {
-  top: 166px;
+.weekly-redesign__progress-milestone {
+  position: absolute;
+  z-index: 2;
+  width: 27%;
+}
+
+.weekly-redesign__progress-milestone--1 {
+  top: 306px;
   left: 6%;
 }
 
-.weekly-redesign__progress-step--two {
-  top: 124px;
-  left: 43%;
+.weekly-redesign__progress-milestone--2 {
+  top: 252px;
+  left: 38%;
 }
 
-.weekly-redesign__progress-step--three {
-  top: 48px;
-  left: 72%;
+.weekly-redesign__progress-milestone--3 {
+  top: 152px;
+  left: 68%;
 }
 
 .weekly-redesign__progress-dot {
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   margin-bottom: 16px;
-  border: 3px solid var(--weekly-paper);
+  border: 2px solid var(--maui-gold);
   border-radius: 50%;
-  background: var(--maui-gold);
-  box-shadow: 0 0 0 1px rgba(184, 125, 44, 0.45);
+  background: var(--weekly-paper);
+  box-shadow: 0 0 0 3px rgba(248, 244, 235, 0.76);
 }
 
-.weekly-redesign__progress-card h3 {
+.weekly-redesign__progress-milestone h3 {
   margin-bottom: 7px;
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   font-size: clamp(1.3rem, 2vw, 1.55rem);
@@ -475,7 +520,7 @@
   line-height: 1.15;
 }
 
-.weekly-redesign__progress-card p {
+.weekly-redesign__progress-milestone p {
   max-width: 22ch;
   color: rgba(23, 53, 42, 0.8);
   font-size: 0.94rem;
@@ -646,58 +691,94 @@
     margin-top: 1.35rem;
   }
 
-  .weekly-redesign__progression-layout,
   .weekly-redesign__teacher-layout {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px), (min-width: 761px) and (max-height: 679px) {
+  .weekly-redesign__progression h2 {
+    margin-bottom: clamp(2.5rem, 8vw, 3.5rem);
+  }
+
+  .weekly-redesign__progression-layout {
+    grid-template-columns: 1fr;
+    gap: clamp(3rem, 8vw, 4.5rem);
+  }
+
+  .weekly-redesign__progress-stage {
+    min-height: 0;
   }
 
   .weekly-redesign__chart {
     display: grid;
-    gap: 2.3rem;
-    min-height: auto;
+    gap: clamp(2.4rem, 7vw, 3.4rem);
+    min-height: 0;
+    padding: 0 4px 0 40px;
   }
 
-  .weekly-redesign__chart-guide,
-  .weekly-redesign__progress-line {
+  .weekly-redesign__progress-graphic {
+    top: 2px;
+    right: auto;
+    bottom: 2px;
+    left: 0;
+    width: 16px;
+    height: auto;
+  }
+
+  .weekly-redesign__progress-graphic svg,
+  .weekly-redesign__chart-guide {
     display: none;
   }
 
-  .weekly-redesign__progress-step {
+  .weekly-redesign__mobile-progress-line {
+    position: absolute;
+    top: 8px;
+    bottom: 16px;
+    left: 7px;
+    display: block;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(184, 125, 44, 0.82), rgba(184, 125, 44, 0.24));
+  }
+
+  .weekly-redesign__progress-active-dot {
+    top: 0;
+    left: 0;
+  }
+
+  .weekly-redesign__progress-milestone,
+  .weekly-redesign__progress-milestone--1,
+  .weekly-redesign__progress-milestone--2,
+  .weekly-redesign__progress-milestone--3 {
     position: relative;
     top: auto;
     left: auto;
     width: auto;
-    padding-left: 32px;
-  }
-
-  .weekly-redesign__progress-step::before {
-    position: absolute;
-    top: 8px;
-    bottom: -2.3rem;
-    left: 8px;
-    width: 1px;
-    background: rgba(23, 53, 42, 0.18);
-    content: '';
-  }
-
-  .weekly-redesign__progress-step--three::before {
-    display: none;
+    min-height: 96px;
   }
 
   .weekly-redesign__progress-dot {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 1px;
+    left: -40px;
     margin: 0;
   }
 
-  .weekly-redesign__progress-card p {
-    max-width: 35ch;
+  .weekly-redesign__progress-milestone p {
+    max-width: 38ch;
   }
 
+  .weekly-redesign__fretboard-photo {
+    width: min(100%, 520px);
+    justify-self: end;
+  }
 }
 
 @media (max-width: 440px) {
+  .weekly-redesign__progress-heading {
+    font-size: clamp(2.7rem, 13vw, 3.25rem);
+  }
+
   .weekly-redesign__fact-list {
     grid-template-columns: 1fr;
   }

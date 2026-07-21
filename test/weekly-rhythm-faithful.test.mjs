@@ -100,10 +100,29 @@ test('keeps the approved fact and progression copy as real text', () => {
   assert.match(tsx, /First chords, real songs/)
   assert.match(tsx, /Reading & understanding/)
   assert.match(tsx, /Refining your style/)
-  assert.match(tsx, /weekly-redesign__progress-line/)
+  assert.match(tsx, /weekly-redesign__progress-path/)
   assert.match(tsx, /weekly-redesign__progress-dot/)
-  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) minmax\(280px, 0\.42fr\)/)
+  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) minmax\(320px, 0\.38fr\)/)
   assert.match(css, /\.weekly-redesign__fretboard-photo img \{\s+aspect-ratio: 2 \/ 3;/)
+})
+
+test('builds a rising graph with one active travelling dot', () => {
+  assert.match(tsx, /weekly-redesign__progress-graphic/)
+  assert.match(tsx, /weekly-redesign__progress-active-dot/)
+  assert.match(tsx, /weekly-redesign__progress-path/)
+  assert.match(tsx, /weekly-redesign__progress-milestone/g)
+  assert.match(tsx, /id: 'weekly-progress-desktop'/)
+  assert.match(tsx, /id: 'weekly-progress-mobile'/)
+  assert.match(tsx, /pin:\s*progressStage/)
+  assert.match(tsx, /motionPath:/)
+  assert.match(tsx, /y:\s*-64/)
+})
+
+test('does not pin the graph on mobile or short-height screens', () => {
+  assert.match(tsx, /if \(isDesktop\)/)
+  assert.match(tsx, /weekly-progress-mobile/)
+  assert.match(css, /padding:\s*0 4px 0 40px/)
+  assert.doesNotMatch(css, /@media \(max-width: 760px\)[\s\S]*position:\s*sticky/)
 })
 
 test('uses the supplied lesson photographs in every weekly media slot', () => {
@@ -146,7 +165,7 @@ test('keeps the progression and finale visually clean', () => {
   const finaleSection = tsx.slice(finaleStart)
 
   assert.doesNotMatch(progressionSection, /<StaffMark\s*\/>/)
-  assert.match(css, /\.weekly-redesign__chart \{\s+position: relative;\s+min-height: 430px;/)
+  assert.match(css, /\.weekly-redesign__chart \{\s+position: relative;\s+min-height: 560px;/)
   assert.match(css, /stroke-width: 2\.5/)
   assert.doesNotMatch(finaleSection, /begin/)
   assert.match(css, /\.weekly-redesign__finale \{\s+position: relative;\s+min-height: 100svh;/)

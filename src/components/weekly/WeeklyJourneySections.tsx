@@ -172,7 +172,7 @@ export default function WeeklyJourneySections() {
       },
       (context) => {
         const q = gsap.utils.selector(root)
-        const { isMobile, isShort } = context.conditions as {
+        const { isDesktop, isMobile, isShort } = context.conditions as {
           isDesktop: boolean
           isMobile: boolean
           isShort: boolean
@@ -222,6 +222,82 @@ export default function WeeklyJourneySections() {
             { yPercent: 4, scale: 1 },
             0.15,
           )
+
+        if (isDesktop) {
+          const progressStage = q('.weekly-redesign__progress-stage')[0] as HTMLElement
+          const path = root.querySelector<SVGPathElement>('.weekly-redesign__progress-path')!
+          const pathLength = path.getTotalLength()
+          const progressTl = gsap.timeline({ defaults: { ease: 'none' } })
+
+          progressTl
+            .set(path, { strokeDasharray: pathLength, strokeDashoffset: pathLength })
+            .fromTo(q('.weekly-redesign__progress-graphic'), { y: 76 }, { y: -64, duration: 1 }, 0)
+            .to(path, { strokeDashoffset: 0, duration: 0.82 }, 0.06)
+            .to(
+              q('.weekly-redesign__progress-active-dot'),
+              {
+                motionPath: { path, align: path, alignOrigin: [0.5, 0.5] },
+                duration: 0.82,
+              },
+              0.06,
+            )
+            .fromTo(
+              q('.weekly-redesign__progress-milestone'),
+              { autoAlpha: 0.34, y: 36 },
+              { autoAlpha: 1, y: 0, stagger: 0.2, duration: 0.22 },
+              0.12,
+            )
+            .fromTo(
+              q('.weekly-redesign__fretboard-photo img'),
+              { yPercent: -4, scale: 1.06 },
+              { yPercent: 4, scale: 1, duration: 1 },
+              0,
+            )
+
+          ScrollTrigger.create({
+            id: 'weekly-progress-desktop',
+            trigger: progressStage,
+            start: 'top top',
+            end: () => `+=${window.innerHeight * 1.65}`,
+            animation: progressTl,
+            pin: progressStage,
+            scrub: 1,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          })
+        }
+
+        if (!isDesktop) {
+          gsap
+            .timeline({
+              defaults: { ease: 'none' },
+              scrollTrigger: {
+                id: 'weekly-progress-mobile',
+                trigger: q('.weekly-redesign__chart')[0],
+                start: 'top 82%',
+                end: 'bottom 28%',
+                scrub: 0.8,
+              },
+            })
+            .fromTo(
+              q('.weekly-redesign__mobile-progress-line'),
+              { scaleY: 0 },
+              { scaleY: 1, transformOrigin: 'top' },
+              0,
+            )
+            .fromTo(
+              q('.weekly-redesign__progress-active-dot'),
+              { y: 0 },
+              { y: () => (q('.weekly-redesign__chart')[0] as HTMLElement).offsetHeight - 24 },
+              0,
+            )
+            .fromTo(
+              q('.weekly-redesign__progress-milestone'),
+              { autoAlpha: 0.45, x: 20 },
+              { autoAlpha: 1, x: 0, stagger: 0.24 },
+              0,
+            )
+        }
 
         gsap
           .timeline({
@@ -399,48 +475,47 @@ export default function WeeklyJourneySections() {
           <p className="weekly-redesign__eyebrow">
             HOW IT DEVELOPS
           </p>
-          <h2 id="weekly-progression-title">Same instrument. A different player, every year.</h2>
+          <h2 id="weekly-progression-title" className="weekly-redesign__progress-heading">
+            <span>Same instrument.</span>
+            <span>A different player,</span>
+            <span>every year.</span>
+          </h2>
 
-          <div className="weekly-redesign__progression-layout">
-            <div className="weekly-redesign__chart" aria-label="Learning progression from first chords to personal style">
-              <span className="weekly-redesign__chart-guide weekly-redesign__chart-guide--one" />
-              <span className="weekly-redesign__chart-guide weekly-redesign__chart-guide--two" />
-              <span className="weekly-redesign__chart-guide weekly-redesign__chart-guide--three" />
-              <svg className="weekly-redesign__progress-line" viewBox="0 0 820 250" aria-hidden="true">
-                <path
-                  className="weekly-redesign__progress-line-path"
-                  d="M62 180C198 180 230 138 394 138C528 138 545 64 676 64"
-                />
-              </svg>
-              <div className="weekly-redesign__progress-step weekly-redesign__progress-step--one">
-                <span className="weekly-redesign__progress-dot" aria-hidden="true" />
-                <article className="weekly-redesign__progress-card">
-                  <h3>{progression[0].title}</h3>
-                  <p>{progression[0].description}</p>
-                </article>
+          <div className="weekly-redesign__progress-stage">
+            <div className="weekly-redesign__progression-layout">
+              <div className="weekly-redesign__chart">
+                <div className="weekly-redesign__progress-graphic" aria-hidden="true">
+                  <span className="weekly-redesign__chart-guide weekly-redesign__chart-guide--one" />
+                  <span className="weekly-redesign__chart-guide weekly-redesign__chart-guide--two" />
+                  <span className="weekly-redesign__chart-guide weekly-redesign__chart-guide--three" />
+                  <svg viewBox="0 0 860 360" preserveAspectRatio="none">
+                    <path
+                      className="weekly-redesign__progress-path"
+                      d="M54 286 C190 286 218 244 330 232 C470 216 502 144 620 132 C716 122 740 74 812 52"
+                    />
+                  </svg>
+                  <span className="weekly-redesign__mobile-progress-line" />
+                  <span className="weekly-redesign__progress-active-dot" />
+                </div>
+                {progression.map((item, index) => (
+                  <article
+                    key={item.title}
+                    className={`weekly-redesign__progress-milestone weekly-redesign__progress-milestone--${index + 1}`}
+                  >
+                    <span className="weekly-redesign__progress-dot" aria-hidden="true" />
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                  </article>
+                ))}
               </div>
-              <div className="weekly-redesign__progress-step weekly-redesign__progress-step--two">
-                <span className="weekly-redesign__progress-dot" aria-hidden="true" />
-                <article className="weekly-redesign__progress-card">
-                  <h3>{progression[1].title}</h3>
-                  <p>{progression[1].description}</p>
-                </article>
-              </div>
-              <div className="weekly-redesign__progress-step weekly-redesign__progress-step--three">
-                <span className="weekly-redesign__progress-dot" aria-hidden="true" />
-                <article className="weekly-redesign__progress-card">
-                  <h3>{progression[2].title}</h3>
-                  <p>{progression[2].description}</p>
-                </article>
-              </div>
+              <ImageFigure
+                className="weekly-redesign__fretboard-photo"
+                caption="Photo: hands on the fretboard"
+                src={fretboardImage}
+                width={1467}
+                height={2200}
+              />
             </div>
-            <ImageFigure
-              className="weekly-redesign__fretboard-photo"
-              caption="Photo: hands on the fretboard"
-              src={fretboardImage}
-              width={1467}
-              height={2200}
-            />
           </div>
         </div>
       </section>

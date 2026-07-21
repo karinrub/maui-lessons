@@ -582,8 +582,7 @@
   font-style: italic;
 }
 
-.weekly-redesign__cross-link a,
-.weekly-redesign__finale-cta {
+.weekly-redesign__cross-link a {
   color: inherit;
   text-decoration-color: rgba(23, 53, 42, 0.38);
   text-decoration-thickness: 1px;
@@ -592,67 +591,122 @@
 
 .weekly-redesign__finale {
   position: relative;
-  min-height: 100svh;
-  padding: 85px 22px 78px;
   overflow: hidden;
-  background: #0d2018;
+  margin-top: -2px;
+  padding: 0 clamp(16px, 4vw, 56px) clamp(40px, 6svh, 72px);
+  background: linear-gradient(180deg, #fbf7ee 0 3px, #0d2018 3px);
   color: #f8f4eb;
-  text-align: center;
 }
 
 .weekly-redesign__finale-arch {
-  position: absolute;
-  top: -64px;
+  position: relative;
   left: 50%;
-  width: 140%;
-  height: 128px;
-  border-radius: 50%;
+  width: 145vw;
+  height: clamp(120px, 18svh, 230px);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
   background: #fbf7ee;
   transform: translateX(-50%);
 }
 
-.weekly-redesign__finale-content {
+.weekly-redesign__finale-inner {
   position: relative;
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  padding-top: 34px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.2rem, 3svh, 2rem);
+  width: min(94vw, 1080px);
+  margin: clamp(48px, 8svh, 96px) auto 0;
+  text-align: center;
 }
 
 .weekly-redesign__finale h2 {
+  max-width: 12ch;
   color: #f8f4eb;
+  font-size: clamp(3.2rem, 6vw, 5.5rem);
 }
 
-.weekly-redesign__finale-content > p {
-  margin-top: 17px;
-  color: rgba(241, 235, 223, 0.76);
+.weekly-redesign__finale-inner > p:not(.weekly-redesign__finale-copyright) {
+  max-width: 36rem;
+  color: rgba(250, 245, 238, 0.74);
   font-size: clamp(1rem, 1.7vw, 1.15rem);
   line-height: 1.6;
 }
 
 .weekly-redesign__finale-cta {
   display: inline-flex;
-  gap: 10px;
-  margin-top: 36px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(184, 125, 44, 0.52);
-  color: var(--maui-gold);
-  font-size: 1.1rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: clamp(0.9rem, 1.6vw, 1.15rem) clamp(1.8rem, 3.4vw, 2.6rem);
+  border: 1px solid rgba(184, 125, 44, 0.28);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fffaf4 0%, #fbf7ee 68%, #f4ead8 100%);
+  color: #0d2018;
+  font-size: 0.9rem;
   font-weight: 600;
+  letter-spacing: 0.12em;
   text-decoration: none;
+  text-transform: uppercase;
+  box-shadow:
+    0 18px 40px -18px rgba(0, 0, 0, 0.55),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.16);
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
 }
 
 .weekly-redesign__finale-cta:hover,
 .weekly-redesign__finale-cta:focus-visible {
-  color: #dcb877;
+  transform: translateY(-2px);
+  box-shadow:
+    0 24px 48px -18px rgba(0, 0, 0, 0.65),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.22);
 }
 
-.weekly-redesign__finale small {
-  margin-top: 72px;
-  color: rgba(241, 235, 223, 0.42);
+.weekly-redesign__finale-cta:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.weekly-redesign__finale-cta-arrow {
+  color: var(--maui-gold);
+  transition: transform 0.22s ease;
+}
+
+.weekly-redesign__finale-cta:hover .weekly-redesign__finale-cta-arrow {
+  transform: translateX(0.25rem);
+}
+
+.weekly-redesign__finale-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  margin-top: clamp(0.6rem, 2svh, 1.2rem);
+}
+
+.weekly-redesign__finale-links a {
+  color: rgba(250, 245, 238, 0.6);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.22s ease;
+}
+
+.weekly-redesign__finale-links a:hover,
+.weekly-redesign__finale-links a:focus-visible {
+  color: #faf5ee;
+}
+
+.weekly-redesign__finale-links a:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.weekly-redesign__finale-copyright {
+  color: rgba(250, 245, 238, 0.35);
   font-size: 0.72rem;
-  letter-spacing: 0.11em;
-  line-height: 1.5;
+  letter-spacing: 0.08em;
 }
 
 .weekly-redesign a:focus-visible {

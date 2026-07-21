@@ -339,6 +339,37 @@ export default function WeeklyJourneySections() {
             },
           })
           .fromTo(q('.weekly-redesign__cross-link p'), { y: 14 }, { y: -10 })
+
+        gsap
+          .timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: {
+              id: 'weekly-finale-score',
+              trigger: q('.weekly-redesign__finale')[0],
+              start: 'top 92%',
+              end: 'top 34%',
+              scrub: 0.8,
+            },
+          })
+          .fromTo(q('.weekly-redesign__finale h2'), { scale: 0.9, y: 34 }, { scale: 1, y: 0 }, 0)
+          .fromTo(
+            q('.weekly-redesign__finale-inner > p'),
+            { autoAlpha: 0.35, y: 26 },
+            { autoAlpha: 1, y: 0, stagger: 0.08 },
+            0.1,
+          )
+          .fromTo(
+            q('.weekly-redesign__finale-cta'),
+            { autoAlpha: 0.35, y: 28 },
+            { autoAlpha: 1, y: 0 },
+            0.18,
+          )
+          .fromTo(
+            q('.weekly-redesign__finale-links a'),
+            { autoAlpha: 0.35, y: 18 },
+            { autoAlpha: 1, y: 0, stagger: 0.045 },
+            0.28,
+          )
       },
     )
 
@@ -547,18 +578,24 @@ export default function WeeklyJourneySections() {
         </p>
       </section>
 
-      <section className="weekly-redesign__finale" aria-labelledby="weekly-finale-title">
+      <footer className="weekly-redesign__finale" aria-label="Book ongoing lessons">
         <div className="weekly-redesign__finale-arch" aria-hidden="true" />
-        <div className="weekly-redesign__grain" aria-hidden="true" />
-        <div className="weekly-redesign__finale-content">
+        <div className="weekly-redesign__finale-inner">
           <h2 id="weekly-finale-title">Make it a habit.</h2>
           <p>One lesson a week, for as long as it keeps being useful.</p>
           <Link to="/book" className="weekly-redesign__finale-cta">
-            Start lessons <span aria-hidden="true">→</span>
+            Book a Lesson <span className="weekly-redesign__finale-cta-arrow" aria-hidden="true">→</span>
           </Link>
-          <small>MAUI LESSONS — KĪHEI · WAILEA · MAIPOINA BEACH PARK</small>
+          <nav className="weekly-redesign__finale-links" aria-label="Footer navigation">
+            <Link to="/">Home</Link>
+            <Link to="/tourist-lessons">Vacation Lessons</Link>
+            <Link to="/about">About</Link>
+            <Link to="/faq">FAQ</Link>
+          </nav>
+          <p className="weekly-redesign__finale-copyright">© {new Date().getFullYear()} Maui Lessons</p>
         </div>
-      </section>
+        <div className="weekly-redesign__grain" aria-hidden="true" />
+      </footer>
     </main>
   )
 }

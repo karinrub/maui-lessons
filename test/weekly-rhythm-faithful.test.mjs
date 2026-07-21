@@ -163,12 +163,24 @@ test('excludes the unavailable cadence feature entirely', () => {
   assert.doesNotMatch(tsx, /day-picker/i)
 })
 
-test('keeps the requested links and the intentionally simple finale', () => {
+test('keeps the requested lesson links and finale copy', () => {
   assert.match(tsx, /to="\/tourist-lessons"/)
   assert.match(tsx, /to="\/book"/)
-  assert.match(tsx, /Start lessons/)
-  assert.doesNotMatch(tsx, /Footer navigation/)
-  assert.match(tsx, /MAUI LESSONS — KĪHEI · WAILEA · MAIPOINA BEACH PARK/)
+  assert.match(tsx, /Book a Lesson/)
+  assert.match(tsx, /Make it a habit\./)
+  assert.match(tsx, /One lesson a week, for as long as it keeps being useful\./)
+})
+
+test('uses the compact Home-style finale as the weekly footer', () => {
+  assert.match(tsx, /Footer navigation/)
+  assert.match(tsx, /to="\/"[^>]*>Home</)
+  assert.match(tsx, /to="\/tourist-lessons"[^>]*>Vacation Lessons</)
+  assert.match(tsx, /to="\/about"[^>]*>About</)
+  assert.match(tsx, /to="\/faq"[^>]*>FAQ</)
+  assert.match(tsx, /Book a Lesson/)
+  assert.match(tsx, /weekly-redesign__finale-copyright/)
+  assert.doesNotMatch(css, /\.weekly-redesign__finale \{[^}]*min-height:\s*100svh/s)
+  assert.match(tsx, /id: 'weekly-finale-score'/)
 })
 
 test('keeps the progression and finale visually clean', () => {
@@ -182,7 +194,7 @@ test('keeps the progression and finale visually clean', () => {
   assert.match(css, /\.weekly-redesign__chart \{\s+position: relative;\s+min-height: 560px;/)
   assert.match(css, /stroke-width: 2\.5/)
   assert.doesNotMatch(finaleSection, /begin/)
-  assert.match(css, /\.weekly-redesign__finale \{\s+position: relative;\s+min-height: 100svh;/)
+  assert.doesNotMatch(css, /\.weekly-redesign__finale \{[^}]*min-height:\s*100svh/s)
   assert.doesNotMatch(css, /weekly-redesign__ghost-word--begin/)
 })
 

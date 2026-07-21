@@ -36,6 +36,8 @@ test('keeps intrinsic media geometry and a strict resolved contact sheet', () =>
   assert.match(tsx, /poster=\{weeklyHeroImageOne\}/)
   assert.match(css, /\.weekly-redesign__resolved-media/)
   assert.match(css, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/)
+  assert.match(css, /\.weekly-redesign__hero-video-frame video \{[\s\S]*?width: 100%;\s+height: auto;/)
+  assert.match(css, /\.weekly-redesign__contact-sheet img \{[\s\S]*?width: 100%;\s+height: auto;/)
 })
 
 test('keeps global navigation outside the weekly component boundary', () => {

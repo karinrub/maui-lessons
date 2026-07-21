@@ -29,6 +29,19 @@ test('renders the approved Practice Loop opening with one semantic hero title', 
   assert.match(tsx, /aria-hidden="true"/)
 })
 
+test('uses one reversible matchMedia lifecycle for the Practice Loop', () => {
+  assert.match(tsx, /MotionPathPlugin/)
+  assert.match(tsx, /gsap\.matchMedia\(root\)/)
+  assert.match(tsx, /isDesktop: '\(min-width: 761px\).*min-height: 680px/)
+  assert.match(tsx, /isMobile: '\(max-width: 760px\)/)
+  assert.match(tsx, /scrub:\s*1(?:\.0)?/)
+  assert.match(tsx, /pin:\s*openingStage/)
+  assert.match(tsx, /mm\.revert\(\)/)
+  assert.doesNotMatch(tsx, /toggleActions:/)
+  assert.doesNotMatch(tsx, /new Lenis|addEventListener\(['"]wheel/)
+  assert.match(tsx, /new IntersectionObserver/)
+})
+
 test('keeps intrinsic media geometry and a strict resolved contact sheet', () => {
   assert.match(tsx, /width=\{720\}\s+height=\{960\}/)
   assert.match(tsx, /width=\{698\}\s+height=\{920\}/)

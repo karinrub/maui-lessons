@@ -1,12 +1,12 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
-import playIfInView from '../../utils/playIfInView'
 import './WeeklyJourneySections.css'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin)
 
 const weeklySectionVideo = new URL('../../../assets/videos/aaron-weekly-section.mp4', import.meta.url).href
 const weeklyHeroImageOne = new URL('../../../assets/images/aaron-weekly-1.jpg', import.meta.url).href
@@ -83,6 +83,76 @@ function ImageFigure({
   )
 }
 
+function buildPracticeLoopTimeline(root: HTMLElement) {
+  const q = gsap.utils.selector(root)
+  const stage = q('.weekly-redesign__opening-stage')[0] as HTMLElement
+  const loopSystem = q('.weekly-redesign__loop-system')[0] as HTMLElement
+  const videoFrame = q('.weekly-redesign__hero-video-frame')[0] as HTMLElement
+  const orbitPath = root.querySelector<SVGPathElement>('.weekly-redesign__orbit-path')!
+  const getVideoStart = () => {
+    const stageRect = stage.getBoundingClientRect()
+    const loopRect = loopSystem.getBoundingClientRect()
+    const videoRect = videoFrame.getBoundingClientRect()
+    const loopCenterX = loopRect.left - stageRect.left + loopRect.width / 2
+    const loopCenterY = loopRect.top - stageRect.top + loopRect.height / 2
+    const videoCenterX = videoRect.left - stageRect.left + videoRect.width / 2
+    const videoCenterY = videoRect.top - stageRect.top + videoRect.height / 2
+
+    return {
+      x: loopCenterX - videoCenterX,
+      y: loopCenterY - videoCenterY,
+      scale: Math.min(loopRect.width, loopRect.height) / videoRect.height,
+    }
+  }
+
+  const tl = gsap.timeline({ defaults: { ease: 'none' } })
+  tl.addLabel('still', 0)
+    .set(q('.weekly-redesign__loop-system'), { display: 'block' })
+    .set(q('.weekly-redesign__loop-begin, .weekly-redesign__loop-transition'), { display: 'block' })
+    .set(q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet'), { autoAlpha: 0 })
+    .set(videoFrame, {
+      x: () => getVideoStart().x,
+      y: () => getVideoStart().y,
+      scale: () => getVideoStart().scale,
+      clipPath: 'circle(38% at 50% 50%)',
+      transformOrigin: 'center center',
+    })
+    .set(q('.weekly-redesign__loop-transition'), { autoAlpha: 0, y: 24 })
+    .addLabel('repetition', 0.2)
+    .to(
+      q('.weekly-redesign__loop-dot'),
+      {
+        motionPath: {
+          path: orbitPath,
+          align: orbitPath,
+          alignOrigin: [0.5, 0.5],
+        },
+        duration: 0.28,
+      },
+      0.2,
+    )
+    .to(q('.weekly-redesign__loop-rings'), { scale: 1.06, duration: 0.28 }, 0.2)
+    .to(q('.weekly-redesign__loop-begin'), { autoAlpha: 0, y: -18, duration: 0.12 }, 0.28)
+    .to(q('.weekly-redesign__loop-transition'), { autoAlpha: 1, y: 0, duration: 0.16 }, 0.32)
+    .addLabel('release', 0.48)
+    .to(q('.weekly-redesign__loop-rings'), { autoAlpha: 0, scale: 1.18, duration: 0.2 }, 0.48)
+    .to(q('.weekly-redesign__loop-open-arc'), { autoAlpha: 1, rotate: 18, duration: 0.22 }, 0.48)
+    .to(q('.weekly-redesign__loop-staff'), { autoAlpha: 1, x: 0, duration: 0.24 }, 0.52)
+    .to(q('.weekly-redesign__loop-transition'), { autoAlpha: 0, y: -20, duration: 0.14 }, 0.66)
+    .addLabel('progress', 0.72)
+    .to(q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet'), { autoAlpha: 1, duration: 0.18 }, 0.72)
+    .fromTo(
+      q('.weekly-redesign__resolved-copy > *'),
+      { y: 34 },
+      { y: 0, duration: 0.24, stagger: 0.035 },
+      0.72,
+    )
+    .to(videoFrame, { x: 0, y: 0, scale: 1, clipPath: 'inset(0% round 8px)', duration: 0.28 }, 0.72)
+    .to(q('.weekly-redesign__ghost-word--practice'), { xPercent: -10, duration: 1 }, 0)
+
+  return tl
+}
+
 export default function WeeklyJourneySections() {
   const rootRef = useRef<HTMLElement>(null)
   const prefersReducedMotion = usePrefersReducedMotion()
@@ -93,38 +163,59 @@ export default function WeeklyJourneySections() {
       return
     }
 
-    const progressionSection = root.querySelector<HTMLElement>('.weekly-redesign__progression')
-    const line = root.querySelector<SVGPathElement>('.weekly-redesign__progress-line-path')
-    const dots = root.querySelectorAll<HTMLElement>('.weekly-redesign__progress-dot')
-    const cards = root.querySelectorAll<HTMLElement>('.weekly-redesign__progress-card')
-
-    if (!progressionSection || !line) {
-      return
-    }
-
-    const lineLength = line.getTotalLength()
-    const reveal = gsap.timeline({
-      paused: true,
-      scrollTrigger: {
-        trigger: progressionSection,
-        start: 'top 72%',
-        toggleActions: 'play none none none',
+    const mm = gsap.matchMedia(root)
+    mm.add(
+      {
+        isDesktop: '(min-width: 761px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)',
+        isMobile: '(max-width: 760px) and (prefers-reduced-motion: no-preference)',
+        isShort: '(min-width: 761px) and (max-height: 679px) and (prefers-reduced-motion: no-preference)',
       },
-    })
+      (context) => {
+        const { isMobile, isShort } = context.conditions as {
+          isDesktop: boolean
+          isMobile: boolean
+          isShort: boolean
+        }
+        const opening = root.querySelector<HTMLElement>('.weekly-redesign__opening')
+        const openingStage = root.querySelector<HTMLElement>('.weekly-redesign__opening-stage')
+        if (!opening || !openingStage) return
 
-    reveal
-      .set(line, { strokeDasharray: lineLength, strokeDashoffset: lineLength })
-      .fromTo(line, { strokeDashoffset: lineLength }, { strokeDashoffset: 0, duration: 0.75, ease: 'power2.out' })
-      .fromTo(dots, { scale: 0.3, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.4, stagger: 0.16, ease: 'back.out(1.8)' }, '-=0.1')
-      .fromTo(cards, { y: 16, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.48, stagger: 0.16, ease: 'power3.out' }, '-=0.5')
+        const loop = buildPracticeLoopTimeline(root)
+        ScrollTrigger.create({
+          id: 'weekly-practice-loop',
+          trigger: opening,
+          start: 'top top',
+          end: () => `+=${window.innerHeight * (isMobile ? 1.25 : isShort ? 1.05 : 1.6)}`,
+          animation: loop,
+          pin: openingStage,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        })
+      },
+    )
 
-    playIfInView(reveal, progressionSection)
-
-    return () => {
-      reveal.scrollTrigger?.kill()
-      reveal.kill()
-    }
+    return () => mm.revert()
   }, [prefersReducedMotion])
+
+  useEffect(() => {
+    const video = rootRef.current?.querySelector<HTMLVideoElement>('.weekly-redesign__hero-video-frame video')
+    if (!video) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          void video.play().catch(() => undefined)
+        } else {
+          video.pause()
+        }
+      },
+      { rootMargin: '25% 0px', threshold: 0.01 },
+    )
+    observer.observe(video)
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <main className="weekly-redesign" ref={rootRef}>
@@ -134,6 +225,17 @@ export default function WeeklyJourneySections() {
             practice
           </span>
           <div className="weekly-redesign__loop-system" aria-hidden="true">
+            <svg
+              className="weekly-redesign__loop-orbit"
+              viewBox="0 0 420 420"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                className="weekly-redesign__orbit-path"
+                d="M210 4A206 206 0 0 1 210 416A206 206 0 0 1 210 4"
+              />
+            </svg>
             <span className="weekly-redesign__loop-rings">
               <i />
               <i />

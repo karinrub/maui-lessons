@@ -1,478 +1,335 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import Lenis from 'lenis'
-import WeeklyStepVisual, { type WeeklyStepRingColors } from './WeeklyStepVisual'
-import WeeklyPathways from './WeeklyPathways'
-import WeeklyMonthRhythm from './WeeklyMonthRhythm'
 import './WeeklyJourneySections.css'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const weeklyOneToOneImage = new URL(
-  '../../../assets/images/aaron-weekly-1.jpg',
-  import.meta.url,
-).href
-const weeklyGroupImage = new URL(
-  '../../../assets/images/aaron-teaching-2.jpg',
-  import.meta.url,
-).href
-const weeklyPerformanceImage = new URL(
-  '../../../assets/images/aaron-weekly-2.jpg',
-  import.meta.url,
-).href
+const heroTeachingImage = new URL('../../../assets/images/aaron-teaching-2.jpg', import.meta.url).href
+const heroWeeklyImage = new URL('../../../assets/images/aaron-weekly-2.jpg', import.meta.url).href
+const monthImages = [heroTeachingImage, heroWeeklyImage, heroTeachingImage, heroWeeklyImage] as const
+const STICKY_SCROLL_MULTIPLIER = 2
 
-const CHAPTER_STARTS = [0, 1.55, 3.1] as const
-const CHAPTER_END = 4.15
-
-type JourneyStep = {
-  id: string
-  numeral: string
-  title: string
-  body: string
-  image: string
-  alt: string
-  loading: 'eager' | 'lazy'
-  width: number
-  height: number
-  imagePosition: string
-  ringColors: WeeklyStepRingColors
-}
-
-const steps: readonly JourneyStep[] = [
+const levels = [
   {
-    id: 'step-1',
-    numeral: '01',
-    title: 'Start where you are',
-    body: 'Your first lesson meets you at your level — whether that means open strings or songs you already half-know. No prep, no pressure.',
-    image: weeklyOneToOneImage,
-    alt: 'Aaron guiding a young ukulele student through a lesson outdoors',
-    loading: 'eager',
-    width: 720,
-    height: 960,
-    imagePosition: '50% 30%',
-    ringColors: {
-      outer: 'rgba(211, 154, 66, 0.42)',
-      middle: 'rgba(247, 216, 143, 0.64)',
-      inner: 'rgba(184, 200, 160, 0.82)',
-    },
+    id: 'beginner',
+    label: 'Beginner',
+    headline: 'Just starting out',
+    summary: 'Build confidence with the basics and play real songs from day one.',
+    detail:
+      'No experience, no problem. Lessons begin with your first chords and a pace that feels comfortable — no pressure, just steady progress.',
+    benefits: [
+      'First chords and basic strumming, from zero',
+      'A patient, no-pressure pace built around you',
+      'Real songs, not just exercises',
+    ],
+    cta: 'Book a beginner lesson',
   },
   {
-    id: 'step-2',
-    numeral: '02',
-    title: 'Find your rhythm',
-    body: 'Lessons become a regular part of your week, built around your pace and your goals. Each one picks up exactly where the last left off.',
-    image: weeklyGroupImage,
-    alt: "A small group practicing guitar together during Aaron's lesson",
-    loading: 'eager',
-    width: 1153,
-    height: 1153,
-    imagePosition: '50% 45%',
-    ringColors: {
-      outer: 'rgba(245, 240, 231, 0.72)',
-      middle: 'rgba(184, 200, 160, 0.82)',
-      inner: 'rgba(111, 134, 90, 0.78)',
-    },
+    id: 'intermediate',
+    label: 'Intermediate',
+    headline: 'Ready to go further',
+    summary: 'Strengthen rhythm, add techniques, and expand your song toolkit.',
+    detail:
+      'You already know a few songs. Together, you build smoother changes, stronger rhythm, and the confidence to make each song feel like your own.',
+    benefits: [
+      'Connect chords with cleaner, easier movement',
+      'Find strumming patterns that make songs feel alive',
+      'Choose songs that stretch your musical vocabulary',
+    ],
+    cta: 'Book an intermediate lesson',
   },
   {
-    id: 'step-3',
-    numeral: '03',
-    title: 'Hear it add up',
-    body: 'A chord becomes a song, a song becomes a set. Week by week the progress compounds — and you can hear it.',
-    image: weeklyPerformanceImage,
-    alt: 'Aaron teaching chord shapes to a student outdoors',
-    loading: 'eager',
-    width: 698,
-    height: 920,
-    imagePosition: '50% 30%',
-    ringColors: {
-      outer: 'rgba(111, 134, 90, 0.75)',
-      middle: 'rgba(23, 53, 42, 0.72)',
-      inner: 'rgba(211, 154, 66, 0.52)',
-    },
+    id: 'advanced',
+    label: 'Advanced',
+    headline: 'Make the music yours',
+    summary: 'Refine your voice, explore arrangements, and play with freedom.',
+    detail:
+      'Bring the songs and skills you want to deepen. Lessons can focus on arrangement, technique, musicality, and the small details that shape your sound.',
+    benefits: [
+      'Refine the techniques that support your own style',
+      'Explore harmony, arranging, and musical expression',
+      'Keep a challenging repertoire moving forward',
+    ],
+    cta: 'Book an advanced lesson',
   },
 ] as const
 
+const monthBeats = [
+  {
+    title: 'First chords',
+    copy: 'Learn a few simple shapes and sound great right away.',
+    image: monthImages[0],
+  },
+  {
+    title: 'First song',
+    copy: 'Play your first complete song — yes, really.',
+    image: monthImages[1],
+  },
+  {
+    title: 'Rhythm settles',
+    copy: 'Lock in steady rhythm and start adding your style.',
+    image: monthImages[2],
+  },
+  {
+    title: 'Play it through',
+    copy: 'Put it all together and play with confidence.',
+    image: monthImages[3],
+  },
+] as const
+
+function Arrow() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className="weekly-redesign__arrow">
+      <path d="M3 10h12M10 5l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  )
+}
+
 export default function WeeklyJourneySections() {
-  const rootRef = useRef<HTMLDivElement>(null)
+  const [activeLevelIndex, setActiveLevelIndex] = useState(0)
+  const [activeMonthIndex, setActiveMonthIndex] = useState(0)
+  const baseId = useId()
+  const monthStageRef = useRef<HTMLElement>(null)
+  const monthTrackRef = useRef<HTMLOListElement>(null)
+  const monthProgressFillRef = useRef<HTMLSpanElement>(null)
+  const activeMonthIndexRef = useRef(0)
+  const activeLevel = levels[activeLevelIndex]
 
   useLayoutEffect(() => {
-    const root = rootRef.current
-    if (!root) return
+    const stage = monthStageRef.current
+    const track = monthTrackRef.current
 
-    const mm = gsap.matchMedia(root)
+    if (!stage || !track) {
+      return
+    }
 
-    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 761px)', () => {
-      const entrance = root.querySelector<HTMLElement>('.weekly-entrance')
-      const content = root.querySelector<HTMLElement>('.weekly-entrance__content')
-      const label = root.querySelector<HTMLElement>('.weekly-entrance__label')
-      const sage = root.querySelector<HTMLElement>('.weekly-entrance__sage')
-      const lines = gsap.utils.toArray<HTMLElement>('.weekly-entrance__title-line', root)
-      if (!entrance || !content || !label || !sage || lines.length === 0) return
+    const media = gsap.matchMedia()
+    const context = gsap.context(() => {
+      media.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', () => {
+        const progressFill = monthProgressFillRef.current
+        const getTrackDistance = () => Math.max(track.scrollWidth - stage.clientWidth, 1)
+        const getScrollDistance = () => getTrackDistance() * STICKY_SCROLL_MULTIPLIER
 
-      const intro = gsap.timeline({ defaults: { ease: 'power3.out' } })
-      intro
-        .fromTo(label, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.65 })
-        .fromTo(
-          lines,
-          { yPercent: 115 },
-          { yPercent: 0, duration: 1, stagger: 0.12 },
-          0.12,
-        )
-        .fromTo(
-          root.querySelector('.weekly-entrance__lede'),
-          { autoAlpha: 0, y: 18 },
-          { autoAlpha: 1, y: 0, duration: 0.7 },
-          0.55,
-        )
-
-      const transition = gsap.timeline({
-        scrollTrigger: {
-          trigger: entrance,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 0.8,
-        },
-      })
-      // The title drifts for the whole exit but only dims in the back half,
-      // so "A rhythm, not a routine." stays readable until it is genuinely
-      // leaving instead of washing out on the first wheel tick.
-      transition
-        .to(content, { yPercent: -20, ease: 'none', duration: 1 }, 0)
-        .to(content, { autoAlpha: 0.12, ease: 'none', duration: 0.55 }, 0.45)
-        .fromTo(sage, { scaleY: 0.65 }, { scaleY: 1, ease: 'none', duration: 1 }, 0)
-
-      return () => {
-        intro.kill()
-        transition.scrollTrigger?.kill()
-        transition.kill()
-      }
-    })
-
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      const stage = root.querySelector<HTMLElement>('.weekly-rhythm__stage')
-      const track = root.querySelector<HTMLElement>('.weekly-rhythm__track')
-      const spine = root.querySelector<HTMLElement>('.weekly-rhythm__spine-line')
-      const panels = gsap.utils.toArray<HTMLElement>('.weekly-step', root)
-      if (!stage || !track || !spine || panels.length === 0) return
-
-      root.classList.add('weekly-journey--horizontal')
-
-      // All lens images are already eager-loaded; decoding them up front as
-      // well means the clip-path reveal never waits on a decode and the
-      // aperture always opens onto pixels, not an empty ring.
-      for (const image of gsap.utils.toArray<HTMLImageElement>('.weekly-step__image', root)) {
-        void image.decode().catch(() => undefined)
-      }
-
-      const n = panels.length
-      // Travel is based on panel width, not track.scrollWidth: the oversized
-      // ghost numerals intentionally overflow their panel bounds.
-      const getScrollDistance = () => panels[0].offsetWidth * (n - 1)
-
-      const lenis = new Lenis({
-        duration: 1.15,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        gestureOrientation: 'vertical',
-        syncTouch: true,
-      })
-      const tick = (time: number) => lenis.raf(time * 1000)
-      lenis.on('scroll', ScrollTrigger.update)
-      gsap.ticker.add(tick)
-      gsap.ticker.lagSmoothing(0)
-
-      // Trimmed 2026-07-15 polish pass: the old 1.6×/3.1× pin left long
-      // stretches of scroll where nothing on screen changed between
-      // chapters. 1.3×/2.6× keeps the chapter-stepped rhythm with the dead
-      // travel squeezed out.
-      const getPinnedDistance = () =>
-        Math.max(getScrollDistance() * 1.3, window.innerHeight * 2.6)
-      // Numeric, pin-spacer-aware positions avoid refresh compensation drift.
-      const getSectionTop = () => {
-        const spacer = stage.parentElement?.classList.contains('pin-spacer')
-          ? stage.parentElement
-          : stage
-        return spacer.getBoundingClientRect().top + window.scrollY
-      }
-
-      gsap.set(spine, { scaleX: 0, transformOrigin: 'left center' })
-
-      // Size the spine so full scaleX ends exactly at the final dot's resting
-      // x — which equals the first dot's initial x, since panels share width.
-      const sizeSpine = () => {
-        const firstDot = panels[0].querySelector<HTMLElement>('.weekly-step__dot')
-        if (!firstDot) return
-        const trackX = gsap.getProperty(track, 'x') as number
-        const dotRect = firstDot.getBoundingClientRect()
-        const spineLeft = spine.getBoundingClientRect().left
-        const dotCenter = dotRect.left + dotRect.width / 2 - trackX
-        gsap.set(spine, { width: Math.max(dotCenter - spineLeft, 0), right: 'auto' })
-      }
-      sizeSpine()
-      ScrollTrigger.addEventListener('refreshInit', sizeSpine)
-
-      panels.forEach((panel) => {
-        gsap.set(panel.querySelector('.weekly-step__dot'), { scale: 0 })
-        gsap.set(panel.querySelector('.weekly-step__numeral'), { autoAlpha: 0, y: 24 })
-        gsap.set(panel.querySelector('.weekly-step__title'), { autoAlpha: 0, y: 16 })
-        gsap.set(panel.querySelector('.weekly-step__body'), { autoAlpha: 0, y: 12 })
-        gsap.set(panel.querySelectorAll('.weekly-step__ring'), { autoAlpha: 0, scale: 0.72 })
-        gsap.set(panel.querySelector('.weekly-step__lens'), {
-          autoAlpha: 0,
-          clipPath: 'circle(0% at 50% 50%)',
-        })
-        gsap.set(panel.querySelector('.weekly-step__image'), { scale: 1.08 })
-      })
-
-      const master = gsap.timeline({
-        scrollTrigger: {
-          trigger: stage,
-          start: () => getSectionTop(),
-          end: () => getSectionTop() + getPinnedDistance(),
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      })
-
-      panels.forEach((panel, index) => {
-        const chapterAt = CHAPTER_STARTS[index]
-        // Later chapters bloom 0.35 early, while still traveling into view —
-        // kills the empty-viewport dead frame between chapters.
-        const revealAt = index === 0 ? chapterAt : chapterAt - 0.35
-        // The lens follows the rings closely (+0.24, was +0.48): at scrub
-        // pace the old gap held fully-drawn rings empty for a third of a
-        // viewport of scroll before the photo arrived.
-        const imageAt = revealAt + 0.24
-        const travelAt = chapterAt + 0.95
-        const rings = panel.querySelectorAll<HTMLElement>('.weekly-step__ring')
-        const lens = panel.querySelector<HTMLElement>('.weekly-step__lens')
-        if (chapterAt === undefined || rings.length !== 3 || !lens) return
-
-        master
-          .to(
-            panel.querySelector('.weekly-step__dot'),
-            { scale: 1, duration: 0.18, ease: 'back.out(2)' },
-            revealAt,
-          )
-          .to(
-            panel.querySelector('.weekly-step__numeral'),
-            { autoAlpha: 0.16, y: 0, duration: 0.18, ease: 'power3.out' },
-            revealAt,
-          )
-          .to(
-            panel.querySelector('.weekly-step__title'),
-            { autoAlpha: 1, y: 0, duration: 0.18, ease: 'power3.out' },
-            revealAt,
-          )
-          .to(
-            rings[2],
-            { autoAlpha: 1, scale: 1, duration: 0.18, ease: 'back.out(1.4)' },
-            revealAt,
-          )
-          .to(
-            rings[1],
-            { autoAlpha: 1, scale: 1, duration: 0.18, ease: 'power3.out' },
-            revealAt + 0.14,
-          )
-          .to(
-            panel.querySelector('.weekly-step__body'),
-            { autoAlpha: 1, y: 0, duration: 0.18, ease: 'power3.out' },
-            revealAt + 0.14,
-          )
-          .to(
-            rings[0],
-            { autoAlpha: 1, scale: 1, duration: 0.18, ease: 'power3.out' },
-            revealAt + 0.28,
-          )
-          .to(
-            lens,
-            {
-              autoAlpha: 1,
-              clipPath: 'circle(72% at 50% 50%)',
-              duration: 0.24,
-              ease: 'power2.out',
-            },
-            imageAt,
-          )
-          // Slow Ken-Burns settle keeps the held chapter alive.
-          .to(
-            panel.querySelector('.weekly-step__image'),
-            { scale: 1, duration: travelAt - imageAt, ease: 'none' },
-            imageAt,
-          )
-          // One metronome pulse once the chapter lands.
-          .to(
-            panel.querySelector('.weekly-step__dot'),
-            {
-              keyframes: [
-                { scale: 1.22, duration: 0.06, ease: 'power2.out' },
-                { scale: 1, duration: 0.08, ease: 'power2.in' },
-              ],
-            },
-            chapterAt + 0.2,
-          )
-
-        if (index < n - 1) {
-          master
-            .to(
-              track,
-              {
-                x: () => -panels[0].offsetWidth * (index + 1),
-                duration: 0.6,
-                ease: 'expo.inOut',
-              },
-              travelAt,
-            )
-            .to(
-              spine,
-              {
-                scaleX: (index + 1) / (n - 1),
-                duration: 0.6,
-                ease: 'expo.inOut',
-              },
-              travelAt,
-            )
-            // Graceful exit: the outgoing step dissolves as it travels, so no
-            // orphaned text or ring fragments bleed into the next chapter.
-            .to(
-              [
-                panel.querySelector('.weekly-step__numeral'),
-                panel.querySelector('.weekly-step__visual'),
-                panel.querySelector('.weekly-step__content'),
-              ],
-              { autoAlpha: 0, xPercent: -8, duration: 0.45, ease: 'power2.in' },
-              travelAt,
-            )
+        if (progressFill) {
+          gsap.set(progressFill, { scaleY: 0, transformOrigin: 'top center' })
         }
-      })
 
-      // Warm gold drift toward the payoff chapter — foreshadows the Book CTA.
-      master.to(
-        stage,
-        {
-          '--weekly-warm': 1,
-          duration: CHAPTER_STARTS[2] + 0.37 - CHAPTER_STARTS[1],
+        gsap.to(track, {
+          x: () => -getTrackDistance(),
           ease: 'none',
-        },
-        CHAPTER_STARTS[1],
-      )
+          scrollTrigger: {
+            trigger: stage,
+            start: 'top top',
+            end: () => `+=${getScrollDistance()}`,
+            pin: true,
+            scrub: true,
+            anticipatePin: 1,
+            snap: {
+              snapTo: 1 / (monthBeats.length - 1),
+              duration: { min: 0.18, max: 0.42 },
+              delay: 0.1,
+              ease: 'power2.out',
+              inertia: false,
+              directional: false,
+            },
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              if (progressFill) {
+                gsap.set(progressFill, { scaleY: self.progress })
+              }
 
-      const finalImageEnd = CHAPTER_STARTS[2] + 0.37
-      // Empty tween holds the pin so the final chapter rests on screen.
-      master.to({}, { duration: CHAPTER_END - finalImageEnd }, finalImageEnd)
+              const nextMonthIndex = Math.round(self.progress * (monthBeats.length - 1))
+              if (activeMonthIndexRef.current !== nextMonthIndex) {
+                activeMonthIndexRef.current = nextMonthIndex
+                setActiveMonthIndex(nextMonthIndex)
+              }
+            },
+          },
+        })
 
-      return () => {
-        root.classList.remove('weekly-journey--horizontal')
-        ScrollTrigger.removeEventListener('refreshInit', sizeSpine)
-        master.scrollTrigger?.kill()
-        master.kill()
-        gsap.ticker.remove(tick)
-        // Restore GSAP's default lag smoothing (the About page's Lenis
-        // cleanup does the same); leaving it at 0 penalizes every route
-        // visited after this one on a busy main thread.
-        gsap.ticker.lagSmoothing(500, 33)
-        lenis.destroy()
-      }
-    })
+        ScrollTrigger.refresh()
+      })
+    }, stage)
 
-    return () => mm.revert()
+    return () => {
+      media.revert()
+      context.revert()
+    }
   }, [])
 
+  function handleLevelKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex = index
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+      nextIndex = (index + 1) % levels.length
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+      nextIndex = (index - 1 + levels.length) % levels.length
+    } else if (event.key === 'Home') {
+      nextIndex = 0
+    } else if (event.key === 'End') {
+      nextIndex = levels.length - 1
+    } else {
+      return
+    }
+
+    event.preventDefault()
+    setActiveLevelIndex(nextIndex)
+    document.getElementById(`${baseId}-tab-${levels[nextIndex].id}`)?.focus()
+  }
+
   return (
-    <div ref={rootRef} className="weekly-journey">
-      <section className="weekly-entrance" aria-labelledby="weekly-entrance-title">
-        <div className="weekly-entrance__sage" aria-hidden="true" />
-        <div className="weekly-entrance__content">
-          <p className="weekly-entrance__label">How it works</p>
-          <h1 id="weekly-entrance-title" className="weekly-entrance__title">
-            <span className="weekly-entrance__title-mask">
-              <span className="weekly-entrance__title-line">A rhythm,</span>
-            </span>
-            <span className="weekly-entrance__title-mask">
-              <span className="weekly-entrance__title-line weekly-entrance__title-line--em">
-                not a routine.
-              </span>
-            </span>
-          </h1>
-          <p className="weekly-entrance__lede">
-            Private ukulele and guitar lessons that build week over week — whether you’ve
-            called Maui home for years or you’re here for a long stay.
-          </p>
+    <main className="weekly-redesign">
+      <section className="weekly-redesign__hero" aria-labelledby="weekly-redesign-title">
+        <div className="weekly-redesign__hero-inner">
+          <div className="weekly-redesign__hero-copy">
+            <h1 id="weekly-redesign-title">A rhythm, not a routine.</h1>
+            <span className="weekly-redesign__accent-rule" aria-hidden="true" />
+            <p>Private ukulele &amp; guitar lessons that build week over week.</p>
+            <div className="weekly-redesign__hero-actions">
+              <a className="weekly-redesign__primary-cta" href="#lesson-pathways">
+                Choose your path <Arrow />
+              </a>
+              <a className="weekly-redesign__text-link" href="#first-month">
+                See how the first month works <Arrow />
+              </a>
+            </div>
+          </div>
+
+          <div className="weekly-redesign__hero-art" aria-hidden="true">
+            <span className="weekly-redesign__hero-ring weekly-redesign__hero-ring--one" />
+            <span className="weekly-redesign__hero-ring weekly-redesign__hero-ring--two" />
+            <span className="weekly-redesign__hero-ring weekly-redesign__hero-ring--three" />
+            <figure className="weekly-redesign__hero-image weekly-redesign__hero-image--primary">
+              <img
+                src={heroTeachingImage}
+                alt=""
+                width="720"
+                height="960"
+                fetchPriority="high"
+              />
+            </figure>
+            <figure className="weekly-redesign__hero-image weekly-redesign__hero-image--secondary">
+              <img src={heroWeeklyImage} alt="" width="720" height="960" />
+            </figure>
+          </div>
         </div>
       </section>
 
-      <section className="weekly-rhythm" aria-label="How ongoing lessons work">
-        <div className="weekly-rhythm__band" aria-hidden="true" />
-        <div className="weekly-rhythm__stage">
-          <span className="weekly-rhythm__spine-line" aria-hidden="true" />
-          <ol className="weekly-rhythm__track">
-            {steps.map((step) => (
-              <li
-                key={step.id}
-                className="weekly-step weekly-step--has-media"
+      <section id="lesson-pathways" className="weekly-redesign__pathways" aria-labelledby="pathways-title">
+        <div className="weekly-redesign__section-heading">
+          <p>Where you begin</p>
+          <h2 id="pathways-title">Find your starting point</h2>
+          <span>Lessons meet your level from the first strum.</span>
+        </div>
+
+        <div className="weekly-redesign__level-grid" role="tablist" aria-label="Choose a lesson level">
+          {levels.map((level, index) => {
+            const isActive = index === activeLevelIndex
+            const panelId = `${baseId}-panel-${level.id}`
+            const tabId = `${baseId}-tab-${level.id}`
+
+            return (
+              <article
+                key={level.id}
+                className={`weekly-redesign__level-card${isActive ? ' is-active' : ''}`}
               >
-                <span className="weekly-step__numeral" aria-hidden="true">
-                  {step.numeral}
+                <button
+                  id={tabId}
+                  role="tab"
+                  type="button"
+                  aria-selected={isActive}
+                  aria-controls={panelId}
+                  tabIndex={isActive ? 0 : -1}
+                  onClick={() => setActiveLevelIndex(index)}
+                  onKeyDown={(event) => handleLevelKeyDown(event, index)}
+                >
+                  <span className="weekly-redesign__level-index" aria-hidden="true">
+                    0{index + 1}
+                  </span>
+                  <span>{level.label}</span>
+                </button>
+
+                {isActive ? (
+                  <div
+                    id={panelId}
+                    role="tabpanel"
+                    aria-labelledby={tabId}
+                    className="weekly-redesign__level-content"
+                  >
+                    <h3>{activeLevel.headline}</h3>
+                    <p>{activeLevel.detail}</p>
+                    <ul>
+                      {activeLevel.benefits.map((benefit) => (
+                        <li key={benefit}>{benefit}</li>
+                      ))}
+                    </ul>
+                    <Link to={`/book?type=ongoing&level=${activeLevel.id}`}>
+                      {activeLevel.cta} <Arrow />
+                    </Link>
+                  </div>
+                ) : (
+                  <p className="weekly-redesign__level-summary">{level.summary}</p>
+                )}
+              </article>
+            )
+          })}
+        </div>
+      </section>
+
+      <section
+        id="first-month"
+        ref={monthStageRef}
+        className="weekly-redesign__month weekly-redesign__month-stage"
+        aria-labelledby="month-title"
+      >
+        <div className="weekly-redesign__month-heading">
+          <p>Your first month</p>
+          <h2 id="month-title">Small steps. Real progress.</h2>
+          <span>Here’s what it can look like.</span>
+        </div>
+        <div className="weekly-redesign__month-progress" aria-hidden="true">
+          <span ref={monthProgressFillRef} />
+        </div>
+        <p className="weekly-redesign__month-cue" aria-hidden="true">
+          Scroll to explore <Arrow />
+        </p>
+        <ol ref={monthTrackRef} className="weekly-redesign__timeline">
+          {monthBeats.map((beat, index) => {
+            const isActive = index === activeMonthIndex
+
+            return (
+              <li
+                key={beat.title}
+                className={`weekly-redesign__timeline-station${isActive ? ' is-active' : ''}`}
+                aria-current={isActive ? 'step' : undefined}
+              >
+                <span className="weekly-redesign__timeline-orbit" aria-hidden="true" />
+                <figure className="weekly-redesign__timeline-image">
+                  <img src={beat.image} alt="" loading="lazy" />
+                </figure>
+                <span className="weekly-redesign__timeline-dot" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
                 </span>
-                <span className="weekly-step__dot" aria-hidden="true" />
-                <WeeklyStepVisual
-                  src={step.image}
-                  alt={step.alt}
-                  loading={step.loading}
-                  width={step.width}
-                  height={step.height}
-                  imagePosition={step.imagePosition}
-                  ringColors={step.ringColors}
-                />
-                <div className="weekly-step__content">
-                  <h3 className="weekly-step__title">{step.title}</h3>
-                  <p className="weekly-step__body">{step.body}</p>
+                <div className="weekly-redesign__timeline-copy">
+                  <h3>{beat.title}</h3>
+                  <p>{beat.copy}</p>
                 </div>
               </li>
-            ))}
-          </ol>
-        </div>
+            )
+          })}
+        </ol>
       </section>
 
-      <WeeklyPathways />
-
-      <WeeklyMonthRhythm />
-
-      <section className="weekly-close" aria-label="Book an ongoing lesson">
-        {/* Same closing mechanic as HomeFinale: the section above bulges down
-            into the ink field as an arch — sage here instead of the home tan. */}
-        <div className="weekly-close__arch" aria-hidden="true" />
-        <div className="weekly-close__inner">
-          <p className="weekly-close__quote">
-            Nobody learns a song in one sitting. You learn it a little every week — until one
-            day, it’s simply yours.
-          </p>
-          <p className="weekly-close__line">Ready to make it a rhythm?</p>
-          <p className="weekly-close__note">
-            Lessons meet across Kihei and Wailea, and at Maipoina Beach Park.
-          </p>
-          <div className="weekly-close__cta-wrap">
-            <Link to="/book" className="weekly-close__cta">
-              Book a lesson <span className="weekly-close__cta-arrow" aria-hidden="true">→</span>
-            </Link>
-          </div>
-          <p className="weekly-close__aside">
-            Questions first? <Link to="/faq">Read the FAQ</Link>
-          </p>
-          <nav className="weekly-close__links" aria-label="Footer navigation">
-            <Link to="/">Home</Link>
-            <Link to="/tourist-lessons">Vacation Lessons</Link>
-            <Link to="/weekly-lessons">Ongoing Lessons</Link>
-            <Link to="/about">About</Link>
-            <Link to="/faq">FAQ</Link>
-          </nav>
-          <p className="weekly-close__copyright">© {new Date().getFullYear()} Maui Lessons</p>
-        </div>
-        <div className="weekly-close__grain" aria-hidden="true" />
+      <section className="weekly-redesign__close" aria-labelledby="weekly-redesign-close-title">
+        <p>Nobody learns a song in one sitting. You learn it a little every week — until one day, it’s simply yours.</p>
+        <h2 id="weekly-redesign-close-title">Ready to make it a rhythm?</h2>
+        <span>Lessons meet across Kihei and Wailea, and at Maipoina Beach Park.</span>
+        <Link to="/book" className="weekly-redesign__close-cta">
+          Book a lesson <Arrow />
+        </Link>
       </section>
-    </div>
+    </main>
   )
 }

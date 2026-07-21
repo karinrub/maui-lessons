@@ -138,7 +138,12 @@ select {
   background: transparent;
   color: #1f1d18;
   cursor: pointer;
-  filter: drop-shadow(0 1px 3px rgba(31, 29, 24, 0.24));
+  /* Dual-tone halo (dark bars need help on light photo/sage sections, a
+     light glow needs to help on the dark ink footer band) so the icon stays
+     legible over any section background sitewide, not just the hero. */
+  filter:
+    drop-shadow(0 0 4px rgba(250, 245, 238, 0.5))
+    drop-shadow(0 1px 3px rgba(31, 29, 24, 0.35));
 }
 
 .site-header.is-menu-open .menu-toggle {
@@ -182,7 +187,12 @@ select {
   line-height: 1;
   letter-spacing: 0.26em;
   text-decoration: none;
-  text-shadow: 0 1px 6px rgba(31, 29, 24, 0.22);
+  /* Cream type reads fine over the home hero photo it was designed for, but
+     goes low-contrast over the lighter sage sections on other pages — a
+     stronger dark halo keeps it legible over any section background. */
+  text-shadow:
+    0 1px 3px rgba(23, 53, 42, 0.55),
+    0 2px 14px rgba(23, 53, 42, 0.4);
   text-transform: uppercase;
   white-space: nowrap;
 }

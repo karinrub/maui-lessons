@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
@@ -35,6 +35,21 @@ const beats = [
 export default function WeeklyMonthRhythm() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const rootRef = useRef<HTMLElement>(null)
+  const [isDesktopSpine, setIsDesktopSpine] = useState(
+    () => window.matchMedia('(min-width: 761px)').matches,
+  )
+
+  // Live-tracked (not a one-time read) so rotating a device across the
+  // 761px line mid-session doesn't leave the spine draw in a stale state.
+  useEffect(() => {
+    const query = window.matchMedia('(min-width: 761px)')
+    const handleChange = (event: MediaQueryListEvent) => setIsDesktopSpine(event.matches)
+
+    setIsDesktopSpine(query.matches)
+    query.addEventListener('change', handleChange)
+
+    return () => query.removeEventListener('change', handleChange)
+  }, [])
 
   useLayoutEffect(() => {
     const root = rootRef.current
@@ -63,7 +78,7 @@ export default function WeeklyMonthRhythm() {
       // journey), while beats pop once as play-once reveals. Desktop only:
       // below the breakpoint the line runs vertically, where a horizontal
       // scaleX draw is meaningless — it stays static there.
-      if (window.matchMedia('(min-width: 761px)').matches) {
+      if (isDesktopSpine) {
         gsap.fromTo(
           root.querySelector('.weekly-month__line'),
           { scaleX: 0, transformOrigin: 'left center' },
@@ -107,7 +122,7 @@ export default function WeeklyMonthRhythm() {
     }, root)
 
     return () => ctx.revert()
-  }, [prefersReducedMotion])
+  }, [prefersReducedMotion, isDesktopSpine])
 
   return (
     <section ref={rootRef} className="weekly-month" aria-labelledby="weekly-month-title">

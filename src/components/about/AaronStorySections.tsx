@@ -86,9 +86,19 @@ export default function AaronStorySections() {
         .fromTo(body, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.6')
     })
 
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
+    /* Keyed as matchMedia conditions (not a one-time isMobile read) so gsap
+       tears down and rebuilds this whole pinned sequence automatically when
+       the viewport crosses the mobile/desktop breakpoint mid-session — e.g.
+       rotating a phone — instead of running stale mobile-tuned constants
+       against a now-desktop-width layout until the next full reload. */
+    mm.add(
+      {
+        isMobile: '(max-width: 760px) and (prefers-reduced-motion: no-preference)',
+        isDesktop: '(min-width: 761px) and (prefers-reduced-motion: no-preference)',
+      },
+      (context) => {
+      const { isMobile } = context.conditions as { isMobile: boolean; isDesktop: boolean }
       const panels = gsap.utils.toArray<HTMLElement>('.aaron-story__panel', root)
-      const isMobile = window.matchMedia('(max-width: 760px)').matches
       /* Re-measured on every ScrollTrigger refresh so window resizes never
          leave the tween distance and the pin distance out of sync. Derived
          from panel width, not track.scrollWidth — the watermark numerals

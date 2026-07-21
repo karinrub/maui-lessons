@@ -57,6 +57,7 @@ test('sizes downstream media from source aspect ratios', () => {
   assert.match(tsx, /width=\{2200\}\s+height=\{1467\}/)
   assert.match(tsx, /width=\{1467\}\s+height=\{2200\}/)
   assert.match(tsx, /width=\{1153\}\s+height=\{1153\}/)
+  assert.match(css, /\.weekly-redesign__photo img \{[\s\S]*?width: 100%;\s+height: auto;/)
   assert.match(css, /\.weekly-redesign__location-photo img[^}]*aspect-ratio:\s*16 \/ 9/s)
   assert.match(css, /\.weekly-redesign__teaching-photo img[^}]*aspect-ratio:\s*1/s)
 })
@@ -123,6 +124,19 @@ test('does not pin the graph on mobile or short-height screens', () => {
   assert.match(tsx, /weekly-progress-mobile/)
   assert.match(css, /padding:\s*0 4px 0 40px/)
   assert.doesNotMatch(css, /@media \(max-width: 760px\)[\s\S]*position:\s*sticky/)
+})
+
+test('keeps milestone headings contained in the narrow pinned graph', () => {
+  const narrowPinnedStart = css.indexOf(
+    '@media (min-width: 761px) and (max-width: 920px) and (min-height: 680px)',
+  )
+  const narrowPinnedEnd = css.indexOf('@media', narrowPinnedStart + 1)
+  const narrowPinned = css.slice(narrowPinnedStart, narrowPinnedEnd)
+
+  assert.ok(narrowPinnedStart >= 0)
+  assert.match(narrowPinned, /grid-template-columns: minmax\(0, 1fr\) minmax\(240px, 0\.36fr\)/)
+  assert.match(narrowPinned, /\.weekly-redesign__progress-milestone h3 \{[\s\S]*font-size: 1\.18rem;/)
+  assert.match(narrowPinned, /overflow-wrap: normal;\s+word-break: normal;/)
 })
 
 test('uses the supplied lesson photographs in every weekly media slot', () => {

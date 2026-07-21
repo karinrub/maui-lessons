@@ -309,6 +309,7 @@
 .weekly-redesign__photo img {
   display: block;
   width: 100%;
+  height: auto;
   border-radius: 8px;
   object-fit: cover;
 }
@@ -693,6 +694,24 @@
 
   .weekly-redesign__teacher-layout {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 920px) and (min-height: 680px) {
+  .weekly-redesign__progression-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.36fr);
+    gap: 24px;
+  }
+
+  .weekly-redesign__progress-milestone h3 {
+    font-size: 1.18rem;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .weekly-redesign__progress-milestone p {
+    font-size: 0.86rem;
+    line-height: 1.45;
   }
 }
 

@@ -18,91 +18,119 @@ test('keeps the dedicated Ongoing Lessons route', () => {
   assert.match(page, /Ongoing Lessons \| Maui Lessons/)
 })
 
-test('renders the approved conversion-first hero collage without the trust strip', () => {
-  assert.match(tsx, /A rhythm, not a routine\./)
-  assert.match(tsx, /Choose your path/)
-  assert.match(tsx, /See how the first month works/)
-  assert.match(tsx, /aaron-teaching-2\.jpg/)
+test('uses a title-free practice hero with the supplied lesson video', () => {
+  assert.match(tsx, /Progress happens on repeat\./)
+  assert.match(tsx, /weekly-redesign__staff-mark/)
+  assert.match(tsx, /weekly-redesign__ghost-word/)
+  assert.match(tsx, /practice/)
+  assert.doesNotMatch(tsx, /ONGOING LESSONS/)
+  assert.doesNotMatch(tsx, /weekly-redesign__metronome/)
+  assert.match(tsx, /aaron-weekly-section\.mp4/)
+  assert.match(tsx, /autoPlay muted loop playsInline/)
+  assert.match(tsx, /weekly-redesign__hero-photo-pair/)
+  assert.match(tsx, /weekly-redesign__hero-content/)
+  assert.match(tsx, /aaron-weekly-1\.jpg/)
   assert.match(tsx, /aaron-weekly-2\.jpg/)
-  assert.match(tsx, /weekly-redesign__hero-image--primary/)
-  assert.match(tsx, /weekly-redesign__hero-image--secondary/)
-  assert.doesNotMatch(tsx, /Private lessons/)
-  assert.doesNotMatch(tsx, /weekly-redesign__trust/)
+  assert.doesNotMatch(tsx, /Photo placeholder — vertical/)
+  assert.doesNotMatch(tsx, /className="weekly-redesign__hero-media"/)
+  assert.doesNotMatch(tsx, /weekly-redesign__collage/)
+  assert.doesNotMatch(tsx, /weekly-redesign__quote/)
+  assert.match(css, /\.weekly-redesign__hero-content \{\s+display: grid;/)
+  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) auto/)
+  assert.match(css, /\.weekly-redesign__hero-video \{\s+width: min\(280px, calc\(50vw - 54px\)\);/)
+  assert.match(css, /\.weekly-redesign__hero-video video \{\s+display: block;\s+width: 100%;\s+height: 157px;/)
 })
 
-test('uses the shared site navigation instead of a route-specific header', () => {
+test('renders the approved foundation sections in page order', () => {
+  const hero = tsx.indexOf('className="weekly-redesign__hero"')
+  const facts = tsx.indexOf('className="weekly-redesign__facts"')
+  const progression = tsx.indexOf('className="weekly-redesign__progression"')
+  const teacher = tsx.indexOf('className="weekly-redesign__teacher"')
+  const crossLink = tsx.indexOf('className="weekly-redesign__cross-link"')
+  const finale = tsx.indexOf('className="weekly-redesign__finale"')
+
+  assert.ok(hero < facts && facts < progression && progression < teacher && teacher < crossLink && crossLink < finale)
+  assert.match(tsx, /THE BASICS/)
+  assert.match(tsx, /HOW IT DEVELOPS/)
+  assert.match(tsx, /WHO YOU(?:'|&apos;)RE LEARNING FROM/)
+  assert.match(tsx, /Make it a habit\./)
+
+  const factsSection = tsx.slice(facts, progression)
+  assert.doesNotMatch(factsSection, /<StaffMark\s*\/>/)
+})
+
+test('keeps the approved fact and progression copy as real text', () => {
+  assert.match(tsx, /Private, one-on-one lessons/)
+  assert.match(tsx, /Ukulele or guitar/)
+  assert.match(tsx, /Weekly, across Kīhei, Wailea & Maipoina Beach Park/)
+  assert.match(tsx, /From \$35 for a 30-minute lesson/)
+  assert.match(tsx, /First chords, real songs/)
+  assert.match(tsx, /Reading & understanding/)
+  assert.match(tsx, /Refining your style/)
+  assert.match(tsx, /weekly-redesign__progress-line/)
+  assert.match(tsx, /weekly-redesign__progress-dot/)
+  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) minmax\(280px, 0\.42fr\)/)
+  assert.match(css, /\.weekly-redesign__fretboard-photo img \{\s+height: clamp\(360px, 42vw, 520px\)/)
+})
+
+test('uses the supplied lesson photographs in every weekly media slot', () => {
+  const placeholders = tsx.match(/<ImagePlaceholder/g) ?? []
+  assert.equal(placeholders.length, 0)
+  assert.match(tsx, /aaron-weekly-1\.jpg/)
+  assert.match(tsx, /aaron-weekly-2\.jpg/)
+  assert.match(tsx, /Photo: Maipoina Beach Park, one of the regular lesson spots/)
+  assert.match(tsx, /Photo: hands on the fretboard/)
+  assert.match(tsx, /Photo: Aaron teaching a lesson/)
+  assert.match(tsx, /aaron-personal-branding-isa-danzig-photography-2-2\.jpg/)
+  assert.match(tsx, /aaron-bookingForm\.jpg/)
+  assert.match(tsx, /aaron-teaching-2\.jpg/)
+  assert.match(tsx, /<img src=\{src\} alt=\{caption\}/)
+  assert.match(css, /\.weekly-redesign__location-photo \{\s+width: min\(100%, 720px\);\s+margin-left: auto;/)
+  assert.match(css, /object-position: 50% 72%/)
+  assert.match(css, /\.weekly-redesign__hero-photo-pair \.weekly-redesign__photo img \{\s+height: 170px;/)
+})
+
+test('excludes the unavailable cadence feature entirely', () => {
+  assert.doesNotMatch(tsx, /same day, every week/i)
+  assert.doesNotMatch(tsx, /highlightDay/)
+  assert.doesNotMatch(tsx, /cadence/i)
+  assert.doesNotMatch(tsx, /day-picker/i)
+})
+
+test('keeps the requested links and the intentionally simple finale', () => {
+  assert.match(tsx, /to="\/tourist-lessons"/)
+  assert.match(tsx, /to="\/book"/)
+  assert.match(tsx, /Start lessons/)
+  assert.doesNotMatch(tsx, /Footer navigation/)
+  assert.match(tsx, /MAUI LESSONS — KĪHEI · WAILEA · MAIPOINA BEACH PARK/)
+})
+
+test('uses a one-time, reduced-motion-safe progression reveal', () => {
+  assert.match(tsx, /import gsap from 'gsap'/)
+  assert.match(tsx, /usePrefersReducedMotion/)
+  assert.match(tsx, /playIfInView/)
+  assert.match(tsx, /toggleActions: 'play none none none'/)
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/)
+})
+
+test('keeps the progression and finale visually clean', () => {
+  const progressionStart = tsx.indexOf('className="weekly-redesign__progression"')
+  const teacherStart = tsx.indexOf('className="weekly-redesign__teacher"')
+  const finaleStart = tsx.indexOf('className="weekly-redesign__finale"')
+  const progressionSection = tsx.slice(progressionStart, teacherStart)
+  const finaleSection = tsx.slice(finaleStart)
+
+  assert.doesNotMatch(progressionSection, /<StaffMark\s*\/>/)
+  assert.match(css, /\.weekly-redesign__chart \{\s+position: relative;\s+min-height: 430px;/)
+  assert.match(css, /stroke-width: 2\.5/)
+  assert.match(css, /\.weekly-redesign__hero-photo-pair \.weekly-redesign__photo figcaption \{\s+display: none;/)
+  assert.doesNotMatch(finaleSection, /begin/)
+  assert.match(css, /\.weekly-redesign__finale \{\s+position: relative;\s+min-height: 100svh;/)
+  assert.doesNotMatch(css, /weekly-redesign__ghost-word--begin/)
+})
+
+test('uses the shared site navigation without altering other routes', () => {
   assert.doesNotMatch(tsx, /weekly-redesign__site-nav/)
   assert.match(layout, /<GlobalNavigation isSuppressed=\{isHome && isHeaderSuppressed\} \/>/)
-  assert.doesNotMatch(css, /\.weekly-redesign\s*\{[^}]*margin-top:/s)
-})
-
-test('uses the site title and content font stacks throughout the page', () => {
-  assert.match(css, /font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif/)
-  assert.match(css, /font-family: Inter, ui-sans-serif, system-ui, sans-serif/)
-  assert.doesNotMatch(css, /Fraunces/)
-})
-
-test('renders an accessible selected-level interface with booking links', () => {
-  assert.match(tsx, /role="tablist"/)
-  assert.match(tsx, /role="tab"/)
-  assert.match(tsx, /aria-selected/)
-  assert.match(tsx, /onKeyDown/)
-  assert.match(tsx, /Beginner/)
-  assert.match(tsx, /Intermediate/)
-  assert.match(tsx, /Advanced/)
-  assert.match(tsx, /Book a beginner lesson/)
-})
-
-test('renders a concise four-beat first-month circle story', () => {
-  assert.match(tsx, /Your first month/)
-  assert.match(tsx, /First chords/)
-  assert.match(tsx, /First song/)
-  assert.match(tsx, /Rhythm settles/)
-  assert.match(tsx, /Play it through/)
-  assert.match(tsx, /weekly-redesign__timeline/)
-  assert.match(tsx, /weekly-redesign__timeline-station/)
-  assert.match(tsx, /Scroll to explore/)
-})
-
-test('gives every first-month circle one clear number and a readable copy surface', () => {
-  assert.match(tsx, /String\(index \+ 1\)\.padStart\(2, '0'\)/)
-  assert.doesNotMatch(tsx, /weekly-redesign__timeline-symbol/)
-  assert.doesNotMatch(tsx, /symbol: '0[1-4]'/)
-  assert.match(tsx, /weekly-redesign__timeline-copy/)
-  assert.match(css, /\.weekly-redesign__timeline-copy\s*\{[^}]*background: rgba\(248, 244, 235, 0\.9\)/s)
-})
-
-test('drives first-month circles with a reversible desktop scroll timeline', () => {
-  assert.doesNotMatch(tsx, /new Lenis\(/)
-  assert.match(tsx, /import gsap from 'gsap'/)
-  assert.match(tsx, /import \{ ScrollTrigger \} from 'gsap\/ScrollTrigger'/)
-  assert.match(tsx, /gsap\.matchMedia/)
-  assert.match(tsx, /\(min-width: 861px\) and \(prefers-reduced-motion: no-preference\)/)
-  assert.match(tsx, /pin: true/)
-  assert.match(tsx, /pin: true,\s*scrub: true,/)
-  assert.match(tsx, /const STICKY_SCROLL_MULTIPLIER = 2/)
-  assert.match(tsx, /snap:\s*\{[\s\S]*snapTo: 1 \/ \(monthBeats\.length - 1\)/)
-  assert.match(tsx, /setActiveMonthIndex/)
-  assert.match(tsx, /weekly-redesign__timeline-station\$\{isActive \? ' is-active' : ''\}/)
-  assert.doesNotMatch(tsx, /containerAnimation/)
-  assert.match(tsx, /monthStageRef/)
-  assert.match(tsx, /monthTrackRef/)
-  assert.match(tsx, /ScrollTrigger\.refresh\(\)/)
-  assert.match(css, /\.weekly-redesign__timeline-station\.is-active\s*\{/)
-})
-
-test('keeps first-month circles accessible when animation is unavailable', () => {
-  assert.match(tsx, /<ol[^>]*className="weekly-redesign__timeline"/)
-  assert.match(css, /@media \(max-width: 860px\), \(prefers-reduced-motion: reduce\)/)
-  assert.match(css, /\.weekly-redesign__timeline\s*\{\s*display: grid;/)
-  assert.match(
-    css,
-    /\.weekly-redesign__month-stage\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\);/s,
-  )
-  assert.match(
-    css,
-    /\.weekly-redesign__timeline-image::after\s*\{[^}]*rgba\(248, 244, 235, 0\.9\)/s,
-  )
-  assert.doesNotMatch(css, /--weekly-sage/)
-  assert.match(css, /var\(--home-sage\)/)
+  assert.match(layout, /const isCinematic = isTouristLessons \|\| isAbout \|\| isWeeklyLessons/)
 })

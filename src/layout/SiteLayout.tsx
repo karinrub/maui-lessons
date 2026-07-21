@@ -22,7 +22,7 @@ export default function SiteLayout() {
   const isWeeklyLessons = pathname === '/weekly-lessons'
   const isTouristLessons = pathname === '/tourist-lessons'
   const isAbout = pathname === '/about'
-  const isCinematic = isTouristLessons || isAbout
+  const isCinematic = isTouristLessons || isAbout || isWeeklyLessons
   const hasAtmosphericBackground = isTouristLessons
   const [isHeaderSuppressed, setHeaderSuppressed] = useState(false)
   const shellClassName = isHome

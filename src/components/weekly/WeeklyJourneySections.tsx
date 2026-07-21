@@ -171,6 +171,7 @@ export default function WeeklyJourneySections() {
         isShort: '(min-width: 761px) and (max-height: 679px) and (prefers-reduced-motion: no-preference)',
       },
       (context) => {
+        const q = gsap.utils.selector(root)
         const { isMobile, isShort } = context.conditions as {
           isDesktop: boolean
           isMobile: boolean
@@ -192,6 +193,76 @@ export default function WeeklyJourneySections() {
           anticipatePin: 1,
           invalidateOnRefresh: true,
         })
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              id: 'weekly-facts-score',
+              trigger: q('.weekly-redesign__facts')[0],
+              start: 'top 86%',
+              end: 'bottom 28%',
+              scrub: 0.8,
+            },
+          })
+          .fromTo(
+            q('.weekly-redesign__fact-list li'),
+            { y: 34, autoAlpha: 0.35 },
+            { y: -12, autoAlpha: 1, stagger: 0.08 },
+            0,
+          )
+          .fromTo(
+            q('.weekly-redesign__location-photo'),
+            { scale: 0.9, y: 38 },
+            { scale: 1, y: -18 },
+            0.15,
+          )
+          .fromTo(
+            q('.weekly-redesign__location-photo img'),
+            { yPercent: -4, scale: 1.06 },
+            { yPercent: 4, scale: 1 },
+            0.15,
+          )
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              id: 'weekly-teacher-score',
+              trigger: q('.weekly-redesign__teacher')[0],
+              start: 'top 88%',
+              end: 'bottom 24%',
+              scrub: 0.8,
+            },
+          })
+          .fromTo(
+            q('.weekly-redesign__teacher-copy'),
+            { x: -42, autoAlpha: 0.45 },
+            { x: 12, autoAlpha: 1 },
+            0,
+          )
+          .fromTo(
+            q('.weekly-redesign__teacher-copy strong'),
+            { y: 28, scale: 0.82 },
+            { y: -8, scale: 1 },
+            0.08,
+          )
+          .fromTo(
+            q('.weekly-redesign__teaching-photo'),
+            { x: 46, scale: 0.94 },
+            { x: -10, scale: 1 },
+            0,
+          )
+
+        gsap
+          .timeline({
+            scrollTrigger: {
+              id: 'weekly-cross-link-score',
+              trigger: q('.weekly-redesign__cross-link')[0],
+              start: 'top 94%',
+              end: 'bottom 52%',
+              scrub: 0.8,
+            },
+          })
+          .fromTo(q('.weekly-redesign__cross-link p'), { y: 14 }, { y: -10 })
       },
     )
 

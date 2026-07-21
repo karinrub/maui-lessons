@@ -53,6 +53,22 @@ test('keeps intrinsic media geometry and a strict resolved contact sheet', () =>
   assert.match(css, /\.weekly-redesign__contact-sheet img \{[\s\S]*?width: 100%;\s+height: auto;/)
 })
 
+test('sizes downstream media from source aspect ratios', () => {
+  assert.match(tsx, /width=\{2200\}\s+height=\{1467\}/)
+  assert.match(tsx, /width=\{1467\}\s+height=\{2200\}/)
+  assert.match(tsx, /width=\{1153\}\s+height=\{1153\}/)
+  assert.match(css, /\.weekly-redesign__location-photo img[^}]*aspect-ratio:\s*16 \/ 9/s)
+  assert.match(css, /\.weekly-redesign__teaching-photo img[^}]*aspect-ratio:\s*1/s)
+})
+
+test('uses reversible section timelines instead of collage parallax', () => {
+  assert.match(tsx, /weekly-facts-score/)
+  assert.match(tsx, /weekly-teacher-score/)
+  assert.match(tsx, /scrub:\s*0\.8/)
+  assert.match(css, /\.weekly-redesign__teacher-copy strong[^}]*display:\s*inline-block/s)
+  assert.doesNotMatch(tsx, /data-vacation-parallax|collage|pull-quote/)
+})
+
 test('keeps global navigation outside the weekly component boundary', () => {
   assert.doesNotMatch(tsx, /GlobalNavigation|site-header|weekly-redesign__site-nav/)
   assert.match(layout, /<GlobalNavigation isSuppressed=\{isHome && isHeaderSuppressed\} \/>/)
@@ -87,7 +103,7 @@ test('keeps the approved fact and progression copy as real text', () => {
   assert.match(tsx, /weekly-redesign__progress-line/)
   assert.match(tsx, /weekly-redesign__progress-dot/)
   assert.match(css, /grid-template-columns: minmax\(0, 1fr\) minmax\(280px, 0\.42fr\)/)
-  assert.match(css, /\.weekly-redesign__fretboard-photo img \{\s+height: clamp\(360px, 42vw, 520px\)/)
+  assert.match(css, /\.weekly-redesign__fretboard-photo img \{\s+aspect-ratio: 2 \/ 3;/)
 })
 
 test('uses the supplied lesson photographs in every weekly media slot', () => {
@@ -103,8 +119,8 @@ test('uses the supplied lesson photographs in every weekly media slot', () => {
   assert.match(tsx, /aaron-teaching-2\.jpg/)
   assert.match(tsx, /src=\{src\}/)
   assert.match(tsx, /alt=\{caption\}/)
-  assert.match(css, /\.weekly-redesign__location-photo \{\s+width: min\(100%, 720px\);\s+margin-left: auto;/)
-  assert.match(css, /object-position: 50% 72%/)
+  assert.match(css, /\.weekly-redesign__location-photo \{\s+width: 100%;\s+transform-origin: center;/)
+  assert.match(css, /object-position: 50% 68%/)
 })
 
 test('excludes the unavailable cadence feature entirely', () => {

@@ -364,13 +364,14 @@
 }
 
 .weekly-redesign__location-photo {
-  width: min(100%, 720px);
-  margin-left: auto;
+  width: 100%;
+  transform-origin: center;
 }
 
 .weekly-redesign__location-photo img {
-  height: clamp(340px, 38vw, 480px);
-  object-position: 50% 72%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: 50% 68%;
 }
 
 .weekly-redesign__progression {
@@ -390,7 +391,8 @@
 }
 
 .weekly-redesign__fretboard-photo img {
-  height: clamp(360px, 42vw, 520px);
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
 }
 
 .weekly-redesign__chart {
@@ -502,6 +504,7 @@
 }
 
 .weekly-redesign__teacher-copy strong {
+  display: inline-block;
   color: var(--maui-gold);
   font-family: Fraunces, Georgia, serif;
   font-size: 1.45em;
@@ -509,8 +512,14 @@
   font-weight: 600;
 }
 
+.weekly-redesign__teaching-photo {
+  width: min(100%, 480px);
+  justify-self: end;
+}
+
 .weekly-redesign__teaching-photo img {
-  height: 300px;
+  aspect-ratio: 1;
+  object-fit: cover;
 }
 
 .weekly-redesign__cross-link {
@@ -686,9 +695,6 @@
     max-width: 35ch;
   }
 
-  .weekly-redesign__teaching-photo img {
-    height: 230px;
-  }
 }
 
 @media (max-width: 440px) {

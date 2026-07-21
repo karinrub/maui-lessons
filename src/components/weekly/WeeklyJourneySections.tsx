@@ -41,9 +41,9 @@ const progression = [
   },
 ] as const
 
-function StaffMark() {
+function StaffMark({ className = '' }: { className?: string }) {
   return (
-    <span className="weekly-redesign__staff-mark" aria-hidden="true">
+    <span className={`weekly-redesign__staff-mark ${className}`.trim()} aria-hidden="true">
       <i />
       <i />
       <i />
@@ -56,15 +56,28 @@ function StaffMark() {
 function ImageFigure({
   src,
   caption,
+  width,
+  height,
+  eager = false,
   className = '',
 }: {
   src: string
   caption: string
+  width: number
+  height: number
+  eager?: boolean
   className?: string
 }) {
   return (
     <figure className={`weekly-redesign__photo ${className}`.trim()}>
-      <img src={src} alt={caption} />
+      <img
+        src={src}
+        alt={caption}
+        width={width}
+        height={height}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+      />
       <figcaption>{caption}</figcaption>
     </figure>
   )
@@ -115,27 +128,69 @@ export default function WeeklyJourneySections() {
 
   return (
     <main className="weekly-redesign" ref={rootRef}>
-      <section className="weekly-redesign__hero" aria-labelledby="weekly-redesign-title">
-        <span className="weekly-redesign__ghost-word weekly-redesign__ghost-word--practice" aria-hidden="true">
-          practice
-        </span>
-        <div className="weekly-redesign__container">
-          <div className="weekly-redesign__hero-content">
-            <div>
-              <h1 id="weekly-redesign-title">Progress happens on repeat.</h1>
+      <section className="weekly-redesign__opening" aria-labelledby="weekly-redesign-title">
+        <div className="weekly-redesign__opening-stage">
+          <span className="weekly-redesign__ghost-word weekly-redesign__ghost-word--practice" aria-hidden="true">
+            practice
+          </span>
+          <div className="weekly-redesign__loop-system" aria-hidden="true">
+            <span className="weekly-redesign__loop-rings">
+              <i />
+              <i />
+              <i />
+            </span>
+            <span className="weekly-redesign__loop-dot" />
+            <span className="weekly-redesign__loop-open-arc" />
+            <StaffMark className="weekly-redesign__loop-staff" />
+          </div>
+          <p className="weekly-redesign__loop-begin" aria-hidden="true">
+            Begin again.
+          </p>
+          <p className="weekly-redesign__loop-transition" aria-hidden="true">
+            Practice becomes <em>progress.</em>
+          </p>
+          <div className="weekly-redesign__resolved-hero weekly-redesign__container">
+            <div className="weekly-redesign__resolved-copy">
+              <h1 id="weekly-redesign-title">
+                <span>Progress happens</span>
+                <span>on repeat.</span>
+              </h1>
               <p className="weekly-redesign__hero-lede">
                 Private ukulele and guitar lessons on Maui, shaped around whoever&apos;s in front of him — not a level chart.
               </p>
             </div>
 
-            <div className="weekly-redesign__hero-media-row">
-              <figure className="weekly-redesign__hero-video">
-                <video src={weeklySectionVideo} autoPlay muted loop playsInline aria-label="Lesson footage — silent clip, low-fi" />
+            <div className="weekly-redesign__resolved-media">
+              <figure className="weekly-redesign__hero-video-frame">
+                <video
+                  src={weeklySectionVideo}
+                  poster={weeklyHeroImageOne}
+                  width={1920}
+                  height={1080}
+                  preload="metadata"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  aria-label="Lesson footage — silent clip, low-fi"
+                />
                 <figcaption>Lesson footage — silent clip, low-fi</figcaption>
               </figure>
-              <div className="weekly-redesign__hero-photo-pair">
-                <ImageFigure className="weekly-redesign__hero-photo" caption="Photo: Aaron teaching outdoors" src={weeklyHeroImageOne} />
-                <ImageFigure className="weekly-redesign__hero-photo" caption="Photo: Aaron guiding a lesson by the ocean" src={weeklyHeroImageTwo} />
+              <div className="weekly-redesign__contact-sheet">
+                <ImageFigure
+                  src={weeklyHeroImageOne}
+                  caption="Aaron teaching outdoors"
+                  width={720}
+                  height={960}
+                  eager
+                />
+                <ImageFigure
+                  src={weeklyHeroImageTwo}
+                  caption="Aaron guiding a lesson by the ocean"
+                  width={698}
+                  height={920}
+                  eager
+                />
               </div>
             </div>
           </div>
@@ -157,6 +212,8 @@ export default function WeeklyJourneySections() {
             className="weekly-redesign__location-photo"
             caption="Photo: Maipoina Beach Park, one of the regular lesson spots"
             src={maipoinaLocationImage}
+            width={2200}
+            height={1467}
           />
         </div>
       </section>
@@ -204,7 +261,13 @@ export default function WeeklyJourneySections() {
                 </article>
               </div>
             </div>
-            <ImageFigure className="weekly-redesign__fretboard-photo" caption="Photo: hands on the fretboard" src={fretboardImage} />
+            <ImageFigure
+              className="weekly-redesign__fretboard-photo"
+              caption="Photo: hands on the fretboard"
+              src={fretboardImage}
+              width={1467}
+              height={2200}
+            />
           </div>
         </div>
       </section>
@@ -220,7 +283,13 @@ export default function WeeklyJourneySections() {
               Aaron has taught guitar and ukulele on Maui for <strong>22</strong> years. For the last <strong>8</strong>, ukulele has been the focus.
             </p>
           </div>
-          <ImageFigure className="weekly-redesign__teaching-photo" caption="Photo: Aaron teaching a lesson" src={teachingImage} />
+          <ImageFigure
+            className="weekly-redesign__teaching-photo"
+            caption="Photo: Aaron teaching a lesson"
+            src={teachingImage}
+            width={1153}
+            height={1153}
+          />
         </div>
       </section>
 

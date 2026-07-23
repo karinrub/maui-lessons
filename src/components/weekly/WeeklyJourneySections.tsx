@@ -182,7 +182,7 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
       { y: 0, duration: 0.24, stagger: 0.035 },
       0.72,
     )
-    .to(videoFrame, { x: 0, y: 0, scale: 1, clipPath: 'inset(0% round 8px)', duration: 0.28 }, 0.72)
+    .to(videoFrame, { x: 0, y: 0, scale: 1, clipPath: 'circle(100% at 50% 50%)', duration: 0.28 }, 0.72)
     .to(q('.weekly-redesign__ghost-word--practice'), { xPercent: -10, duration: 1 }, 0)
 
   return tl

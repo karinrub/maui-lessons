@@ -6,6 +6,10 @@ const content = await readFile(
   new URL('../src/components/faq/faqContent.ts', import.meta.url),
   'utf8',
 )
+const tsx = await readFile(
+  new URL('../src/components/faq/FaqSections.tsx', import.meta.url),
+  'utf8',
+)
 
 test('defines visitor, ongoing, and booking routes for the FAQ guide', () => {
   assert.match(content, /label: 'Visiting Maui'/)
@@ -29,4 +33,17 @@ test('does not promise unfinished booking delivery or unconfirmed policies', () 
   assert.doesNotMatch(content, /he’ll take it from there/i)
   assert.doesNotMatch(content, /send a booking request/i)
   assert.doesNotMatch(content, /cancellation|reschedul|weather|parking/i)
+})
+
+test('renders guide routes, visible facts, and one instructional proof image', () => {
+  assert.match(tsx, /faq-guide-routes/)
+  assert.match(tsx, /faq-quick-facts/)
+  assert.match(tsx, /faq-proof/)
+  assert.match(tsx, /src=\{faqProof\.imageSrc\}/)
+  assert.doesNotMatch(tsx, /faq-break/)
+})
+
+test('uses a truthful FAQ booking action', () => {
+  assert.match(tsx, /Explore lesson options/)
+  assert.doesNotMatch(tsx, /Book a Lesson/)
 })

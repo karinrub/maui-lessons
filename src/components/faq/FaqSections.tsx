@@ -4,117 +4,16 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
 import playIfInView from '../../utils/playIfInView'
+import {
+  faqCategories,
+  faqGuideRoutes,
+  faqProof,
+  faqQuickFacts,
+  faqStructuredData,
+} from './faqContent'
 import './FaqSections.css'
 
-const faqBreakImage = new URL('../../../assets/images/aaron-beach-dance-1.jpg', import.meta.url)
-  .href
-
 gsap.registerPlugin(ScrollTrigger)
-
-type FaqItem = { id: string; q: string; a: string }
-type FaqCategory = {
-  id: string
-  label: string
-  descriptor: string
-  ghostWord: string
-  items: FaqItem[]
-}
-
-const faqCategories: FaqCategory[] = [
-  {
-    id: 'getting-started',
-    label: 'Getting started',
-    descriptor: 'Before your first lesson',
-    ghostWord: 'begin',
-    items: [
-      {
-        id: 'experience',
-        q: 'Do I need any experience?',
-        a: 'None at all. Most vacation students have never held a ukulele before — the hour moves at your pace, one chord at a time. If you already play, ongoing lessons pick up wherever you are, all the way to advanced technique.',
-      },
-      {
-        id: 'ages',
-        q: 'What ages do you teach?',
-        a: 'All of them. Aaron teaches students of any age with the same patient, no-pressure approach, and families often learn side by side.',
-      },
-      {
-        id: 'instruments',
-        q: 'Ukulele or guitar?',
-        a: 'Both. The ukulele has been Aaron’s focus for the last eight years; guitar lessons come with the same one-on-one attention.',
-      },
-      {
-        id: 'bring-instrument',
-        q: 'Do I need to bring my own instrument?',
-        a: 'No. Aaron brings a ukulele for every lesson, so there’s nothing to own or pack — just show up and play.',
-      },
-    ],
-  },
-  {
-    id: 'the-lessons',
-    label: 'The lessons',
-    descriptor: 'While you’re here',
-    ghostWord: 'play',
-    items: [
-      {
-        id: 'vacation',
-        q: 'What happens in a vacation lesson?',
-        a: 'One private hour on a Maui beach. You’ll learn your first chords, then a real song — one you keep long after the trip ends.',
-      },
-      {
-        id: 'where',
-        q: 'Where do lessons happen?',
-        a: 'Around South Maui. Vacation lessons usually meet at Maipoina Beach Park or along the coast through Kihei and Wailea — and if it’s easier, Aaron will come to you, whether you’re staying at a hotel or an Airbnb. Ongoing students meet across Kihei and Wailea, and at Maipoina Beach Park.',
-      },
-      {
-        id: 'ongoing',
-        q: 'How do ongoing lessons work?',
-        a: 'They become a regular part of your week. Each lesson picks up exactly where the last left off — from first chords, through reading music, to refining your own style.',
-      },
-      {
-        id: 'group',
-        q: 'Can we book as a group or family?',
-        a: 'Yes. The group experience is made for families and friends traveling together — everyone learns the same song, side by side.',
-      },
-    ],
-  },
-  {
-    id: 'booking',
-    label: 'Booking',
-    descriptor: 'Making it regular',
-    ghostWord: 'book',
-    items: [
-      {
-        id: 'how-to-book',
-        q: 'How do I book?',
-        a: 'Through the booking page: choose your lesson, tell Aaron about your group and your dates, and he’ll take it from there.',
-      },
-      {
-        id: 'pricing',
-        q: 'What does a lesson cost?',
-        a: 'Rates start at $35 for a 30-minute lesson. The exact rate depends on the lesson type and how often you’d like to meet — send a booking request and Aaron will confirm current pricing with you directly.',
-      },
-      {
-        id: 'payment',
-        q: 'How do I pay?',
-        a: 'Venmo or cash on the day of your lesson. Card payments through Square are coming soon.',
-      },
-    ],
-  },
-]
-
-// FAQPage structured data, generated once from the same source of truth the
-// accordion renders — eligible for rich results without a second copy.
-const faqStructuredData = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqCategories.flatMap((category) =>
-    category.items.map((item) => ({
-      '@type': 'Question',
-      name: item.q,
-      acceptedAnswer: { '@type': 'Answer', text: item.a },
-    })),
-  ),
-})
 
 const allFaqItems = faqCategories.flatMap((category) => category.items)
 
@@ -124,10 +23,10 @@ export default function FaqSections() {
   const compassRef = useRef<HTMLDivElement>(null)
   const ghostRef = useRef<HTMLSpanElement>(null)
   const [open, setOpen] = useState<string | null>('experience')
-  const [activeCategory, setActiveCategory] = useState(faqCategories[0].id)
+  const [activeCategory, setActiveCategory] = useState<string>(faqCategories[0].id)
   const [ghostWord, setGhostWord] = useState(faqCategories[0].ghostWord)
 
-  // Deep links: /faq#pricing opens that row; /faq#faq-category-booking lands
+  // Deep links: /faq#pricing opens that row; /faq#faq-category-pricing lands
   // on the category. Runs once, after SiteLayout's scroll-to-top.
   useEffect(() => {
     const hash = window.location.hash.replace('#', '')
@@ -322,10 +221,10 @@ export default function FaqSections() {
         playIfInView(tl, category)
       }
 
-      const faqBreak = root.querySelector('.faq-break__inner')
-      if (faqBreak) {
-        const breakTween = gsap.fromTo(
-          faqBreak,
+      const faqProof = root.querySelector('.faq-proof')
+      if (faqProof) {
+        const proofTween = gsap.fromTo(
+          faqProof,
           { opacity: 0, y: 22 },
           {
             opacity: 1,
@@ -333,20 +232,20 @@ export default function FaqSections() {
             duration: 0.8,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: faqBreak,
+              trigger: faqProof,
               start: 'top 88%',
               toggleActions: 'play none none none',
             },
           },
         )
-        playIfInView(breakTween, faqBreak)
+        playIfInView(proofTween, faqProof)
       }
 
-      // Warm gold drift scrubbed in as the Booking category approaches — the
+      // Warm gold drift scrubbed in as Pricing and booking approaches — the
       // same high-intent foreshadowing device as the weekly journey.
       const shelf = root.querySelector('.faq-shelf')
-      const bookingCategory = root.querySelector('#faq-category-booking')
-      if (shelf && bookingCategory) {
+      const pricingCategory = root.querySelector('#faq-category-pricing')
+      if (shelf && pricingCategory) {
         gsap.fromTo(
           shelf,
           { '--faq-warm': 0 },
@@ -354,7 +253,7 @@ export default function FaqSections() {
             '--faq-warm': 1,
             ease: 'none',
             scrollTrigger: {
-              trigger: bookingCategory,
+              trigger: pricingCategory,
               start: 'top 92%',
               end: 'top 38%',
               scrub: 0.8,
@@ -421,6 +320,23 @@ export default function FaqSections() {
           Whether you’re here for a week or you’ve called Maui home for years, a lesson is meant to
           feel like an experience worth having — not one more thing on the list.
         </p>
+        <nav className="faq-guide-routes" aria-label="Choose your FAQ path">
+          {faqGuideRoutes.map((route) => (
+            <a
+              key={route.targetId}
+              href={`#${route.targetId}`}
+              onClick={(event) =>
+                handleNavClick(event, route.targetId.replace('faq-category-', ''))
+              }
+            >
+              <span>{route.label}</span>
+              <small>{route.detail}</small>
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3 8h9M8 3l5 5-5 5" />
+              </svg>
+            </a>
+          ))}
+        </nav>
         <div className="faq-intro__compass-window" aria-hidden="true">
           <div ref={compassRef} className="faq-compass">
             <span className="faq-compass__ring faq-compass__ring--outer" />
@@ -452,6 +368,11 @@ export default function FaqSections() {
           </nav>
 
           <div className="faq-shelf__content">
+            <ul className="faq-quick-facts" aria-label="Lesson essentials">
+              {faqQuickFacts.map((fact) => (
+                <li key={fact}>{fact}</li>
+              ))}
+            </ul>
             {faqCategories.map((category, index) => (
               <Fragment key={category.id}>
                 <section
@@ -499,19 +420,31 @@ export default function FaqSections() {
                   </div>
                 </section>
 
-                {category.id === 'the-lessons' && (
-                  <div className="faq-break">
-                    <figure className="faq-break__inner">
+                {category.id === 'ongoing' && (
+                  <aside className="faq-proof" aria-label="Why learn with Aaron">
+                    <div className="faq-proof__copy">
+                      <p>{faqProof.eyebrow}</p>
+                      <h2>{faqProof.heading}</h2>
+                      <ul>
+                        {faqProof.points.map((point) => (
+                          <li key={point}>{point}</li>
+                        ))}
+                      </ul>
+                      <Link to="/about">
+                        Meet Aaron <span aria-hidden="true">→</span>
+                      </Link>
+                    </div>
+                    <figure className="faq-proof__media">
                       <img
-                        src={faqBreakImage}
-                        alt="Aaron dancing on the beach with a ukulele in hand"
-                        width={2400}
-                        height={1603}
+                        src={faqProof.imageSrc}
+                        alt={faqProof.imageAlt}
+                        width={1920}
+                        height={1280}
                         loading="lazy"
                         decoding="async"
                       />
                     </figure>
-                  </div>
+                  </aside>
                 )}
               </Fragment>
             ))}
@@ -521,14 +454,12 @@ export default function FaqSections() {
                 <p className="faq-close__line">Still wondering about something?</p>
                 <p className="faq-close__promise">Bring the questions. Leave with a song.</p>
                 <Link to="/book" className="faq-close__cta">
-                  Book a Lesson
+                  Explore lesson options
                   <span className="faq-close__cta-arrow" aria-hidden="true">
                     →
                   </span>
                 </Link>
-                <p className="faq-close__note">
-                  Lessons meet across Kihei and Wailea, and at Maipoina Beach Park.
-                </p>
+                <p className="faq-close__note">Compare formats, choose a date, and plan your lesson.</p>
               </div>
             </section>
           </div>

@@ -6,17 +6,21 @@ const tsx = await readFile(
   new URL('../src/components/faq/FaqSections.tsx', import.meta.url),
   'utf8',
 )
+const content = await readFile(
+  new URL('../src/components/faq/faqContent.ts', import.meta.url),
+  'utf8',
+)
 const css = await readFile(
   new URL('../src/components/faq/FaqSections.css', import.meta.url),
   'utf8',
 )
 
 test('emits FAQPage structured data generated from the accordion source', () => {
-  assert.match(tsx, /'@type': 'FAQPage'/)
-  assert.match(tsx, /acceptedAnswer/)
+  assert.match(content, /'@type': 'FAQPage'/)
+  assert.match(content, /acceptedAnswer/)
   assert.match(tsx, /application\/ld\+json/)
   // Generated from faqCategories, not a second hand-written copy.
-  assert.match(tsx, /faqCategories\.flatMap/)
+  assert.match(content, /faqCategories\.flatMap/)
 })
 
 test('supports deep links that open a question from the URL hash', () => {
@@ -44,7 +48,8 @@ test('ghost word crossfades instead of hard-cutting', () => {
   assert.match(tsx, /onComplete: \(\) => setGhostWord\(next\)/)
 })
 
-test('warm gold drift scrubs in toward the Booking category', () => {
+test('warm gold drift scrubs in toward Pricing and booking', () => {
+  assert.match(tsx, /#faq-category-pricing/)
   assert.match(tsx, /--faq-warm/)
   assert.match(css, /opacity: var\(--faq-warm, 0\)/)
 })

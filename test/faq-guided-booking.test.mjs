@@ -46,4 +46,5 @@ test('renders guide routes, visible facts, and one instructional proof image', (
 test('uses a truthful FAQ booking action', () => {
   assert.match(tsx, /Explore lesson options/)
   assert.doesNotMatch(tsx, /Book a Lesson/)
+  assert.doesNotMatch(tsx, /Anything\s+else — just ask when you book\./)
 })

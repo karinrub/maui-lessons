@@ -313,8 +313,8 @@ export default function FaqSections() {
           </span>
         </h1>
         <p className="faq-intro__lede">
-          Everything you might want to know before picking up an instrument with Aaron. Anything
-          else — just ask when you book.
+          Everything you might want to know before picking up an instrument with Aaron. Choose the
+          path below that sounds most like you.
         </p>
         <p className="faq-intro__reassurance">
           Whether you’re here for a week or you’ve called Maui home for years, a lesson is meant to

@@ -19,25 +19,27 @@ const fretboardImage = new URL('../../../assets/images/aaron-bookingForm.jpg', i
 const teachingImage = new URL('../../../assets/images/aaron-teaching-2.jpg', import.meta.url).href
 
 const facts = [
-  'Private, one-on-one lessons',
+  'Private lessons with Aaron',
   'Ukulele or guitar',
-  'Weekly, across Kīhei, Wailea & Maipoina Beach Park',
-  'From $35 for a 30-minute lesson',
+  'Weekly lessons in Kīhei, Wailea, and at Maipoina Beach Park',
+  'Rates start at $35 for a 30 minute lesson',
 ] as const
 
 const progression = [
   {
     title: 'First chords, real songs',
-    description: "You're playing actual songs from day one — not drills building toward some future payoff.",
-  },
-  {
-    title: 'Reading & understanding',
     description:
-      'As the songs get harder, you start reading music and learning why the instrument works the way it does.',
+      'You begin with music you can actually play, so practice has a purpose from the start.',
   },
   {
-    title: 'Refining your style',
-    description: 'Technique sharpens, and your own voice on the instrument starts to come through.',
+    title: 'Reading and understanding',
+    description:
+      'As the music grows, Aaron can introduce reading and help you understand how the instrument works.',
+  },
+  {
+    title: 'Technique and your own style',
+    description:
+      'With steady practice, your playing becomes more comfortable and your own musical voice has room to come through.',
   },
 ] as const
 
@@ -89,7 +91,7 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
   const loopSystem = q('.weekly-redesign__loop-system')[0] as HTMLElement
   const videoFigure = q('.weekly-redesign__hero-video-figure')[0] as HTMLElement
   const videoFrame = q('.weekly-redesign__hero-video-frame')[0] as HTMLElement
-  const orbitPath = root.querySelector<SVGPathElement>('.weekly-redesign__orbit-path')!
+  const orbitPath = root.querySelector('.weekly-redesign__orbit-path') as SVGPathElement
 
   // This runs repeatedly as a GSAP function-based tween value, including
   // after invalidateOnRefresh — by then videoFrame is already mid-transform,
@@ -216,8 +218,8 @@ export default function WeeklyJourneySections() {
           isMobile: boolean
           isShort: boolean
         }
-        const opening = root.querySelector<HTMLElement>('.weekly-redesign__opening')
-        const openingStage = root.querySelector<HTMLElement>('.weekly-redesign__opening-stage')
+        const opening = root.querySelector('.weekly-redesign__opening') as HTMLElement
+        const openingStage = root.querySelector('.weekly-redesign__opening-stage') as HTMLElement
         if (!opening || !openingStage) return
 
         const loop = buildPracticeLoopTimeline(root)
@@ -264,7 +266,7 @@ export default function WeeklyJourneySections() {
 
         if (isDesktop) {
           const progressStage = q('.weekly-redesign__progress-stage')[0] as HTMLElement
-          const path = root.querySelector<SVGPathElement>('.weekly-redesign__progress-path')!
+          const path = root.querySelector('.weekly-redesign__progress-path') as SVGPathElement
           const pathLength = path.getTotalLength()
           const progressTl = gsap.timeline({ defaults: { ease: 'none' } })
 
@@ -339,6 +341,33 @@ export default function WeeklyJourneySections() {
             )
         }
 
+        for (const sectionName of ['audience', 'weekly-lesson'] as const) {
+          const section = q(`.weekly-redesign__${sectionName}`)[0]
+          const revealItems = q(
+            sectionName === 'audience'
+              ? '.weekly-redesign__audience-intro > *, .weekly-redesign__audience-grid article'
+              : '.weekly-redesign__weekly-lesson-layout > *',
+          )
+
+          gsap.fromTo(
+            revealItems,
+            { y: 34, autoAlpha: 0.45 },
+            {
+              y: 0,
+              autoAlpha: 1,
+              stagger: 0.08,
+              ease: 'none',
+              scrollTrigger: {
+                id: `weekly-${sectionName}-score`,
+                trigger: section,
+                start: 'top 84%',
+                end: 'center 44%',
+                scrub: 0.8,
+              },
+            },
+          )
+        }
+
         gsap
           .timeline({
             scrollTrigger: {
@@ -350,7 +379,7 @@ export default function WeeklyJourneySections() {
             },
           })
           .fromTo(
-            q('.weekly-redesign__teacher-copy'),
+            q('.weekly-redesign__teacher-copy > *'),
             { x: -42, autoAlpha: 0.45 },
             { x: 12, autoAlpha: 1 },
             0,
@@ -417,7 +446,7 @@ export default function WeeklyJourneySections() {
   }, [prefersReducedMotion])
 
   useEffect(() => {
-    const video = rootRef.current?.querySelector<HTMLVideoElement>('.weekly-redesign__hero-video-frame video')
+    const video = rootRef.current?.querySelector('.weekly-redesign__hero-video-frame video') as HTMLVideoElement
     if (!video) return
 
     const observer = new IntersectionObserver(
@@ -476,7 +505,8 @@ export default function WeeklyJourneySections() {
                 <span>on repeat.</span>
               </h1>
               <p className="weekly-redesign__hero-lede">
-                Private ukulele and guitar lessons on Maui, shaped around whoever&apos;s in front of him — not a level chart.
+                Private ukulele and guitar lessons on Maui, shaped around your experience, your pace,
+                and the music you want to play.
               </p>
             </div>
 
@@ -493,10 +523,10 @@ export default function WeeklyJourneySections() {
                     muted
                     loop
                     playsInline
-                    aria-label="Lesson footage — silent clip, low-fi"
+                    aria-label="Silent lesson footage"
                   />
                 </div>
-                <figcaption>Lesson footage — silent clip, low-fi</figcaption>
+                <figcaption>Silent lesson footage</figcaption>
               </figure>
               <div className="weekly-redesign__contact-sheet">
                 <ImageFigure
@@ -532,11 +562,47 @@ export default function WeeklyJourneySections() {
           </ul>
           <ImageFigure
             className="weekly-redesign__location-photo"
-            caption="Photo: Maipoina Beach Park, one of the regular lesson spots"
+            caption="Maipoina Beach Park, one of the regular lesson spots"
             src={maipoinaLocationImage}
             width={2200}
             height={1467}
           />
+        </div>
+      </section>
+
+      <section className="weekly-redesign__audience" aria-labelledby="weekly-audience-title">
+        <div className="weekly-redesign__container">
+          <p className="weekly-redesign__eyebrow">A PLACE TO BEGIN</p>
+          <div className="weekly-redesign__audience-intro">
+            <h2 id="weekly-audience-title">Lessons for every stage of learning.</h2>
+            <p>
+              Some students are holding an instrument for the first time. Others already play
+              and want thoughtful guidance toward what comes next. Aaron meets each student
+              where they are and gives them a comfortable way forward.
+            </p>
+          </div>
+          <div className="weekly-redesign__audience-grid">
+            <article>
+              <span aria-hidden="true">01</span>
+              <h3>Adults and returning players</h3>
+              <p>
+                You do not need a musical background to begin. Start with your first chords,
+                return after years away, or build on the skills you already have. Lessons move
+                at a pace that gives you time to understand what you are playing and enjoy the
+                process.
+              </p>
+            </article>
+            <article>
+              <span aria-hidden="true">02</span>
+              <h3>Younger students and their parents</h3>
+              <p>
+                Aaron teaches students of any age with the same patient approach. Younger
+                players get clear steps, real music to work toward, and room to learn without
+                feeling rushed. For parents looking for a warm and encouraging teacher, every
+                lesson is shaped around the student in front of him.
+              </p>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -549,9 +615,9 @@ export default function WeeklyJourneySections() {
             HOW IT DEVELOPS
           </p>
           <h2 id="weekly-progression-title" className="weekly-redesign__progress-heading">
-            <span>Same instrument.</span>
-            <span>A different player,</span>
-            <span>every year.</span>
+            <span>The more you play,</span>
+            <span>the more it becomes</span>
+            <span>your own.</span>
           </h2>
 
           <div className="weekly-redesign__progress-stage">
@@ -583,12 +649,38 @@ export default function WeeklyJourneySections() {
               </div>
               <ImageFigure
                 className="weekly-redesign__fretboard-photo"
-                caption="Photo: hands on the fretboard"
+                caption="Hands on the fretboard"
                 src={fretboardImage}
                 width={1467}
                 height={2200}
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        className="weekly-redesign__weekly-lesson"
+        aria-labelledby="weekly-lesson-title"
+      >
+        <div className="weekly-redesign__grain" aria-hidden="true" />
+        <div className="weekly-redesign__container weekly-redesign__weekly-lesson-layout">
+          <div>
+            <p className="weekly-redesign__eyebrow weekly-redesign__eyebrow--ink">
+              YOUR WEEKLY LESSON
+            </p>
+            <h2 id="weekly-lesson-title">Each week starts where the last one ended.</h2>
+          </div>
+          <div className="weekly-redesign__weekly-lesson-copy">
+            <p>
+              Aaron pays attention to what is clicking, what still feels awkward, and what you
+              would like to play next. Lessons can move from first chords and familiar songs
+              into reading music, technique, and a deeper understanding of the instrument.
+            </p>
+            <p>
+              There is no fixed level chart to keep up with. The pace changes with the student,
+              which gives children and adults the time they need to build real confidence.
+            </p>
           </div>
         </div>
       </section>
@@ -600,13 +692,21 @@ export default function WeeklyJourneySections() {
               <StaffMark />
               WHO YOU&apos;RE LEARNING FROM
             </h2>
-            <p className="weekly-redesign__teacher-copy">
-              Aaron has taught guitar and ukulele on Maui for <strong>22</strong> years. For the last <strong>8</strong>, ukulele has been the focus.
-            </p>
+            <div className="weekly-redesign__teacher-copy">
+              <p>
+                Aaron brings <strong>22 years</strong> of making, studying, and performing music to
+                every lesson. Ukulele has been his primary instrument and focus for the last <strong>eight years</strong>,
+                and guitar students receive the same personal attention.
+              </p>
+              <p>
+                His approach is patient and encouraging. The goal is to help students feel comfortable
+                with the instrument and excited to keep playing between lessons.
+              </p>
+            </div>
           </div>
           <ImageFigure
             className="weekly-redesign__teaching-photo"
-            caption="Photo: Aaron teaching a lesson"
+            caption="Aaron teaching a lesson"
             src={teachingImage}
             width={1153}
             height={1153}
@@ -616,15 +716,20 @@ export default function WeeklyJourneySections() {
 
       <section className="weekly-redesign__cross-link" aria-label="Vacation lesson option">
         <p>
-          Just on Maui for a week or two? There&apos;s a page for that — <Link to="/tourist-lessons">Vacation Lessons</Link>
+          Visiting Maui for a week or two? Explore{' '}
+          <Link to="/tourist-lessons">Vacation Lessons</Link>.
         </p>
       </section>
 
       <footer className="weekly-redesign__finale" aria-label="Book ongoing lessons">
         <div className="weekly-redesign__finale-arch" aria-hidden="true" />
         <div className="weekly-redesign__finale-inner">
-          <h2 id="weekly-finale-title">Make it a habit.</h2>
-          <p>One lesson a week, for as long as it keeps being useful.</p>
+          <h2 id="weekly-finale-title">Make music part of your week.</h2>
+          <p>Start where you are. Aaron will help you find the next step.</p>
+          <p>
+            You do not need to have everything figured out before you book. Tell Aaron who the
+            lesson is for and what you hope to play.
+          </p>
           <Link to="/book" className="weekly-redesign__finale-cta">
             Book a Lesson <span className="weekly-redesign__finale-cta-arrow" aria-hidden="true">→</span>
           </Link>

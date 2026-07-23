@@ -7,7 +7,7 @@ export default function WeeklyLessons() {
   useDocumentMeta({
     title: 'Ongoing Ukulele & Guitar Lessons on Maui | Maui Lessons',
     description:
-      'Aaron has spent over twenty years teaching music, and the ukulele has been his focus for the last eight. Steady, private ongoing lessons on Maui for beginner, intermediate, and advanced students.',
+      'Private ongoing ukulele and guitar lessons on Maui for adults and younger students. Learn at a patient pace with Aaron, who brings 22 years in music.',
     path: '/weekly-lessons',
   })
 

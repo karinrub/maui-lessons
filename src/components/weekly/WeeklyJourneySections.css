@@ -398,6 +398,15 @@
   min-height: 600px;
 }
 
+@media (min-width: 761px) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
+  .weekly-redesign__progress-stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+  }
+}
+
 .weekly-redesign__progression-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);
@@ -472,8 +481,8 @@
 
 .weekly-redesign__progress-active-dot {
   position: absolute;
-  top: calc(79.45% - 8px);
-  left: calc(6.28% - 8px);
+  top: calc(77.22% - 8px);
+  left: calc(6.05% - 8px);
   z-index: 3;
   display: block;
   width: 16px;
@@ -785,6 +794,7 @@
   }
 
   .weekly-redesign__progress-stage {
+    display: block;
     min-height: 0;
   }
 

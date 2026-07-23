@@ -266,7 +266,7 @@ export default function WeeklyJourneySections() {
 
           progressTl
             .set(path, { strokeDasharray: pathLength, strokeDashoffset: pathLength })
-            .fromTo(q('.weekly-redesign__progress-graphic'), { y: 76 }, { y: -64, duration: 1 }, 0)
+            .fromTo(q('.weekly-redesign__chart'), { y: 76 }, { y: -64, duration: 1 }, 0)
             .to(path, { strokeDashoffset: 0, duration: 0.82 }, 0.06)
             .to(
               q('.weekly-redesign__progress-active-dot'),
@@ -560,7 +560,7 @@ export default function WeeklyJourneySections() {
                   <svg viewBox="0 0 860 360" preserveAspectRatio="none">
                     <path
                       className="weekly-redesign__progress-path"
-                      d="M54 286 C190 286 218 244 330 232 C470 216 502 144 620 132 C716 122 740 74 812 52"
+                      d="M52 278 C187 278 215 236 327 224 C451 208 480 136 585 124"
                     />
                   </svg>
                   <span className="weekly-redesign__mobile-progress-line" />

@@ -18,38 +18,97 @@ test('keeps the dedicated Ongoing Lessons route', () => {
   assert.match(page, /Ongoing Lessons \| Maui Lessons/)
 })
 
-test('uses a title-free practice hero with the supplied lesson video', () => {
-  assert.match(tsx, /Progress happens on repeat\./)
-  assert.match(tsx, /weekly-redesign__staff-mark/)
-  assert.match(tsx, /weekly-redesign__ghost-word/)
-  assert.match(tsx, /practice/)
-  assert.doesNotMatch(tsx, /ONGOING LESSONS/)
-  assert.doesNotMatch(tsx, /weekly-redesign__metronome/)
-  assert.match(tsx, /aaron-weekly-section\.mp4/)
-  assert.match(tsx, /autoPlay muted loop playsInline/)
-  assert.match(tsx, /weekly-redesign__hero-photo-pair/)
-  assert.match(tsx, /weekly-redesign__hero-content/)
-  assert.match(tsx, /aaron-weekly-1\.jpg/)
-  assert.match(tsx, /aaron-weekly-2\.jpg/)
-  assert.doesNotMatch(tsx, /Photo placeholder — vertical/)
-  assert.doesNotMatch(tsx, /className="weekly-redesign__hero-media"/)
-  assert.doesNotMatch(tsx, /weekly-redesign__collage/)
-  assert.doesNotMatch(tsx, /weekly-redesign__quote/)
-  assert.match(css, /\.weekly-redesign__hero-content \{\s+display: grid;/)
-  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) auto/)
-  assert.match(css, /\.weekly-redesign__hero-video \{\s+width: min\(280px, calc\(50vw - 54px\)\);/)
-  assert.match(css, /\.weekly-redesign__hero-video video \{\s+display: block;\s+width: 100%;\s+height: 157px;/)
+test('renders the approved Practice Loop opening with one semantic hero title', () => {
+  assert.match(tsx, /weekly-redesign__opening/)
+  assert.match(tsx, /weekly-redesign__opening-stage/)
+  assert.match(tsx, /weekly-redesign__loop-rings/)
+  assert.match(tsx, /Begin again\./)
+  assert.match(tsx, /Practice becomes/)
+  assert.match(tsx, /Progress happens<\/span>\s*<span>on repeat\./)
+  assert.equal((tsx.match(/<h1/g) ?? []).length, 1)
+  assert.match(tsx, /aria-hidden="true"/)
+})
+
+test('uses one reversible matchMedia lifecycle for the Practice Loop', () => {
+  assert.match(tsx, /MotionPathPlugin/)
+  assert.match(tsx, /gsap\.matchMedia\(root\)/)
+  assert.match(tsx, /isDesktop: '\(min-width: 761px\).*min-height: 680px/)
+  assert.match(tsx, /isMobile: '\(max-width: 760px\)/)
+  assert.match(tsx, /scrub:\s*1(?:\.0)?/)
+  assert.match(tsx, /pin:\s*openingStage/)
+  assert.match(tsx, /mm\.revert\(\)/)
+  assert.doesNotMatch(tsx, /toggleActions:/)
+  assert.doesNotMatch(tsx, /new Lenis|addEventListener\(['"]wheel/)
+  assert.match(tsx, /new IntersectionObserver/)
+})
+
+test('keeps intrinsic media geometry and a strict resolved contact sheet', () => {
+  assert.match(tsx, /width=\{720\}\s+height=\{960\}/)
+  assert.match(tsx, /width=\{698\}\s+height=\{920\}/)
+  assert.match(tsx, /preload="metadata"/)
+  assert.match(tsx, /poster=\{weeklyHeroImageOne\}/)
+  assert.match(css, /\.weekly-redesign__resolved-media/)
+  assert.match(css, /grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/)
+  assert.match(css, /\.weekly-redesign__hero-video-frame video \{[\s\S]*?width: 100%;\s+height: auto;/)
+  assert.match(css, /\.weekly-redesign__contact-sheet img \{[\s\S]*?width: 100%;\s+height: auto;/)
+})
+
+test('initializes a caption-free Practice Loop aperture before its trigger enters', () => {
+  assert.match(
+    tsx,
+    /<figure className="weekly-redesign__hero-video-figure">\s*<div className="weekly-redesign__hero-video-frame">[\s\S]*?<\/div>\s*<figcaption>/,
+  )
+
+  const initialFrameSet = tsx.indexOf('gsap.set(videoFrame')
+  const practiceTimeline = tsx.indexOf("const tl = gsap.timeline({ defaults: { ease: 'none' } })")
+  assert.ok(initialFrameSet >= 0 && initialFrameSet < practiceTimeline)
+  assert.equal((tsx.match(/\.set\(\s*videoFrame/g) ?? []).length, 2)
+})
+
+test('keeps the video aperture position refresh-safe inside the scrubbed timeline', () => {
+  // The one-time gsap.set() before the timeline only prevents an initial-paint
+  // flash; it never re-runs. invalidateOnRefresh only recomputes function-based
+  // values that belong to the ScrollTrigger's own animation, so the x/y/scale
+  // offset must also be set inside the timeline itself (not only eagerly) or a
+  // resize/font-load refresh leaves the video mis-centered in the loop window.
+  const stillLabel = tsx.indexOf("tl.addLabel('still', 0)")
+  const repetitionLabel = tsx.indexOf(".addLabel('repetition', 0.2)")
+  assert.ok(stillLabel >= 0 && repetitionLabel > stillLabel)
+  const stillPhase = tsx.slice(stillLabel, repetitionLabel)
+  assert.match(stillPhase, /\.set\(\s*videoFrame,\s*\{\s*x:\s*\(\)\s*=>\s*getVideoStart\(\)\.x/)
+})
+
+test('sizes downstream media from source aspect ratios', () => {
+  assert.match(tsx, /width=\{2200\}\s+height=\{1467\}/)
+  assert.match(tsx, /width=\{1467\}\s+height=\{2200\}/)
+  assert.match(tsx, /width=\{1153\}\s+height=\{1153\}/)
+  assert.match(css, /\.weekly-redesign__photo img \{[\s\S]*?width: 100%;\s+height: auto;/)
+  assert.match(css, /\.weekly-redesign__location-photo img[^}]*aspect-ratio:\s*16 \/ 9/s)
+  assert.match(css, /\.weekly-redesign__teaching-photo img[^}]*aspect-ratio:\s*1/s)
+})
+
+test('uses reversible section timelines instead of collage parallax', () => {
+  assert.match(tsx, /weekly-facts-score/)
+  assert.match(tsx, /weekly-teacher-score/)
+  assert.match(tsx, /scrub:\s*0\.8/)
+  assert.match(css, /\.weekly-redesign__teacher-copy strong[^}]*display:\s*inline-block/s)
+  assert.doesNotMatch(tsx, /data-vacation-parallax|collage|pull-quote/)
+})
+
+test('keeps global navigation outside the weekly component boundary', () => {
+  assert.doesNotMatch(tsx, /GlobalNavigation|site-header|weekly-redesign__site-nav/)
+  assert.match(layout, /<GlobalNavigation isSuppressed=\{isHome && isHeaderSuppressed\} \/>/)
 })
 
 test('renders the approved foundation sections in page order', () => {
-  const hero = tsx.indexOf('className="weekly-redesign__hero"')
+  const opening = tsx.indexOf('className="weekly-redesign__opening"')
   const facts = tsx.indexOf('className="weekly-redesign__facts"')
   const progression = tsx.indexOf('className="weekly-redesign__progression"')
   const teacher = tsx.indexOf('className="weekly-redesign__teacher"')
   const crossLink = tsx.indexOf('className="weekly-redesign__cross-link"')
   const finale = tsx.indexOf('className="weekly-redesign__finale"')
 
-  assert.ok(hero < facts && facts < progression && progression < teacher && teacher < crossLink && crossLink < finale)
+  assert.ok(opening < facts && facts < progression && progression < teacher && teacher < crossLink && crossLink < finale)
   assert.match(tsx, /THE BASICS/)
   assert.match(tsx, /HOW IT DEVELOPS/)
   assert.match(tsx, /WHO YOU(?:'|&apos;)RE LEARNING FROM/)
@@ -67,10 +126,42 @@ test('keeps the approved fact and progression copy as real text', () => {
   assert.match(tsx, /First chords, real songs/)
   assert.match(tsx, /Reading & understanding/)
   assert.match(tsx, /Refining your style/)
-  assert.match(tsx, /weekly-redesign__progress-line/)
+  assert.match(tsx, /weekly-redesign__progress-path/)
   assert.match(tsx, /weekly-redesign__progress-dot/)
-  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) minmax\(280px, 0\.42fr\)/)
-  assert.match(css, /\.weekly-redesign__fretboard-photo img \{\s+height: clamp\(360px, 42vw, 520px\)/)
+  assert.match(css, /grid-template-columns: minmax\(0, 1fr\) minmax\(320px, 0\.38fr\)/)
+  assert.match(css, /\.weekly-redesign__fretboard-photo img \{\s+aspect-ratio: 2 \/ 3;/)
+})
+
+test('builds a rising graph with one active travelling dot', () => {
+  assert.match(tsx, /weekly-redesign__progress-graphic/)
+  assert.match(tsx, /weekly-redesign__progress-active-dot/)
+  assert.match(tsx, /weekly-redesign__progress-path/)
+  assert.match(tsx, /weekly-redesign__progress-milestone/g)
+  assert.match(tsx, /id: 'weekly-progress-desktop'/)
+  assert.match(tsx, /id: 'weekly-progress-mobile'/)
+  assert.match(tsx, /pin:\s*progressStage/)
+  assert.match(tsx, /motionPath:/)
+  assert.match(tsx, /y:\s*-64/)
+})
+
+test('does not pin the graph on mobile or short-height screens', () => {
+  assert.match(tsx, /if \(isDesktop\)/)
+  assert.match(tsx, /weekly-progress-mobile/)
+  assert.match(css, /padding:\s*0 4px 0 40px/)
+  assert.doesNotMatch(css, /@media \(max-width: 760px\)[\s\S]*position:\s*sticky/)
+})
+
+test('keeps milestone headings contained in the narrow pinned graph', () => {
+  const narrowPinnedStart = css.indexOf(
+    '@media (min-width: 761px) and (max-width: 920px) and (min-height: 680px)',
+  )
+  const narrowPinnedEnd = css.indexOf('@media', narrowPinnedStart + 1)
+  const narrowPinned = css.slice(narrowPinnedStart, narrowPinnedEnd)
+
+  assert.ok(narrowPinnedStart >= 0)
+  assert.match(narrowPinned, /grid-template-columns: minmax\(0, 1fr\) minmax\(240px, 0\.36fr\)/)
+  assert.match(narrowPinned, /\.weekly-redesign__progress-milestone h3 \{[\s\S]*font-size: 1\.18rem;/)
+  assert.match(narrowPinned, /overflow-wrap: normal;\s+word-break: normal;/)
 })
 
 test('uses the supplied lesson photographs in every weekly media slot', () => {
@@ -84,10 +175,10 @@ test('uses the supplied lesson photographs in every weekly media slot', () => {
   assert.match(tsx, /aaron-personal-branding-isa-danzig-photography-2-2\.jpg/)
   assert.match(tsx, /aaron-bookingForm\.jpg/)
   assert.match(tsx, /aaron-teaching-2\.jpg/)
-  assert.match(tsx, /<img src=\{src\} alt=\{caption\}/)
-  assert.match(css, /\.weekly-redesign__location-photo \{\s+width: min\(100%, 720px\);\s+margin-left: auto;/)
-  assert.match(css, /object-position: 50% 72%/)
-  assert.match(css, /\.weekly-redesign__hero-photo-pair \.weekly-redesign__photo img \{\s+height: 170px;/)
+  assert.match(tsx, /src=\{src\}/)
+  assert.match(tsx, /alt=\{caption\}/)
+  assert.match(css, /\.weekly-redesign__location-photo \{\s+width: 100%;\s+transform-origin: center;/)
+  assert.match(css, /object-position: 50% 68%/)
 })
 
 test('excludes the unavailable cadence feature entirely', () => {
@@ -97,20 +188,24 @@ test('excludes the unavailable cadence feature entirely', () => {
   assert.doesNotMatch(tsx, /day-picker/i)
 })
 
-test('keeps the requested links and the intentionally simple finale', () => {
+test('keeps the requested lesson links and finale copy', () => {
   assert.match(tsx, /to="\/tourist-lessons"/)
   assert.match(tsx, /to="\/book"/)
-  assert.match(tsx, /Start lessons/)
-  assert.doesNotMatch(tsx, /Footer navigation/)
-  assert.match(tsx, /MAUI LESSONS — KĪHEI · WAILEA · MAIPOINA BEACH PARK/)
+  assert.match(tsx, /Book a Lesson/)
+  assert.match(tsx, /Make it a habit\./)
+  assert.match(tsx, /One lesson a week, for as long as it keeps being useful\./)
 })
 
-test('uses a one-time, reduced-motion-safe progression reveal', () => {
-  assert.match(tsx, /import gsap from 'gsap'/)
-  assert.match(tsx, /usePrefersReducedMotion/)
-  assert.match(tsx, /playIfInView/)
-  assert.match(tsx, /toggleActions: 'play none none none'/)
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/)
+test('uses the compact Home-style finale as the weekly footer', () => {
+  assert.match(tsx, /Footer navigation/)
+  assert.match(tsx, /to="\/"[^>]*>Home</)
+  assert.match(tsx, /to="\/tourist-lessons"[^>]*>Vacation Lessons</)
+  assert.match(tsx, /to="\/about"[^>]*>About</)
+  assert.match(tsx, /to="\/faq"[^>]*>FAQ</)
+  assert.match(tsx, /Book a Lesson/)
+  assert.match(tsx, /weekly-redesign__finale-copyright/)
+  assert.doesNotMatch(css, /\.weekly-redesign__finale \{[^}]*min-height:\s*100svh/s)
+  assert.match(tsx, /id: 'weekly-finale-score'/)
 })
 
 test('keeps the progression and finale visually clean', () => {
@@ -121,16 +216,31 @@ test('keeps the progression and finale visually clean', () => {
   const finaleSection = tsx.slice(finaleStart)
 
   assert.doesNotMatch(progressionSection, /<StaffMark\s*\/>/)
-  assert.match(css, /\.weekly-redesign__chart \{\s+position: relative;\s+min-height: 430px;/)
+  assert.match(css, /\.weekly-redesign__chart \{\s+position: relative;\s+min-height: 560px;/)
   assert.match(css, /stroke-width: 2\.5/)
-  assert.match(css, /\.weekly-redesign__hero-photo-pair \.weekly-redesign__photo figcaption \{\s+display: none;/)
   assert.doesNotMatch(finaleSection, /begin/)
-  assert.match(css, /\.weekly-redesign__finale \{\s+position: relative;\s+min-height: 100svh;/)
+  assert.doesNotMatch(css, /\.weekly-redesign__finale \{[^}]*min-height:\s*100svh/s)
   assert.doesNotMatch(css, /weekly-redesign__ghost-word--begin/)
 })
 
-test('uses the shared site navigation without altering other routes', () => {
-  assert.doesNotMatch(tsx, /weekly-redesign__site-nav/)
-  assert.match(layout, /<GlobalNavigation isSuppressed=\{isHome && isHeaderSuppressed\} \/>/)
+test('keeps the cinematic route classification without altering other routes', () => {
   assert.match(layout, /const isCinematic = isTouristLessons \|\| isAbout \|\| isWeeklyLessons/)
+})
+
+test('keeps reduced motion fully visible and removes cinematic pinning', () => {
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/)
+  assert.match(css, /\.weekly-redesign__resolved-hero[^}]*opacity:\s*1/s)
+  assert.match(css, /\.weekly-redesign__progress-milestone[^}]*opacity:\s*1/s)
+  assert.match(tsx, /if \(!root \|\| prefersReducedMotion\)\s*\{?\s*return/)
+})
+
+test('preserves section order and excludes rejected mechanics', () => {
+  const opening = tsx.indexOf('className="weekly-redesign__opening"')
+  const facts = tsx.indexOf('className="weekly-redesign__facts"')
+  const progression = tsx.indexOf('className="weekly-redesign__progression"')
+  const teacher = tsx.indexOf('className="weekly-redesign__teacher"')
+  const crossLink = tsx.indexOf('className="weekly-redesign__cross-link"')
+  const finale = tsx.indexOf('className="weekly-redesign__finale"')
+  assert.ok(opening < facts && facts < progression && progression < teacher && teacher < crossLink && crossLink < finale)
+  assert.doesNotMatch(tsx, /cadence|highlightDay|day-picker|collage|pull-quote/i)
 })

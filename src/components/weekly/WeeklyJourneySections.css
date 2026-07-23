@@ -28,14 +28,26 @@
 .weekly-redesign__container {
   position: relative;
   z-index: 1;
-  width: min(100% - 44px, 1120px);
+  width: min(100% - 44px, 1240px);
   margin: 0 auto;
 }
 
-.weekly-redesign__hero,
 .weekly-redesign__progression {
   position: relative;
   padding: clamp(9rem, 15vw, 12rem) 0 clamp(5.5rem, 9vw, 8rem);
+}
+
+.weekly-redesign__opening {
+  position: relative;
+  min-height: 100svh;
+}
+
+.weekly-redesign__opening-stage {
+  --weekly-loop-size: clamp(230px, 32vw, 420px);
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
 }
 
 .weekly-redesign__ghost-word {
@@ -93,7 +105,7 @@
   opacity: 0.55;
 }
 
-.weekly-redesign__hero h1,
+.weekly-redesign__resolved-copy h1,
 .weekly-redesign__progression h2,
 .weekly-redesign__finale h2 {
   max-width: 15ch;
@@ -106,6 +118,10 @@
   text-wrap: balance;
 }
 
+.weekly-redesign__resolved-copy h1 span {
+  display: block;
+}
+
 .weekly-redesign__hero-lede {
   max-width: 33rem;
   margin-top: 28px;
@@ -114,37 +130,40 @@
   line-height: 1.65;
 }
 
-.weekly-redesign__hero-media-row {
-  display: flex;
-  align-items: end;
-  gap: 16px;
-}
-
-.weekly-redesign__hero-content {
+.weekly-redesign__resolved-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: clamp(2.5rem, 6vw, 5rem);
+  grid-template-columns: minmax(0, 0.9fr) minmax(560px, 1.1fr);
+  align-items: center;
+  min-height: 100svh;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  padding-block: clamp(7rem, 12svh, 10rem) clamp(4rem, 8svh, 7rem);
 }
 
-.weekly-redesign__hero-photo-pair {
-  width: min(192px, calc(50vw - 54px));
+.weekly-redesign__resolved-media {
+  display: grid;
+  gap: 12px;
 }
 
-.weekly-redesign__hero-video {
-  width: min(280px, calc(50vw - 54px));
+.weekly-redesign__hero-video-figure {
+  margin: 0;
 }
 
-.weekly-redesign__hero-video video {
+.weekly-redesign__hero-video-frame {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.weekly-redesign__hero-video-frame video {
   display: block;
   width: 100%;
-  height: 157px;
+  height: auto;
+  aspect-ratio: 16 / 9;
   border-radius: 8px;
   background: #0d2018;
   object-fit: cover;
 }
 
-.weekly-redesign__hero-video figcaption {
+.weekly-redesign__hero-video-figure figcaption {
   margin-top: 10px;
   color: rgba(23, 53, 42, 0.64);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -153,22 +172,139 @@
   line-height: 1.25;
 }
 
-.weekly-redesign__hero-photo-pair {
+.weekly-redesign__contact-sheet {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-.weekly-redesign__hero-photo-pair .weekly-redesign__photo {
-  margin: 0;
+.weekly-redesign__contact-sheet img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
 }
 
-.weekly-redesign__hero-photo-pair .weekly-redesign__photo img {
-  height: 170px;
-}
-
-.weekly-redesign__hero-photo-pair .weekly-redesign__photo figcaption {
+.weekly-redesign__loop-system,
+.weekly-redesign__loop-begin,
+.weekly-redesign__loop-transition {
   display: none;
+}
+
+.weekly-redesign__loop-system {
+  position: absolute;
+  top: max(88px, 11svh);
+  left: 50%;
+  z-index: 2;
+  width: var(--weekly-loop-size);
+  aspect-ratio: 1;
+  color: var(--maui-gold);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.weekly-redesign__loop-orbit,
+.weekly-redesign__loop-rings,
+.weekly-redesign__loop-open-arc {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.weekly-redesign__loop-orbit {
+  overflow: visible;
+  opacity: 0;
+}
+
+.weekly-redesign__orbit-path {
+  fill: none;
+  stroke: transparent;
+}
+
+.weekly-redesign__loop-rings {
+  transform-origin: center;
+}
+
+.weekly-redesign__loop-rings i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  aspect-ratio: 1;
+  border: 1px solid rgba(23, 53, 42, 0.42);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.weekly-redesign__loop-rings i:nth-child(1) {
+  width: 100%;
+}
+
+.weekly-redesign__loop-rings i:nth-child(2) {
+  width: 76%;
+}
+
+.weekly-redesign__loop-rings i:nth-child(3) {
+  width: 52%;
+}
+
+.weekly-redesign__loop-dot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 3;
+  display: block;
+  width: clamp(10px, 1vw, 14px);
+  aspect-ratio: 1;
+  border: 2px solid var(--weekly-paper);
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 1px rgba(184, 125, 44, 0.5);
+  transform: translate(-50%, -50%);
+}
+
+.weekly-redesign__loop-open-arc {
+  border: 1.5px solid rgba(184, 125, 44, 0.78);
+  border-radius: 50%;
+  clip-path: polygon(0 0, 78% 0, 78% 100%, 0 100%);
+  opacity: 0;
+  transform-origin: center;
+}
+
+.weekly-redesign__loop-staff {
+  position: absolute;
+  top: 50%;
+  left: 14%;
+  width: 78%;
+  gap: clamp(7px, 1vw, 11px);
+  opacity: 0;
+  transform: translateX(-42px);
+}
+
+.weekly-redesign__loop-staff i {
+  height: 1px;
+  background: rgba(184, 125, 44, 0.64);
+}
+
+.weekly-redesign__loop-begin,
+.weekly-redesign__loop-transition {
+  position: absolute;
+  top: calc(max(88px, 11svh) + var(--weekly-loop-size) + clamp(24px, 4svh, 42px));
+  right: 18px;
+  left: 18px;
+  z-index: 3;
+  color: rgba(23, 53, 42, 0.78);
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.weekly-redesign__loop-transition em {
+  color: var(--maui-gold);
 }
 
 .weekly-redesign__photo {
@@ -178,6 +314,7 @@
 .weekly-redesign__photo img {
   display: block;
   width: 100%;
+  height: auto;
   border-radius: 8px;
   object-fit: cover;
 }
@@ -233,13 +370,14 @@
 }
 
 .weekly-redesign__location-photo {
-  width: min(100%, 720px);
-  margin-left: auto;
+  width: 100%;
+  transform-origin: center;
 }
 
 .weekly-redesign__location-photo img {
-  height: clamp(340px, 38vw, 480px);
-  object-position: 50% 72%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: 50% 68%;
 }
 
 .weekly-redesign__progression {
@@ -248,92 +386,138 @@
 }
 
 .weekly-redesign__progression h2 {
-  margin-bottom: clamp(3.8rem, 8vw, 5.8rem);
+  margin-bottom: clamp(2.8rem, 5vw, 4.5rem);
+}
+
+.weekly-redesign__progress-heading span {
+  display: block;
+}
+
+.weekly-redesign__progress-stage {
+  position: relative;
+  min-height: 600px;
 }
 
 .weekly-redesign__progression-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);
   align-items: start;
   gap: clamp(2.5rem, 5vw, 4rem);
 }
 
+.weekly-redesign__fretboard-photo {
+  overflow: hidden;
+  border-radius: 8px;
+}
+
 .weekly-redesign__fretboard-photo img {
-  height: clamp(360px, 42vw, 520px);
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
 }
 
 .weekly-redesign__chart {
   position: relative;
-  min-height: 430px;
+  min-height: 560px;
+}
+
+.weekly-redesign__progress-graphic {
+  position: absolute;
+  top: 28px;
+  right: 0;
+  left: 0;
+  height: 360px;
+  transform-origin: center;
+}
+
+.weekly-redesign__progress-graphic svg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 .weekly-redesign__chart-guide {
   position: absolute;
   right: 0;
   left: 0;
+  z-index: 0;
   height: 1px;
   background: rgba(23, 53, 42, 0.12);
 }
 
 .weekly-redesign__chart-guide--one {
-  top: 55px;
+  top: 16%;
 }
 
 .weekly-redesign__chart-guide--two {
-  top: 115px;
+  top: 48%;
 }
 
 .weekly-redesign__chart-guide--three {
-  top: 175px;
+  top: 80%;
 }
 
-.weekly-redesign__progress-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 250px;
-  overflow: visible;
-}
-
-.weekly-redesign__progress-line-path {
+.weekly-redesign__progress-path {
   fill: none;
   stroke: var(--maui-gold);
   stroke-width: 2.5;
+  vector-effect: non-scaling-stroke;
 }
 
-.weekly-redesign__progress-step {
+.weekly-redesign__mobile-progress-line {
+  display: none;
+}
+
+.weekly-redesign__progress-active-dot {
   position: absolute;
-  width: 30%;
+  top: calc(79.45% - 8px);
+  left: calc(6.28% - 8px);
+  z-index: 3;
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--weekly-paper);
+  border-radius: 50%;
+  background: var(--maui-gold);
+  box-shadow: 0 0 0 1px rgba(184, 125, 44, 0.58), 0 3px 12px rgba(23, 53, 42, 0.2);
+  will-change: transform;
 }
 
-.weekly-redesign__progress-step--one {
-  top: 166px;
+.weekly-redesign__progress-milestone {
+  position: absolute;
+  z-index: 2;
+  width: 27%;
+}
+
+.weekly-redesign__progress-milestone--1 {
+  top: 306px;
   left: 6%;
 }
 
-.weekly-redesign__progress-step--two {
-  top: 124px;
-  left: 43%;
+.weekly-redesign__progress-milestone--2 {
+  top: 252px;
+  left: 38%;
 }
 
-.weekly-redesign__progress-step--three {
-  top: 48px;
-  left: 72%;
+.weekly-redesign__progress-milestone--3 {
+  top: 152px;
+  left: 68%;
 }
 
 .weekly-redesign__progress-dot {
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   margin-bottom: 16px;
-  border: 3px solid var(--weekly-paper);
+  border: 2px solid var(--maui-gold);
   border-radius: 50%;
-  background: var(--maui-gold);
-  box-shadow: 0 0 0 1px rgba(184, 125, 44, 0.45);
+  background: var(--weekly-paper);
+  box-shadow: 0 0 0 3px rgba(248, 244, 235, 0.76);
 }
 
-.weekly-redesign__progress-card h3 {
+.weekly-redesign__progress-milestone h3 {
   margin-bottom: 7px;
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   font-size: clamp(1.3rem, 2vw, 1.55rem);
@@ -342,7 +526,7 @@
   line-height: 1.15;
 }
 
-.weekly-redesign__progress-card p {
+.weekly-redesign__progress-milestone p {
   max-width: 22ch;
   color: rgba(23, 53, 42, 0.8);
   font-size: 0.94rem;
@@ -371,6 +555,7 @@
 }
 
 .weekly-redesign__teacher-copy strong {
+  display: inline-block;
   color: var(--maui-gold);
   font-family: Fraunces, Georgia, serif;
   font-size: 1.45em;
@@ -378,8 +563,14 @@
   font-weight: 600;
 }
 
+.weekly-redesign__teaching-photo {
+  width: min(100%, 480px);
+  justify-self: end;
+}
+
 .weekly-redesign__teaching-photo img {
-  height: 300px;
+  aspect-ratio: 1;
+  object-fit: cover;
 }
 
 .weekly-redesign__cross-link {
@@ -396,8 +587,7 @@
   font-style: italic;
 }
 
-.weekly-redesign__cross-link a,
-.weekly-redesign__finale-cta {
+.weekly-redesign__cross-link a {
   color: inherit;
   text-decoration-color: rgba(23, 53, 42, 0.38);
   text-decoration-thickness: 1px;
@@ -406,67 +596,122 @@
 
 .weekly-redesign__finale {
   position: relative;
-  min-height: 100svh;
-  padding: 85px 22px 78px;
   overflow: hidden;
-  background: #0d2018;
+  margin-top: -2px;
+  padding: 0 clamp(16px, 4vw, 56px) clamp(40px, 6svh, 72px);
+  background: linear-gradient(180deg, #fbf7ee 0 3px, #0d2018 3px);
   color: #f8f4eb;
-  text-align: center;
 }
 
 .weekly-redesign__finale-arch {
-  position: absolute;
-  top: -64px;
+  position: relative;
   left: 50%;
-  width: 140%;
-  height: 128px;
-  border-radius: 50%;
+  width: 145vw;
+  height: clamp(120px, 18svh, 230px);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
   background: #fbf7ee;
   transform: translateX(-50%);
 }
 
-.weekly-redesign__finale-content {
+.weekly-redesign__finale-inner {
   position: relative;
-  z-index: 1;
-  display: grid;
-  justify-items: center;
-  padding-top: 34px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.2rem, 3svh, 2rem);
+  width: min(94vw, 1080px);
+  margin: clamp(48px, 8svh, 96px) auto 0;
+  text-align: center;
 }
 
 .weekly-redesign__finale h2 {
+  max-width: 12ch;
   color: #f8f4eb;
+  font-size: clamp(3.2rem, 6vw, 5.5rem);
 }
 
-.weekly-redesign__finale-content > p {
-  margin-top: 17px;
-  color: rgba(241, 235, 223, 0.76);
+.weekly-redesign__finale-inner > p:not(.weekly-redesign__finale-copyright) {
+  max-width: 36rem;
+  color: rgba(250, 245, 238, 0.74);
   font-size: clamp(1rem, 1.7vw, 1.15rem);
   line-height: 1.6;
 }
 
 .weekly-redesign__finale-cta {
   display: inline-flex;
-  gap: 10px;
-  margin-top: 36px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(184, 125, 44, 0.52);
-  color: var(--maui-gold);
-  font-size: 1.1rem;
+  align-items: center;
+  gap: 0.6rem;
+  padding: clamp(0.9rem, 1.6vw, 1.15rem) clamp(1.8rem, 3.4vw, 2.6rem);
+  border: 1px solid rgba(184, 125, 44, 0.28);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fffaf4 0%, #fbf7ee 68%, #f4ead8 100%);
+  color: #0d2018;
+  font-size: 0.9rem;
   font-weight: 600;
+  letter-spacing: 0.12em;
   text-decoration: none;
+  text-transform: uppercase;
+  box-shadow:
+    0 18px 40px -18px rgba(0, 0, 0, 0.55),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.16);
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
 }
 
 .weekly-redesign__finale-cta:hover,
 .weekly-redesign__finale-cta:focus-visible {
-  color: #dcb877;
+  transform: translateY(-2px);
+  box-shadow:
+    0 24px 48px -18px rgba(0, 0, 0, 0.65),
+    inset 0 -2px 0 rgba(184, 125, 44, 0.22);
 }
 
-.weekly-redesign__finale small {
-  margin-top: 72px;
-  color: rgba(241, 235, 223, 0.42);
+.weekly-redesign__finale-cta:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.weekly-redesign__finale-cta-arrow {
+  color: var(--maui-gold);
+  transition: transform 0.22s ease;
+}
+
+.weekly-redesign__finale-cta:hover .weekly-redesign__finale-cta-arrow {
+  transform: translateX(0.25rem);
+}
+
+.weekly-redesign__finale-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  margin-top: clamp(0.6rem, 2svh, 1.2rem);
+}
+
+.weekly-redesign__finale-links a {
+  color: rgba(250, 245, 238, 0.6);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.22s ease;
+}
+
+.weekly-redesign__finale-links a:hover,
+.weekly-redesign__finale-links a:focus-visible {
+  color: #faf5ee;
+}
+
+.weekly-redesign__finale-links a:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.weekly-redesign__finale-copyright {
+  color: rgba(250, 245, 238, 0.35);
   font-size: 0.72rem;
-  letter-spacing: 0.11em;
-  line-height: 1.5;
+  letter-spacing: 0.08em;
 }
 
 .weekly-redesign a:focus-visible {
@@ -474,19 +719,23 @@
   outline-offset: 0.35rem;
 }
 
+@media (max-width: 900px) {
+  .weekly-redesign__resolved-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 760px) {
-  .weekly-redesign__container {
-    width: min(100% - 36px, 1120px);
+  .weekly-redesign__opening-stage {
+    --weekly-loop-size: min(72vw, 320px);
   }
 
-  .weekly-redesign__hero,
+  .weekly-redesign__container {
+    width: min(100% - 36px, 1240px);
+  }
+
   .weekly-redesign__progression {
     padding-top: 8.5rem;
-  }
-
-  .weekly-redesign__hero-content {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
   }
 
   .weekly-redesign__fact-list {
@@ -502,83 +751,110 @@
     margin-top: 1.35rem;
   }
 
-  .weekly-redesign__progression-layout,
   .weekly-redesign__teacher-layout {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 920px) and (min-height: 680px) {
+  .weekly-redesign__progression-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.36fr);
+    gap: 24px;
+  }
+
+  .weekly-redesign__progress-milestone h3 {
+    font-size: 1.18rem;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .weekly-redesign__progress-milestone p {
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+}
+
+@media (max-width: 760px), (min-width: 761px) and (max-height: 679px) {
+  .weekly-redesign__progression h2 {
+    margin-bottom: clamp(2.5rem, 8vw, 3.5rem);
+  }
+
+  .weekly-redesign__progression-layout {
+    grid-template-columns: 1fr;
+    gap: clamp(3rem, 8vw, 4.5rem);
+  }
+
+  .weekly-redesign__progress-stage {
+    min-height: 0;
   }
 
   .weekly-redesign__chart {
     display: grid;
-    gap: 2.3rem;
-    min-height: auto;
+    gap: clamp(2.4rem, 7vw, 3.4rem);
+    min-height: 0;
+    padding: 0 4px 0 40px;
   }
 
-  .weekly-redesign__chart-guide,
-  .weekly-redesign__progress-line {
+  .weekly-redesign__progress-graphic {
+    top: 2px;
+    right: auto;
+    bottom: 2px;
+    left: 0;
+    width: 16px;
+    height: auto;
+  }
+
+  .weekly-redesign__progress-graphic svg,
+  .weekly-redesign__chart-guide {
     display: none;
   }
 
-  .weekly-redesign__progress-step {
+  .weekly-redesign__mobile-progress-line {
+    position: absolute;
+    top: 8px;
+    bottom: 16px;
+    left: 7px;
+    display: block;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(184, 125, 44, 0.82), rgba(184, 125, 44, 0.24));
+  }
+
+  .weekly-redesign__progress-active-dot {
+    top: 0;
+    left: 0;
+  }
+
+  .weekly-redesign__progress-milestone,
+  .weekly-redesign__progress-milestone--1,
+  .weekly-redesign__progress-milestone--2,
+  .weekly-redesign__progress-milestone--3 {
     position: relative;
     top: auto;
     left: auto;
     width: auto;
-    padding-left: 32px;
-  }
-
-  .weekly-redesign__progress-step::before {
-    position: absolute;
-    top: 8px;
-    bottom: -2.3rem;
-    left: 8px;
-    width: 1px;
-    background: rgba(23, 53, 42, 0.18);
-    content: '';
-  }
-
-  .weekly-redesign__progress-step--three::before {
-    display: none;
+    min-height: 96px;
   }
 
   .weekly-redesign__progress-dot {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 1px;
+    left: -40px;
     margin: 0;
   }
 
-  .weekly-redesign__progress-card p {
-    max-width: 35ch;
+  .weekly-redesign__progress-milestone p {
+    max-width: 38ch;
   }
 
-  .weekly-redesign__teaching-photo img {
-    height: 230px;
+  .weekly-redesign__fretboard-photo {
+    width: min(100%, 520px);
+    justify-self: end;
   }
 }
 
 @media (max-width: 440px) {
-  .weekly-redesign__hero-media-row {
-    display: block;
-  }
-
-  .weekly-redesign__hero-video {
-    width: 100%;
-  }
-
-  .weekly-redesign__hero-photo-pair {
-    width: min(100%, 290px);
-  }
-
-  .weekly-redesign__hero-video video {
-    height: 199px;
-  }
-
-  .weekly-redesign__hero-photo-pair {
-    margin-top: 16px;
-  }
-
-  .weekly-redesign__hero-photo-pair .weekly-redesign__photo img {
-    height: 190px;
+  .weekly-redesign__progress-heading {
+    font-size: clamp(2.7rem, 13vw, 3.25rem);
   }
 
   .weekly-redesign__fact-list {
@@ -601,6 +877,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .weekly-redesign__resolved-hero,
+  .weekly-redesign__resolved-copy,
+  .weekly-redesign__contact-sheet,
+  .weekly-redesign__progress-milestone {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
   .weekly-redesign *,
   .weekly-redesign *::before,
   .weekly-redesign *::after {

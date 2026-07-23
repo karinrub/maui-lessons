@@ -154,7 +154,7 @@ git add test/weekly-rhythm-faithful.test.mjs
 git commit -m "test(weekly): lock local student copy"
 ```
 
-### Task 2: Add Approved Content And Correct Route Metadata
+#### Phase 2: Add Approved Content And Correct Route Metadata
 
 **Files:**
 - Modify: `src/components/weekly/WeeklyJourneySections.tsx`
@@ -406,7 +406,7 @@ git add src/components/weekly/WeeklyJourneySections.tsx src/pages/WeeklyLessons.
 git commit -m "feat(weekly): add local student copy"
 ```
 
-### Task 3: Style New Editorial Chapters And Update Handoff
+### Task 2: Style New Editorial Chapters And Update Handoff
 
 **Files:**
 - Modify: `src/components/weekly/WeeklyJourneySections.css`
@@ -414,7 +414,7 @@ git commit -m "feat(weekly): add local student copy"
 - Test: `test/weekly-rhythm-faithful.test.mjs`
 
 **Interfaces:**
-- Consumes: new class names from Task 2 and existing palette, type, container, eyebrow, grain, and breakpoint rules.
+- Consumes: new class names from Task 1 and existing palette, type, container, eyebrow, grain, and breakpoint rules.
 - Produces: two-column wide layout, single-column narrow layout, reduced-motion visibility, and current documentation.
 
 - [ ] **Step 1: Add wide-screen section styles before `.weekly-redesign__progression`**
@@ -644,7 +644,7 @@ git add src/components/weekly/WeeklyJourneySections.css docs/ongoing-lessons-han
 git commit -m "style(weekly): frame local lesson chapters"
 ```
 
-### Task 4: Full Verification And Browser QA
+### Task 3: Full Verification And Browser QA
 
 **Files:**
 - Verify only unless a regression requires a scoped fix.

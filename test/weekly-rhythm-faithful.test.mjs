@@ -100,36 +100,66 @@ test('keeps global navigation outside the weekly component boundary', () => {
   assert.match(layout, /<GlobalNavigation isSuppressed=\{isHome && isHeaderSuppressed\} \/>/)
 })
 
-test('renders the approved foundation sections in page order', () => {
+test('renders the approved local student chapters in page order', () => {
   const opening = tsx.indexOf('className="weekly-redesign__opening"')
   const facts = tsx.indexOf('className="weekly-redesign__facts"')
+  const audience = tsx.indexOf('className="weekly-redesign__audience"')
   const progression = tsx.indexOf('className="weekly-redesign__progression"')
+  const weeklyLesson = tsx.indexOf('className="weekly-redesign__weekly-lesson"')
   const teacher = tsx.indexOf('className="weekly-redesign__teacher"')
   const crossLink = tsx.indexOf('className="weekly-redesign__cross-link"')
   const finale = tsx.indexOf('className="weekly-redesign__finale"')
 
-  assert.ok(opening < facts && facts < progression && progression < teacher && teacher < crossLink && crossLink < finale)
-  assert.match(tsx, /THE BASICS/)
-  assert.match(tsx, /HOW IT DEVELOPS/)
-  assert.match(tsx, /WHO YOU(?:'|&apos;)RE LEARNING FROM/)
-  assert.match(tsx, /Make it a habit\./)
+  assert.ok(
+    opening < facts &&
+      facts < audience &&
+      audience < progression &&
+      progression < weeklyLesson &&
+      weeklyLesson < teacher &&
+      teacher < crossLink &&
+      crossLink < finale,
+  )
+  assert.match(tsx, /A PLACE TO BEGIN/)
+  assert.match(tsx, /Lessons for every stage of learning\./)
+  assert.match(tsx, /Adults and returning players/)
+  assert.match(tsx, /Younger students and their parents/)
+  assert.match(tsx, /YOUR WEEKLY LESSON/)
+  assert.match(tsx, /Each week starts where the last one ended\./)
 
-  const factsSection = tsx.slice(facts, progression)
+  const factsSection = tsx.slice(facts, audience)
   assert.doesNotMatch(factsSection, /<StaffMark\s*\/>/)
 })
 
-test('keeps the approved fact and progression copy as real text', () => {
-  assert.match(tsx, /Private, one-on-one lessons/)
+test('keeps approved facts and progression copy as real text', () => {
+  assert.match(tsx, /Private lessons with Aaron/)
   assert.match(tsx, /Ukulele or guitar/)
-  assert.match(tsx, /Weekly, across Kīhei, Wailea & Maipoina Beach Park/)
-  assert.match(tsx, /From \$35 for a 30-minute lesson/)
+  assert.match(tsx, /Weekly lessons in Kīhei, Wailea, and at Maipoina Beach Park/)
+  assert.match(tsx, /Rates start at \$35 for a 30 minute lesson/)
   assert.match(tsx, /First chords, real songs/)
-  assert.match(tsx, /Reading & understanding/)
-  assert.match(tsx, /Refining your style/)
+  assert.match(tsx, /Reading and understanding/)
+  assert.match(tsx, /Technique and your own style/)
   assert.match(tsx, /weekly-redesign__progress-path/)
   assert.match(tsx, /weekly-redesign__progress-dot/)
   assert.match(css, /grid-template-columns: minmax\(0, 1fr\) minmax\(320px, 0\.38fr\)/)
   assert.match(css, /\.weekly-redesign__fretboard-photo img \{\s+aspect-ratio: 2 \/ 3;/)
+})
+
+test('uses supported teacher experience copy', () => {
+  assert.match(tsx, /Aaron brings <strong>22 years<\/strong> of making, studying, and performing music/)
+  assert.match(tsx, /primary instrument and focus for the last <strong>eight years<\/strong>/)
+  assert.doesNotMatch(tsx, /taught guitar and ukulele on Maui for/)
+  assert.doesNotMatch(page, /over twenty years teaching music/)
+})
+
+test('keeps customer facing Ongoing Lessons copy free of dash characters', () => {
+  const literals = [
+    ...tsx.matchAll(/>([^<>{}\n][^<>{}]*)</g),
+    ...tsx.matchAll(/(?:title|description|caption|aria-label):\s*["'`]([^"'`]+)["'`]/g),
+  ].map((match) => match[1])
+
+  for (const literal of literals) {
+    assert.doesNotMatch(literal, /[-–—]/, `dash character found in: ${literal.trim()}`)
+  }
 })
 
 test('builds a rising graph with one active travelling dot', () => {
@@ -169,9 +199,11 @@ test('uses the supplied lesson photographs in every weekly media slot', () => {
   assert.equal(placeholders.length, 0)
   assert.match(tsx, /aaron-weekly-1\.jpg/)
   assert.match(tsx, /aaron-weekly-2\.jpg/)
-  assert.match(tsx, /Photo: Maipoina Beach Park, one of the regular lesson spots/)
-  assert.match(tsx, /Photo: hands on the fretboard/)
-  assert.match(tsx, /Photo: Aaron teaching a lesson/)
+  assert.match(tsx, /Maipoina Beach Park, one of the regular lesson spots/)
+  assert.match(tsx, /Hands on the fretboard/)
+  assert.match(tsx, /Aaron teaching a lesson/)
+  assert.doesNotMatch(tsx, /Lesson footage — silent clip, low-fi/)
+  assert.doesNotMatch(tsx, /Photo:/)
   assert.match(tsx, /aaron-personal-branding-isa-danzig-photography-2-2\.jpg/)
   assert.match(tsx, /aaron-bookingForm\.jpg/)
   assert.match(tsx, /aaron-teaching-2\.jpg/)
@@ -192,8 +224,9 @@ test('keeps the requested lesson links and finale copy', () => {
   assert.match(tsx, /to="\/tourist-lessons"/)
   assert.match(tsx, /to="\/book"/)
   assert.match(tsx, /Book a Lesson/)
-  assert.match(tsx, /Make it a habit\./)
-  assert.match(tsx, /One lesson a week, for as long as it keeps being useful\./)
+  assert.match(tsx, /Make music part of your week\./)
+  assert.match(tsx, /Start where you are\. Aaron will help you find the next step\./)
+  assert.match(tsx, /You do not need to have everything figured out before you book\./)
 })
 
 test('uses the compact Home-style finale as the weekly footer', () => {
@@ -234,13 +267,11 @@ test('keeps reduced motion fully visible and removes cinematic pinning', () => {
   assert.match(tsx, /if \(!root \|\| prefersReducedMotion\)\s*\{?\s*return/)
 })
 
-test('preserves section order and excludes rejected mechanics', () => {
-  const opening = tsx.indexOf('className="weekly-redesign__opening"')
-  const facts = tsx.indexOf('className="weekly-redesign__facts"')
-  const progression = tsx.indexOf('className="weekly-redesign__progression"')
-  const teacher = tsx.indexOf('className="weekly-redesign__teacher"')
-  const crossLink = tsx.indexOf('className="weekly-redesign__cross-link"')
-  const finale = tsx.indexOf('className="weekly-redesign__finale"')
-  assert.ok(opening < facts && facts < progression && progression < teacher && teacher < crossLink && crossLink < finale)
+test('preserves established mechanics and links around the new copy', () => {
   assert.doesNotMatch(tsx, /cadence|highlightDay|day-picker|collage|pull-quote/i)
+  assert.match(tsx, /to="\/tourist-lessons"/)
+  assert.match(tsx, /to="\/book"/)
+  assert.match(tsx, /weekly-practice-loop/)
+  assert.match(tsx, /weekly-progress-desktop/)
+  assert.match(tsx, /weekly-progress-mobile/)
 })

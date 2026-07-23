@@ -13,6 +13,33 @@ const css = await readFile(
 )
 const layout = await readFile(new URL('../src/layout/SiteLayout.tsx', import.meta.url), 'utf8')
 
+function collectCustomerFacingOngoingCopy(source) {
+  const dataLiterals = [...source.matchAll(/const (?:facts|progression) = \[([\s\S]*?)\] as const/g)]
+    .flatMap((block) => [...block[1].matchAll(/(['"])([\s\S]*?)\1/g)])
+    .map((match) => match[2])
+  const componentStart = source.indexOf('export default function WeeklyJourneySections()')
+  const componentSource = source.slice(componentStart)
+  const jsxStart = componentSource.lastIndexOf('\n  return (')
+
+  assert.ok(componentStart >= 0, 'WeeklyJourneySections component not found')
+  assert.ok(jsxStart >= 0, 'WeeklyJourneySections rendered JSX not found')
+
+  const renderedJsx = componentSource.slice(jsxStart)
+
+  return [
+    ...dataLiterals,
+    ...[...renderedJsx.matchAll(/>([^<]+)</g)].map((match) => match[1]),
+    ...[...renderedJsx.matchAll(/caption\s*=\s*(["'])([\s\S]*?)\1/g)].map((match) => match[2]),
+    ...[...renderedJsx.matchAll(/aria-label\s*=\s*(["'])([\s\S]*?)\1/g)].map((match) => match[2]),
+  ]
+}
+
+function assertCustomerFacingOngoingCopyIsDashFree(source) {
+  for (const copy of collectCustomerFacingOngoingCopy(source)) {
+    assert.doesNotMatch(copy, /[-–—]/, `dash character found in: ${copy.trim()}`)
+  }
+}
+
 test('keeps the dedicated Ongoing Lessons route', () => {
   assert.match(page, /<WeeklyJourneySections\s*\/>/)
   assert.match(page, /Ongoing Lessons \| Maui Lessons/)
@@ -186,14 +213,35 @@ test('uses supported teacher experience copy', () => {
 })
 
 test('keeps customer facing Ongoing Lessons copy free of dash characters', () => {
-  const literals = [
-    ...tsx.matchAll(/>([^<>{}\n][^<>{}]*)</g),
-    ...tsx.matchAll(/(?:title|description|caption|aria-label):\s*["'`]([^"'`]+)["'`]/g),
-  ].map((match) => match[1])
+  assertCustomerFacingOngoingCopyIsDashFree(tsx)
+})
 
-  for (const literal of literals) {
-    assert.doesNotMatch(literal, /[-–—]/, `dash character found in: ${literal.trim()}`)
-  }
+test('the dash-free copy collector detects a dash in a facts data literal', () => {
+  assert.throws(
+    () => assertCustomerFacingOngoingCopyIsDashFree(tsx.replace('Private lessons with Aaron', 'Private-lessons with Aaron')),
+    /dash character found in: Private-lessons with Aaron/,
+  )
+})
+
+test('the dash-free copy collector detects a dash in multiline JSX text', () => {
+  assert.throws(
+    () => assertCustomerFacingOngoingCopyIsDashFree(tsx.replace('Some students', 'Some-students')),
+    /dash character found in: Some-students/,
+  )
+})
+
+test('the dash-free copy collector detects a dash in a caption attribute', () => {
+  assert.throws(
+    () => assertCustomerFacingOngoingCopyIsDashFree(tsx.replace('caption="Hands on the fretboard"', 'caption="Hands-on the fretboard"')),
+    /dash character found in: Hands-on the fretboard/,
+  )
+})
+
+test('the dash-free copy collector detects a dash in an aria-label attribute', () => {
+  assert.throws(
+    () => assertCustomerFacingOngoingCopyIsDashFree(tsx.replace('aria-label="Footer navigation"', 'aria-label="Footer-navigation"')),
+    /dash character found in: Footer-navigation/,
+  )
 })
 
 test('builds a rising graph with one active travelling dot', () => {

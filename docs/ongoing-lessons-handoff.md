@@ -137,7 +137,7 @@ The rendered order is:
 8. Home style finale and footer with `Make music part of your week.`
 
 Practice Loop and progression behavior remain unchanged. New chapters stay in
-normal document flow and use subtle scrubbed reveals. On reduced motion
+normal document flow, are static, and remain fully visible. On reduced motion
 devices, every chapter is static and fully visible.
 
 ## Media contract

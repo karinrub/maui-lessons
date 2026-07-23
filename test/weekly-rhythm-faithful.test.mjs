@@ -62,7 +62,20 @@ test('initializes a caption-free Practice Loop aperture before its trigger enter
   const initialFrameSet = tsx.indexOf('gsap.set(videoFrame')
   const practiceTimeline = tsx.indexOf("const tl = gsap.timeline({ defaults: { ease: 'none' } })")
   assert.ok(initialFrameSet >= 0 && initialFrameSet < practiceTimeline)
-  assert.equal((tsx.match(/\.set\(videoFrame/g) ?? []).length, 1)
+  assert.equal((tsx.match(/\.set\(\s*videoFrame/g) ?? []).length, 2)
+})
+
+test('keeps the video aperture position refresh-safe inside the scrubbed timeline', () => {
+  // The one-time gsap.set() before the timeline only prevents an initial-paint
+  // flash; it never re-runs. invalidateOnRefresh only recomputes function-based
+  // values that belong to the ScrollTrigger's own animation, so the x/y/scale
+  // offset must also be set inside the timeline itself (not only eagerly) or a
+  // resize/font-load refresh leaves the video mis-centered in the loop window.
+  const stillLabel = tsx.indexOf("tl.addLabel('still', 0)")
+  const repetitionLabel = tsx.indexOf(".addLabel('repetition', 0.2)")
+  assert.ok(stillLabel >= 0 && repetitionLabel > stillLabel)
+  const stillPhase = tsx.slice(stillLabel, repetitionLabel)
+  assert.match(stillPhase, /\.set\(\s*videoFrame,\s*\{\s*x:\s*\(\)\s*=>\s*getVideoStart\(\)\.x/)
 })
 
 test('sizes downstream media from source aspect ratios', () => {

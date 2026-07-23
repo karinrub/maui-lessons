@@ -87,21 +87,32 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
   const q = gsap.utils.selector(root)
   const stage = q('.weekly-redesign__opening-stage')[0] as HTMLElement
   const loopSystem = q('.weekly-redesign__loop-system')[0] as HTMLElement
+  const videoFigure = q('.weekly-redesign__hero-video-figure')[0] as HTMLElement
   const videoFrame = q('.weekly-redesign__hero-video-frame')[0] as HTMLElement
   const orbitPath = root.querySelector<SVGPathElement>('.weekly-redesign__orbit-path')!
+
+  // This runs repeatedly as a GSAP function-based tween value, including
+  // after invalidateOnRefresh — by then videoFrame is already mid-transform,
+  // so measuring its own rect would read the animated position and compound
+  // into runaway offsets on the next recompute. videoFigure (the frame's
+  // parent) never receives a transform and shares the frame's left/top/width
+  // exactly, so it stands in for the frame's natural position. Its height
+  // isn't usable as-is (it also contains the figcaption's layout box), so
+  // height is derived from the frame's fixed 16:9 aspect ratio instead.
   const getVideoStart = () => {
     const stageRect = stage.getBoundingClientRect()
     const loopRect = loopSystem.getBoundingClientRect()
-    const videoRect = videoFrame.getBoundingClientRect()
+    const videoRect = videoFigure.getBoundingClientRect()
+    const videoHeight = videoRect.width * (9 / 16)
     const loopCenterX = loopRect.left - stageRect.left + loopRect.width / 2
     const loopCenterY = loopRect.top - stageRect.top + loopRect.height / 2
     const videoCenterX = videoRect.left - stageRect.left + videoRect.width / 2
-    const videoCenterY = videoRect.top - stageRect.top + videoRect.height / 2
+    const videoCenterY = videoRect.top - stageRect.top + videoHeight / 2
 
     return {
       x: loopCenterX - videoCenterX,
       y: loopCenterY - videoCenterY,
-      scale: Math.min(loopRect.width, loopRect.height) / videoRect.height,
+      scale: Math.min(loopRect.width, loopRect.height) / videoHeight,
     }
   }
 
@@ -112,9 +123,6 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
     { autoAlpha: 0 },
   )
   gsap.set(videoFrame, {
-    x: () => getVideoStart().x,
-    y: () => getVideoStart().y,
-    scale: () => getVideoStart().scale,
     clipPath: 'circle(38% at 50% 50%)',
     transformOrigin: 'center center',
     autoAlpha: 0,
@@ -130,6 +138,15 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
       { autoAlpha: 0 },
     )
     .set(q('.weekly-redesign__loop-transition'), { autoAlpha: 0, y: 24 })
+    .set(
+      videoFrame,
+      {
+        x: () => getVideoStart().x,
+        y: () => getVideoStart().y,
+        scale: () => getVideoStart().scale,
+      },
+      'still',
+    )
     .addLabel('repetition', 0.2)
     .to(videoFrame, { autoAlpha: 1, duration: 0.16 }, 0.2)
     .to(
@@ -295,6 +312,7 @@ export default function WeeklyJourneySections() {
                 start: 'top 82%',
                 end: 'bottom 28%',
                 scrub: 0.8,
+                invalidateOnRefresh: true,
               },
             })
             .fromTo(
@@ -500,9 +518,9 @@ export default function WeeklyJourneySections() {
       <section className="weekly-redesign__facts" aria-labelledby="weekly-facts-title">
         <div className="weekly-redesign__grain" aria-hidden="true" />
         <div className="weekly-redesign__container weekly-redesign__facts-content">
-          <p id="weekly-facts-title" className="weekly-redesign__eyebrow weekly-redesign__eyebrow--ink">
+          <h2 id="weekly-facts-title" className="weekly-redesign__eyebrow weekly-redesign__eyebrow--ink">
             THE BASICS
-          </p>
+          </h2>
           <ul className="weekly-redesign__fact-list">
             {facts.map((fact) => (
               <li key={fact}>{fact}</li>
@@ -574,10 +592,10 @@ export default function WeeklyJourneySections() {
       <section className="weekly-redesign__teacher" aria-labelledby="weekly-teacher-title">
         <div className="weekly-redesign__container weekly-redesign__teacher-layout">
           <div>
-            <p id="weekly-teacher-title" className="weekly-redesign__eyebrow">
+            <h2 id="weekly-teacher-title" className="weekly-redesign__eyebrow">
               <StaffMark />
               WHO YOU&apos;RE LEARNING FROM
-            </p>
+            </h2>
             <p className="weekly-redesign__teacher-copy">
               Aaron has taught guitar and ukulele on Maui for <strong>22</strong> years. For the last <strong>8</strong>, ukulele has been the focus.
             </p>

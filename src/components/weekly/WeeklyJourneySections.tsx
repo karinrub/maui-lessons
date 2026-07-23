@@ -175,7 +175,11 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
       { autoAlpha: 1, duration: 0.18 },
       0.72,
     )
-    .to(q('.weekly-redesign__loop-staff, .weekly-redesign__loop-dot'), { autoAlpha: 0, duration: 0.14 }, 0.72)
+    .to(
+      q('.weekly-redesign__loop-staff, .weekly-redesign__loop-dot, .weekly-redesign__loop-open-arc'),
+      { autoAlpha: 0, duration: 0.14 },
+      0.72,
+    )
     .fromTo(
       q('.weekly-redesign__resolved-copy > *'),
       { y: 34 },

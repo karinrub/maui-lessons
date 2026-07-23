@@ -10,6 +10,10 @@ const tsx = await readFile(
   new URL('../src/components/faq/FaqSections.tsx', import.meta.url),
   'utf8',
 )
+const css = await readFile(
+  new URL('../src/components/faq/FaqSections.css', import.meta.url),
+  'utf8',
+)
 
 test('defines visitor, ongoing, and booking routes for the FAQ guide', () => {
   assert.match(content, /label: 'Visiting Maui'/)
@@ -47,4 +51,12 @@ test('uses a truthful FAQ booking action', () => {
   assert.match(tsx, /Explore lesson options/)
   assert.doesNotMatch(tsx, /Book a Lesson/)
   assert.doesNotMatch(tsx, /Anything\s+else — just ask when you book\./)
+})
+
+test('uses open rails and one responsive proof composition instead of a decorative image break', () => {
+  assert.match(css, /\.faq-guide-routes \{[\s\S]*?grid-template-columns: repeat\(3, minmax\(0, 1fr\)\)/)
+  assert.match(css, /\.faq-quick-facts \{[\s\S]*?display: flex/)
+  assert.match(css, /\.faq-proof \{[\s\S]*?grid-template-columns: minmax\(0, 0\.9fr\) minmax\(280px, 0\.7fr\)/)
+  assert.doesNotMatch(css, /\.faq-break/)
+  assert.match(css, /@media \(max-width: 760px\) \{[\s\S]*?\.faq-proof \{[\s\S]*?grid-template-columns: 1fr;/)
 })

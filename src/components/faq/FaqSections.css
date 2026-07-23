@@ -73,6 +73,52 @@
   line-height: 1.5;
 }
 
+/* ── Guided routes ──
+   An open editorial rail keeps the three visitor paths legible without
+   introducing another framed surface above the sage shelf. */
+.faq-guide-routes {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 52rem;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 1px solid rgba(31, 29, 24, 0.22);
+}
+
+.faq-guide-routes a {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.75rem;
+  padding: 1rem 1.15rem;
+  color: rgba(31, 29, 24, 0.78);
+  text-decoration: none;
+}
+
+.faq-guide-routes a + a {
+  border-left: 1px solid rgba(31, 29, 24, 0.18);
+}
+
+.faq-guide-routes small {
+  grid-column: 1;
+  color: rgba(31, 29, 24, 0.52);
+  font: italic 1rem/1.2 'Cormorant Garamond', Georgia, serif;
+}
+
+.faq-guide-routes svg {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 1rem;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.25;
+}
+
+.faq-guide-routes a:focus-visible {
+  outline: 1px solid rgba(31, 29, 24, 0.68);
+  outline-offset: -0.25rem;
+}
+
 /* ── Curiosity compass ── */
 .faq-intro__compass-window {
   position: absolute;
@@ -144,6 +190,26 @@
 
 .faq-shelf__content {
   min-width: 0;
+}
+
+.faq-quick-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0 0 clamp(2rem, 4vw, 3.5rem);
+  padding: 0;
+  border-top: 1px solid rgba(23, 53, 42, 0.22);
+  list-style: none;
+}
+
+.faq-quick-facts li {
+  padding: 0.75rem 1rem 0.75rem 0;
+  margin-right: 1rem;
+  color: rgba(23, 53, 42, 0.72);
+  font-size: 0.76rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .faq-category-nav {
@@ -475,30 +541,90 @@
     transform 0.34s ease 0.08s;
 }
 
-/* Full-bleed pause between "The lessons" and "Booking" — the page's only
-   photograph, dropped in as a quiet break in the accordion rhythm rather
-   than a captioned card. */
-.faq-break {
-  position: relative;
-  left: 50%;
-  width: 100vw;
-  margin: clamp(1rem, 3vw, 2rem) 0 clamp(1.5rem, 3.5vw, 2.5rem);
-  transform: translateX(-50%);
-  overflow: hidden;
+/* ── Instructional proof ──
+   One image-and-copy composition interrupts the question rhythm with useful
+   teaching context, while remaining part of the open editorial flow. */
+.faq-proof {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.7fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: end;
+  margin: clamp(2rem, 5vw, 4rem) 0;
+  padding: clamp(2rem, 4vw, 3.5rem) 0;
+  border-top: 1px solid rgba(23, 53, 42, 0.22);
+  border-bottom: 1px solid rgba(23, 53, 42, 0.22);
 }
 
-.faq-break__inner {
+.faq-proof__copy {
+  min-width: 0;
+}
+
+.faq-proof__copy > p {
+  margin: 0 0 0.7rem;
+  color: rgba(23, 53, 42, 0.58);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.faq-proof__copy h2 {
+  max-width: 15ch;
   margin: 0;
-  border-radius: clamp(16px, 2vw, 28px);
-  overflow: hidden;
+  color: rgba(23, 53, 42, 0.88);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.8rem, 3.6vw, 3.1rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.05;
 }
 
-.faq-break__inner img {
+.faq-proof__copy ul {
+  margin: clamp(1.25rem, 2.5vw, 1.8rem) 0;
+  padding: 0;
+  border-top: 1px solid rgba(23, 53, 42, 0.18);
+  list-style: none;
+}
+
+.faq-proof__copy li {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(23, 53, 42, 0.14);
+  color: rgba(23, 53, 42, 0.72);
+  font-size: clamp(0.92rem, 1.1vw, 1rem);
+  line-height: 1.45;
+}
+
+.faq-proof__copy a {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  color: var(--home-sage-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3rem;
+  text-transform: uppercase;
+}
+
+.faq-proof__copy a:focus-visible {
+  outline: 1px solid rgba(23, 53, 42, 0.68);
+  outline-offset: 0.3rem;
+}
+
+.faq-proof__media {
+  margin: 0;
+  overflow: hidden;
+  border-radius: clamp(16px, 2vw, 28px);
+  aspect-ratio: 4 / 3;
+}
+
+.faq-proof__media img {
   display: block;
   width: 100%;
-  height: clamp(14rem, 32vw, 24rem);
+  height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: 37% 63%;
 }
 
 .faq-close {
@@ -606,8 +732,21 @@
     max-width: 26ch;
   }
 
-  .faq-break__inner img {
-    height: 12rem;
+  .faq-guide-routes {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-guide-routes a + a {
+    border-top: 1px solid rgba(31, 29, 24, 0.18);
+    border-left: 0;
+  }
+
+  .faq-proof {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-proof__media {
+    aspect-ratio: 4 / 3;
   }
 
   .faq-compass {

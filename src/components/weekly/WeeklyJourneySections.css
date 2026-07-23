@@ -481,8 +481,8 @@
 
 .weekly-redesign__progress-active-dot {
   position: absolute;
-  top: calc(77.22% - 8px);
-  left: calc(6.05% - 8px);
+  top: calc(79.44% - 8px);
+  left: calc(6.98% - 8px);
   z-index: 3;
   display: block;
   width: 16px;

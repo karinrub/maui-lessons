@@ -564,7 +564,7 @@ export default function WeeklyJourneySections() {
                   <svg viewBox="0 0 860 360" preserveAspectRatio="none">
                     <path
                       className="weekly-redesign__progress-path"
-                      d="M52 278 C187 278 215 236 327 224 C451 208 480 136 585 124"
+                      d="M60 286 C196 286 223 244 335 232 C460 216 488 144 593 132 C689 122 713 74 785 52"
                     />
                   </svg>
                   <span className="weekly-redesign__mobile-progress-line" />

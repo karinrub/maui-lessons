@@ -105,20 +105,33 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
     }
   }
 
+  gsap.set(q('.weekly-redesign__loop-system'), { display: 'block' })
+  gsap.set(q('.weekly-redesign__loop-begin, .weekly-redesign__loop-transition'), { display: 'block' })
+  gsap.set(
+    q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet, .weekly-redesign__hero-video-figure figcaption'),
+    { autoAlpha: 0 },
+  )
+  gsap.set(videoFrame, {
+    x: () => getVideoStart().x,
+    y: () => getVideoStart().y,
+    scale: () => getVideoStart().scale,
+    clipPath: 'circle(38% at 50% 50%)',
+    transformOrigin: 'center center',
+    autoAlpha: 0,
+  })
+  gsap.set(q('.weekly-redesign__loop-transition'), { autoAlpha: 0, y: 24 })
+
   const tl = gsap.timeline({ defaults: { ease: 'none' } })
   tl.addLabel('still', 0)
     .set(q('.weekly-redesign__loop-system'), { display: 'block' })
     .set(q('.weekly-redesign__loop-begin, .weekly-redesign__loop-transition'), { display: 'block' })
-    .set(q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet'), { autoAlpha: 0 })
-    .set(videoFrame, {
-      x: () => getVideoStart().x,
-      y: () => getVideoStart().y,
-      scale: () => getVideoStart().scale,
-      clipPath: 'circle(38% at 50% 50%)',
-      transformOrigin: 'center center',
-    })
+    .set(
+      q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet, .weekly-redesign__hero-video-figure figcaption'),
+      { autoAlpha: 0 },
+    )
     .set(q('.weekly-redesign__loop-transition'), { autoAlpha: 0, y: 24 })
     .addLabel('repetition', 0.2)
+    .to(videoFrame, { autoAlpha: 1, duration: 0.16 }, 0.2)
     .to(
       q('.weekly-redesign__loop-dot'),
       {
@@ -140,7 +153,12 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
     .to(q('.weekly-redesign__loop-staff'), { autoAlpha: 1, x: 0, duration: 0.24 }, 0.52)
     .to(q('.weekly-redesign__loop-transition'), { autoAlpha: 0, y: -20, duration: 0.14 }, 0.66)
     .addLabel('progress', 0.72)
-    .to(q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet'), { autoAlpha: 1, duration: 0.18 }, 0.72)
+    .to(
+      q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet, .weekly-redesign__hero-video-figure figcaption'),
+      { autoAlpha: 1, duration: 0.18 },
+      0.72,
+    )
+    .to(q('.weekly-redesign__loop-staff, .weekly-redesign__loop-dot'), { autoAlpha: 0, duration: 0.14 }, 0.72)
     .fromTo(
       q('.weekly-redesign__resolved-copy > *'),
       { y: 34 },
@@ -441,19 +459,21 @@ export default function WeeklyJourneySections() {
             </div>
 
             <div className="weekly-redesign__resolved-media">
-              <figure className="weekly-redesign__hero-video-frame">
-                <video
-                  src={weeklySectionVideo}
-                  poster={weeklyHeroImageOne}
-                  width={1920}
-                  height={1080}
-                  preload="metadata"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  aria-label="Lesson footage — silent clip, low-fi"
-                />
+              <figure className="weekly-redesign__hero-video-figure">
+                <div className="weekly-redesign__hero-video-frame">
+                  <video
+                    src={weeklySectionVideo}
+                    poster={weeklyHeroImageOne}
+                    width={1920}
+                    height={1080}
+                    preload="metadata"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    aria-label="Lesson footage — silent clip, low-fi"
+                  />
+                </div>
                 <figcaption>Lesson footage — silent clip, low-fi</figcaption>
               </figure>
               <div className="weekly-redesign__contact-sheet">

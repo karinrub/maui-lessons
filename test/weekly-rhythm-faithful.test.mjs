@@ -53,6 +53,18 @@ test('keeps intrinsic media geometry and a strict resolved contact sheet', () =>
   assert.match(css, /\.weekly-redesign__contact-sheet img \{[\s\S]*?width: 100%;\s+height: auto;/)
 })
 
+test('initializes a caption-free Practice Loop aperture before its trigger enters', () => {
+  assert.match(
+    tsx,
+    /<figure className="weekly-redesign__hero-video-figure">\s*<div className="weekly-redesign__hero-video-frame">[\s\S]*?<\/div>\s*<figcaption>/,
+  )
+
+  const initialFrameSet = tsx.indexOf('gsap.set(videoFrame')
+  const practiceTimeline = tsx.indexOf("const tl = gsap.timeline({ defaults: { ease: 'none' } })")
+  assert.ok(initialFrameSet >= 0 && initialFrameSet < practiceTimeline)
+  assert.equal((tsx.match(/\.set\(videoFrame/g) ?? []).length, 1)
+})
+
 test('sizes downstream media from source aspect ratios', () => {
   assert.match(tsx, /width=\{2200\}\s+height=\{1467\}/)
   assert.match(tsx, /width=\{1467\}\s+height=\{2200\}/)
@@ -200,4 +212,22 @@ test('keeps the progression and finale visually clean', () => {
 
 test('keeps the cinematic route classification without altering other routes', () => {
   assert.match(layout, /const isCinematic = isTouristLessons \|\| isAbout \|\| isWeeklyLessons/)
+})
+
+test('keeps reduced motion fully visible and removes cinematic pinning', () => {
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/)
+  assert.match(css, /\.weekly-redesign__resolved-hero[^}]*opacity:\s*1/s)
+  assert.match(css, /\.weekly-redesign__progress-milestone[^}]*opacity:\s*1/s)
+  assert.match(tsx, /if \(!root \|\| prefersReducedMotion\)\s*\{?\s*return/)
+})
+
+test('preserves section order and excludes rejected mechanics', () => {
+  const opening = tsx.indexOf('className="weekly-redesign__opening"')
+  const facts = tsx.indexOf('className="weekly-redesign__facts"')
+  const progression = tsx.indexOf('className="weekly-redesign__progression"')
+  const teacher = tsx.indexOf('className="weekly-redesign__teacher"')
+  const crossLink = tsx.indexOf('className="weekly-redesign__cross-link"')
+  const finale = tsx.indexOf('className="weekly-redesign__finale"')
+  assert.ok(opening < facts && facts < progression && progression < teacher && teacher < crossLink && crossLink < finale)
+  assert.doesNotMatch(tsx, /cadence|highlightDay|day-picker|collage|pull-quote/i)
 })

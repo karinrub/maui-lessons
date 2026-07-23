@@ -144,8 +144,13 @@
   gap: 12px;
 }
 
-.weekly-redesign__hero-video-frame {
+.weekly-redesign__hero-video-figure {
   margin: 0;
+}
+
+.weekly-redesign__hero-video-frame {
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .weekly-redesign__hero-video-frame video {
@@ -158,7 +163,7 @@
   object-fit: cover;
 }
 
-.weekly-redesign__hero-video-frame figcaption {
+.weekly-redesign__hero-video-figure figcaption {
   margin-top: 10px;
   color: rgba(23, 53, 42, 0.64);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
@@ -872,6 +877,15 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .weekly-redesign__resolved-hero,
+  .weekly-redesign__resolved-copy,
+  .weekly-redesign__contact-sheet,
+  .weekly-redesign__progress-milestone {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
   .weekly-redesign *,
   .weekly-redesign *::before,
   .weekly-redesign *::after {

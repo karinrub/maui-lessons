@@ -14,7 +14,9 @@ learning-curve language already established for this page. The result should
 feel measured, geometric, musical, and cinematic without borrowing Vacation
 Lessons' collage/dissolve language or About's horizontal biography.
 
-The implementation is merged to `main`.
+The historical Practice Loop implementation is merged to `main`. The local
+student copy expansion is on `codex/ongoing-lessons-local-copy` at its current
+head and includes ongoing-page source changes not yet merged to `main`.
 
 - Local `main` and `origin/main` are at `43e4132`.
 - `af9a0d0` merged `codex/ongoing-lessons-practice-loop` into `main`.
@@ -22,9 +24,9 @@ The implementation is merged to `main`.
   and regression-test work shipped in `30558ec` and `9f7c594`.
 - Four later commits tuned the graph and opening:
   `a7fd356`, `e3c893e`, `4f7f2f1`, and `43e4132`.
-- The working tree contains no ongoing-page source changes. The untracked
-  handoff, foundation plan, and metronome spec are documentation work; the two
-  untracked root JPEGs remain historical QA/reference captures.
+- The historical `main` snapshot had no ongoing-page source changes after
+  `43e4132`. This local expansion branch adds the two editorial chapters,
+  their responsive styling, and the current handoff updates.
 - Browser QA on 2026-07-23 covered 1440×900, 768×1024, 390×844, 320×568, and
   1024×640, including forward/reverse opening scroll, graph behavior, route
   re-entry, booking CTA navigation, global-menu focus/scroll restoration,
@@ -55,11 +57,15 @@ Use these in this order:
 
 1. This handoff for current implementation status, QA evidence, and known
    defects.
-2. `docs/superpowers/specs/2026-07-21-ongoing-lessons-practice-loop-cinematic-polish-design.md`
-   for the approved final experience and acceptance criteria.
-3. `docs/superpowers/plans/2026-07-21-ongoing-lessons-practice-loop-cinematic-polish.md`
+2. `docs/superpowers/specs/2026-07-23-ongoing-lessons-local-student-copy-design.md`
+   as the authority for current copy, chapter order, and normal-flow responsive
+   structure.
+3. `docs/superpowers/specs/2026-07-21-ongoing-lessons-practice-loop-cinematic-polish-design.md`
+   as the authority for retained Practice Loop and progression cinematic
+   mechanics.
+4. `docs/superpowers/plans/2026-07-21-ongoing-lessons-practice-loop-cinematic-polish.md`
    for historical implementation detail. Do not re-execute it.
-4. The code on `main` for actual behavior.
+5. The code on the current local expansion branch for actual behavior.
 
 The following documents are historical context, not the final authority:
 
@@ -73,8 +79,8 @@ The following documents are historical context, not the final authority:
   explorations: circle-lens journey, photographic media, shared sage,
   scroll-circles, editorial rise, pathways, and month rhythm.
 
-Where the foundation and Practice Loop specs conflict, the Practice Loop spec
-wins:
+For copy and chapter composition, the July 23 local student copy design wins.
+For retained cinematic mechanics, the July 21 Practice Loop spec wins:
 
 | Foundation version | Approved Practice Loop version |
 | --- | --- |

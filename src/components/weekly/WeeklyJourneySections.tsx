@@ -341,33 +341,6 @@ export default function WeeklyJourneySections() {
             )
         }
 
-        for (const sectionName of ['audience', 'weekly-lesson'] as const) {
-          const section = q(`.weekly-redesign__${sectionName}`)[0]
-          const revealItems = q(
-            sectionName === 'audience'
-              ? '.weekly-redesign__audience-intro > *, .weekly-redesign__audience-grid article'
-              : '.weekly-redesign__weekly-lesson-layout > *',
-          )
-
-          gsap.fromTo(
-            revealItems,
-            { y: 34, autoAlpha: 0.45 },
-            {
-              y: 0,
-              autoAlpha: 1,
-              stagger: 0.08,
-              ease: 'none',
-              scrollTrigger: {
-                id: `weekly-${sectionName}-score`,
-                trigger: section,
-                start: 'top 84%',
-                end: 'center 44%',
-                scrub: 0.8,
-              },
-            },
-          )
-        }
-
         gsap
           .timeline({
             scrollTrigger: {
@@ -690,7 +663,7 @@ export default function WeeklyJourneySections() {
           <div>
             <h2 id="weekly-teacher-title" className="weekly-redesign__eyebrow">
               <StaffMark />
-              WHO YOU&apos;RE LEARNING FROM
+              WHO YOU ARE LEARNING FROM
             </h2>
             <div className="weekly-redesign__teacher-copy">
               <p>

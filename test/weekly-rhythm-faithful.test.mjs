@@ -125,6 +125,7 @@ test('renders the approved local student chapters in page order', () => {
   assert.match(tsx, /Younger students and their parents/)
   assert.match(tsx, /YOUR WEEKLY LESSON/)
   assert.match(tsx, /Each week starts where the last one ended\./)
+  assert.match(tsx, /WHO YOU ARE LEARNING FROM/)
 
   const factsSection = tsx.slice(facts, audience)
   assert.doesNotMatch(factsSection, /<StaffMark\s*\/>/)
@@ -145,8 +146,22 @@ test('lays out the local student chapters responsively and keeps them visible wi
   )
   assert.match(
     css,
+    /@media \(max-width: 760px\) \{[\s\S]*?\.weekly-redesign__audience-grid \{[\s\S]*?grid-template-columns:\s*1fr;[\s\S]*?\.weekly-redesign__audience-grid article,[\s\S]*?\.weekly-redesign__audience-grid article:first-child \{[\s\S]*?border-right:\s*0;/,
+  )
+  assert.match(
+    css,
     /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.weekly-redesign__audience-intro > \*,[\s\S]*?\.weekly-redesign__audience-grid article,[\s\S]*?\.weekly-redesign__weekly-lesson-layout > \* \{[\s\S]*?opacity:\s*1 !important;[\s\S]*?visibility:\s*visible !important;[\s\S]*?transform:\s*none !important;/,
   )
+})
+
+test('keeps new local student chapters out of GSAP hidden-state tweens', () => {
+  const interactionStart = tsx.indexOf('const mm = gsap.matchMedia')
+  const interactionEnd = tsx.indexOf('\n    return (', interactionStart)
+  const interactionSource = tsx.slice(interactionStart, interactionEnd)
+
+  assert.ok(interactionStart >= 0 && interactionEnd > interactionStart)
+  assert.doesNotMatch(interactionSource, /weekly-redesign__audience/)
+  assert.doesNotMatch(interactionSource, /weekly-redesign__weekly-lesson/)
 })
 
 test('keeps approved facts and progression copy as real text', () => {

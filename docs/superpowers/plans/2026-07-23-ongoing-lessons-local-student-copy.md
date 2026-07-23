@@ -661,7 +661,7 @@ Run:
 npm run typecheck
 npm run lint
 npm run build
-npm test
+node --test test/*.test.mjs
 npm run prerender
 npm run check:seo
 git diff --check
@@ -745,7 +745,7 @@ Repeat:
 npm run typecheck
 npm run lint
 npm run build
-npm test
+node --test test/*.test.mjs
 npm run prerender
 npm run check:seo
 git diff --check

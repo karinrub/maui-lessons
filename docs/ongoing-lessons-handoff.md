@@ -32,6 +32,23 @@ The implementation is merged to `main`.
 - Known defects remain. The highest-risk one is that prerendered no-JavaScript
   output serializes GSAP's hidden opening state. See **Current audit findings**.
 
+## 2026-07-23 Local Student Copy Expansion
+
+The page now gives equal emphasis to adults, returning players, younger
+students, and parents. Two normal-flow chapters were added:
+
+1. `weekly-redesign__audience`, between The Basics and progression.
+2. `weekly-redesign__weekly-lesson`, between progression and teacher.
+
+Copy source and constraints are recorded in
+`docs/superpowers/specs/2026-07-23-ongoing-lessons-local-student-copy-design.md`.
+Customer-facing Ongoing Lessons copy avoids hyphen, en dash, and em dash
+characters.
+
+The teacher chapter now says Aaron brings 22 years in music. It no longer says
+he taught on Maui for 22 years, which conflicted with the About page's 2023 move
+date.
+
 ## Source-of-truth order
 
 Use these in this order:
@@ -98,106 +115,24 @@ Visual system:
 
 ## Approved page score
 
-### 1. Practice Loop opening
+Exact customer-facing copy lives in
+`docs/superpowers/specs/2026-07-23-ongoing-lessons-local-student-copy-design.md`.
+The rendered order is:
 
-The only semantic H1 is:
+1. Practice Loop opening with the semantic H1 `Progress happens on repeat.`
+2. The Basics with four lesson and location facts.
+3. `A PLACE TO BEGIN`, giving equal visual weight to adults and returning
+   players, and younger students and their parents.
+4. `HOW IT DEVELOPS`, retaining the pinned rising graph with revised milestone
+   copy.
+5. `YOUR WEEKLY LESSON`, explaining how each lesson continues from the last.
+6. `WHO YOU ARE LEARNING FROM`, using supported 22 years in music wording.
+7. Vacation Lessons cross link.
+8. Home style finale and footer with `Make music part of your week.`
 
-> Progress happens on repeat.
-
-Lede:
-
-> Private ukulele and guitar lessons on Maui, shaped around whoever's in front
-> of him — not a level chart.
-
-The pinned opening has four reversible beats:
-
-1. **Stillness** — three quiet concentric rings, one resting gold beat,
-   low-opacity `practice`, and `Begin again.`
-2. **Repetition** — the beat orbits with GSAP MotionPathPlugin, the rings
-   breathe by no more than about six percent, and the muted lesson video appears
-   in a circular window.
-3. **Release** — the rings open into a prepared five-line staff, the beat moves
-   onto it, and `Practice becomes progress.` gives way to the real hero.
-4. **Progress** — the H1 and lede settle on the left; the video resolves into a
-   wide editorial frame; two portrait lesson stills form a strict contact sheet
-   below it.
-
-Temporary scene phrases are decorative and `aria-hidden`. Reverse scrolling
-must rebuild the opening without a discontinuity.
-
-### 2. Facts and location
-
-Sage field with four real facts:
-
-1. Private, one-on-one lessons
-2. Ukulele or guitar
-3. Weekly, across Kīhei, Wailea & Maipoina Beach Park
-4. From $35 for a 30-minute lesson
-
-The facts enter like evenly spaced beats. The Maipoina Beach Park image expands
-from roughly 90% to full content width through wrapper scale, not animated
-layout width.
-
-### 3. How it develops
-
-Heading:
-
-> Same instrument.
->
-> A different player,
->
-> every year.
-
-The rising graph is the main mid-page cinematic moment:
-
-1. **First chords, real songs** — actual songs from day one, not deferred
-   payoff.
-2. **Reading & understanding** — harder songs introduce reading and why the
-   instrument works.
-3. **Refining your style** — technique sharpens and the student's own voice
-   emerges.
-
-On desktop, the graph stage pins. The guides, gold curve, milestone dots, and
-active travelling dot rise as one graphic group. Cards resolve near their
-corresponding points, and the fretboard portrait performs one slow crop settle.
-The final stage holds briefly before release.
-
-On mobile and short-height screens, the graph remains in normal document flow.
-A vertical line and active dot move through the three cards in DOM order. It
-must never become a mobile scroll trap.
-
-### 4. Teacher
-
-Warm cream-tan field with:
-
-> Aaron has taught guitar and ukulele on Maui for **22** years. For the last
-> **8**, ukulele has been the focus.
-
-The copy and square portrait move from small opposing offsets into alignment.
-The numerals receive restrained scale/vertical emphasis.
-
-### 5. Vacation cross-link
-
-Keep this as thin breathing space, not another card or band:
-
-> Just on Maui for a week or two? There's a page for that — Vacation Lessons
-
-The link remains `/tourist-lessons`.
-
-### 6. Home-style finale/footer
-
-Use a shallow cream/tan arch entering the deep-ink field, grain, a centered
-serif finale, a cream pill CTA with gold arrow, footer links, and copyright.
-
-- Finale: `Make it a habit.`
-- Support: `One lesson a week, for as long as it keeps being useful.`
-- CTA: `Book a Lesson` → `/book`
-- Links: Home, Vacation Lessons, About, FAQ
-- Copyright: current year + Maui Lessons
-
-The natural desktop height should be approximately 500–650px, not an empty
-`100svh`. `SiteLayout` intentionally omits the shared `SiteFooter` on this
-route because this finale owns the footer content.
+Practice Loop and progression behavior remain unchanged. New chapters stay in
+normal document flow and use subtle scrubbed reveals. On reduced motion
+devices, every chapter is static and fully visible.
 
 ## Media contract
 

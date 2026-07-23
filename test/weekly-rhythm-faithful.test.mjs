@@ -130,6 +130,25 @@ test('renders the approved local student chapters in page order', () => {
   assert.doesNotMatch(factsSection, /<StaffMark\s*\/>/)
 })
 
+test('lays out the local student chapters responsively and keeps them visible without motion', () => {
+  assert.match(
+    css,
+    /\.weekly-redesign__audience-intro \{[\s\S]*?grid-template-columns:\s*minmax\(0, 0\.9fr\) minmax\(320px, 0\.7fr\);/,
+  )
+  assert.match(
+    css,
+    /\.weekly-redesign__weekly-lesson-layout \{[\s\S]*?grid-template-columns:\s*minmax\(0, 0\.9fr\) minmax\(320px, 0\.7fr\);/,
+  )
+  assert.match(
+    css,
+    /@media \(max-width: 760px\) \{[\s\S]*?\.weekly-redesign__audience-intro,[\s\S]*?\.weekly-redesign__weekly-lesson-layout \{[\s\S]*?grid-template-columns:\s*1fr;/,
+  )
+  assert.match(
+    css,
+    /@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.weekly-redesign__audience-intro > \*,[\s\S]*?\.weekly-redesign__audience-grid article,[\s\S]*?\.weekly-redesign__weekly-lesson-layout > \* \{[\s\S]*?opacity:\s*1 !important;[\s\S]*?visibility:\s*visible !important;[\s\S]*?transform:\s*none !important;/,
+  )
+})
+
 test('keeps approved facts and progression copy as real text', () => {
   assert.match(tsx, /Private lessons with Aaron/)
   assert.match(tsx, /Ukulele or guitar/)

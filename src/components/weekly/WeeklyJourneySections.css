@@ -380,6 +380,115 @@
   object-position: 50% 68%;
 }
 
+.weekly-redesign__audience {
+  position: relative;
+  padding: clamp(7rem, 12vw, 10rem) 0;
+  border-top: 1px solid rgba(23, 53, 42, 0.14);
+}
+
+.weekly-redesign__audience-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 5rem);
+  margin-bottom: clamp(4rem, 8vw, 6rem);
+}
+
+.weekly-redesign__audience h2,
+.weekly-redesign__weekly-lesson h2 {
+  max-width: 12ch;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 5.4vw, 5rem);
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.weekly-redesign__audience-intro > p {
+  max-width: 42rem;
+  color: rgba(23, 53, 42, 0.8);
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+  line-height: 1.75;
+}
+
+.weekly-redesign__audience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid rgba(23, 53, 42, 0.2);
+}
+
+.weekly-redesign__audience-grid article {
+  padding: clamp(2rem, 4vw, 3.25rem);
+}
+
+.weekly-redesign__audience-grid article:first-child {
+  padding-left: 0;
+  border-right: 1px solid rgba(23, 53, 42, 0.2);
+}
+
+.weekly-redesign__audience-grid article > span {
+  display: block;
+  margin-bottom: 2rem;
+  color: var(--maui-gold);
+  font-family: Fraunces, Georgia, serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+}
+
+.weekly-redesign__audience-grid h3 {
+  max-width: 18ch;
+  margin-bottom: 1rem;
+  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.75rem, 2.7vw, 2.35rem);
+  font-style: italic;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.weekly-redesign__audience-grid p {
+  max-width: 42rem;
+  color: rgba(23, 53, 42, 0.8);
+  line-height: 1.75;
+}
+
+.weekly-redesign__weekly-lesson {
+  position: relative;
+  padding: clamp(6rem, 10vw, 8.5rem) 0;
+  border-top: 1px solid rgba(23, 53, 42, 0.14);
+  background: var(--home-sage);
+}
+
+.weekly-redesign__weekly-lesson-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
+  align-items: start;
+  gap: clamp(3rem, 8vw, 7rem);
+}
+
+.weekly-redesign__weekly-lesson-copy {
+  display: grid;
+  gap: 1.5rem;
+  padding-top: clamp(2.6rem, 5vw, 4rem);
+}
+
+.weekly-redesign__weekly-lesson-copy p {
+  max-width: 42rem;
+  color: rgba(23, 53, 42, 0.82);
+  font-size: clamp(1.03rem, 1.5vw, 1.15rem);
+  line-height: 1.75;
+}
+
+.weekly-redesign__teacher-copy {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.weekly-redesign__teacher-copy p {
+  font: inherit;
+}
+
 .weekly-redesign__progression {
   padding-bottom: clamp(6rem, 11vw, 9rem);
   border-top: 1px solid rgba(23, 53, 42, 0.14);
@@ -763,6 +872,30 @@
   .weekly-redesign__teacher-layout {
     grid-template-columns: 1fr;
   }
+
+  .weekly-redesign__audience-intro,
+  .weekly-redesign__weekly-lesson-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .weekly-redesign__audience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .weekly-redesign__audience-grid article,
+  .weekly-redesign__audience-grid article:first-child {
+    padding: 2rem 0;
+    border-right: 0;
+  }
+
+  .weekly-redesign__audience-grid article + article {
+    border-top: 1px solid rgba(23, 53, 42, 0.2);
+  }
+
+  .weekly-redesign__weekly-lesson-copy {
+    padding-top: 0;
+  }
 }
 
 @media (min-width: 761px) and (max-width: 920px) and (min-height: 680px) {
@@ -890,7 +1023,10 @@
   .weekly-redesign__resolved-hero,
   .weekly-redesign__resolved-copy,
   .weekly-redesign__contact-sheet,
-  .weekly-redesign__progress-milestone {
+  .weekly-redesign__audience-intro > *,
+  .weekly-redesign__audience-grid article,
+  .weekly-redesign__progress-milestone,
+  .weekly-redesign__weekly-lesson-layout > * {
     opacity: 1 !important;
     visibility: visible !important;
     transform: none !important;

@@ -86,18 +86,107 @@ export default function AaronStorySections() {
         .fromTo(body, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.6')
     })
 
-    /* Keyed as matchMedia conditions (not a one-time isMobile read) so gsap
-       tears down and rebuilds this whole pinned sequence automatically when
-       the viewport crosses the mobile/desktop breakpoint mid-session — e.g.
-       rotating a phone — instead of running stale mobile-tuned constants
-       against a now-desktop-width layout until the next full reload. */
-    mm.add(
-      {
-        isMobile: '(max-width: 760px) and (prefers-reduced-motion: no-preference)',
-        isDesktop: '(min-width: 761px) and (prefers-reduced-motion: no-preference)',
-      },
-      (context) => {
-      const { isMobile } = context.conditions as { isMobile: boolean; isDesktop: boolean }
+    /* ── Narrow screens: the same four chapters, read vertically ──
+       The horizontal travel is a desktop mechanic. On a phone it had to
+       compress a whole chapter into one 100svh panel, which left the
+       chapter-2 timeline as three ~65px columns, collided the chapter-3
+       eyebrow with its photo, and put the hand-rolled chapter snap in a
+       tug-of-war with native touch scrolling (scroll position and rendered
+       chapter stopped agreeing). Below 761px the chapters sit in normal
+       flow and each one reveals itself on approach — same blur-to-focus
+       language, same watermark drift, no pin, no second scroll controller.
+
+       Keyed as a matchMedia condition so gsap rebuilds the correct branch
+       when the viewport crosses the breakpoint mid-session (rotating a
+       phone) instead of running stale geometry until the next reload. */
+    mm.add('(max-width: 760px) and (prefers-reduced-motion: no-preference)', () => {
+      const panels = gsap.utils.toArray<HTMLElement>('.aaron-story__panel', root)
+
+      panels.forEach((panel, index) => {
+        const revealTarget = panel.querySelector<HTMLElement>('.aaron-story__reveal')
+        const image = panel.querySelector<HTMLImageElement>('.aaron-story__panel-media img')
+        const beats = gsap.utils.toArray<HTMLElement>('.aaron-story__beat', panel)
+        const watermark = panel.querySelector<HTMLElement>('.aaron-story__watermark')
+
+        /* Chapter 1 is owned by the entrance timeline above. */
+        if (index > 0 && revealTarget) {
+          gsap.fromTo(
+            revealTarget,
+            { filter: 'blur(10px)', opacity: 0, scale: 1.03 },
+            {
+              filter: 'blur(0px)',
+              opacity: 1,
+              scale: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: panel,
+                start: 'top 84%',
+                end: 'top 42%',
+                scrub: true,
+              },
+            },
+          )
+        }
+
+        if (index > 0 && image) {
+          gsap.fromTo(
+            image,
+            { scale: 1.08, yPercent: -3 },
+            {
+              scale: 1,
+              yPercent: 0,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: panel,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              },
+            },
+          )
+        }
+
+        if (beats.length > 0) {
+          gsap.fromTo(
+            beats,
+            { autoAlpha: 0, y: 24 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              ease: 'none',
+              stagger: 0.1,
+              scrollTrigger: {
+                trigger: panel,
+                start: 'top 78%',
+                end: 'center 62%',
+                scrub: true,
+              },
+            },
+          )
+        }
+
+        /* Same background-layer drift as the desktop travel, re-aimed at the
+           axis the reader is actually moving along. */
+        if (watermark) {
+          gsap.fromTo(
+            watermark,
+            { yPercent: -64 },
+            {
+              yPercent: -34,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: panel,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              },
+            },
+          )
+        }
+      })
+    })
+
+    mm.add('(min-width: 761px) and (prefers-reduced-motion: no-preference)', () => {
       const panels = gsap.utils.toArray<HTMLElement>('.aaron-story__panel', root)
       /* Re-measured on every ScrollTrigger refresh so window resizes never
          leave the tween distance and the pin distance out of sync. Derived
@@ -114,13 +203,6 @@ export default function AaronStorySections() {
         syncTouch: true,
       })
 
-      if (isMobile) {
-        // Touch-sync can restore the browser's previous scroll offset while
-        // the pinned sequence is being created. The story must begin at its
-        // horizontal chapter 01 position every time it loads.
-        window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
-        lenis.scrollTo(0, { immediate: true })
-      }
       const tickLenis = (time: number) => {
         lenis.raf(time * 1000)
       }
@@ -130,8 +212,7 @@ export default function AaronStorySections() {
 
       /* Extra pinned scroll after the final chapter so the page rests on
          the dusk panel instead of immediately unpinning into the footer. */
-      const HOLD_RATIO = isMobile ? 1.25 : 0.35
-      const MOBILE_TRAVEL_SCALE = 1.85
+      const HOLD_RATIO = 0.35
 
       /* True document-space top of the section, measured directly (pins
          are reverted during ScrollTrigger refresh, so this is stable).
@@ -173,8 +254,7 @@ export default function AaronStorySections() {
           /* Numeric positions, self-measured — a 'top top' string here
              would get pin-compensated and land past the hold. */
           start: () => getSectionTop(),
-          end: () =>
-            getSectionTop() + getScrollDistance() * (isMobile ? MOBILE_TRAVEL_SCALE : 1),
+          end: () => getSectionTop() + getScrollDistance(),
           /* Immediate, not a numeric smoothing value: Lenis already eases
              every scroll position it produces (including the chapter-snap
              glide below), so a second smoothing layer here only adds lag.
@@ -252,7 +332,7 @@ export default function AaronStorySections() {
         const durationScale = Math.min(Math.max(distance / chapterSpan, 0.35), 1)
 
         lenis.scrollTo(nearest, {
-          duration: (isMobile ? 1.15 : 0.9) * durationScale,
+          duration: 0.9 * durationScale,
           easing: (t) => 1 - Math.pow(1 - t, 3),
         })
       }
@@ -279,7 +359,7 @@ export default function AaronStorySections() {
           }
 
           glideTo(result.nearest, result.distance)
-        }, isMobile ? 300 : 180)
+        }, 180)
       }
 
       lenis.on('scroll', scheduleSnap)

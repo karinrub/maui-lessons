@@ -179,11 +179,11 @@ select {
   z-index: 45;
   left: 50%;
   transform: translateX(-50%);
-  color: rgba(241, 228, 207, 0.9);
+  color: rgba(250, 245, 238, 0.98);
   font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   font-size: clamp(0.82rem, 1.1vw, 1rem);
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: 0.26em;
   text-decoration: none;
@@ -191,7 +191,8 @@ select {
      goes low-contrast over the lighter sage sections on other pages — a
      stronger dark halo keeps it legible over any section background. */
   text-shadow:
-    0 1px 3px rgba(23, 53, 42, 0.55),
+    0 1px 3px rgba(15, 26, 20, 0.65),
+    0 2px 10px rgba(15, 26, 20, 0.5),
     0 2px 14px rgba(23, 53, 42, 0.4);
   text-transform: uppercase;
   white-space: nowrap;

@@ -285,15 +285,22 @@ export default function FaqSections() {
           tl.fromTo(
             rule,
             { scaleX: 0 },
-            { scaleX: 1, duration: 0.9, ease: 'power3.inOut', transformOrigin: 'left' },
+            { scaleX: 1, duration: 0.9, ease: 'power3.inOut', transformOrigin: 'left', immediateRender: false },
             0,
           )
         }
 
+        // immediateRender:false: a plain fromTo forces its opacity:0 "from"
+        // state onto the DOM the instant it's created, regardless of the
+        // ScrollTrigger ever firing — if that trigger's play() never runs
+        // (stalled rAF, missed toggleAction), the questions stay invisible
+        // forever. Deferring the from-state until playback actually starts
+        // means the CSS default (visible) holds until then: presence never
+        // depends on the animation succeeding, only its enhancement does.
         tl.fromTo(
           category.querySelectorAll('.faq-category__index, .faq-category__label, .faq-category__descriptor, .faq-row'),
           { opacity: 0, y: 22 },
-          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
+          { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08, immediateRender: false },
           0.35,
         )
 
@@ -310,6 +317,7 @@ export default function FaqSections() {
             y: 0,
             duration: 0.8,
             ease: 'power3.out',
+            immediateRender: false,
             scrollTrigger: {
               trigger: faqProof,
               start: 'top 88%',

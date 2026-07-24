@@ -196,15 +196,22 @@ export default function Book() {
       return
     }
 
+    // immediateRender:false on both: a plain fromTo/from forces its hidden
+    // "from" state onto the DOM the instant it's created, regardless of
+    // whether the timeline ever finishes playing. If a tick never arrives
+    // (stalled rAF), the entire wizard below the hero — or the H1 itself —
+    // would otherwise stay invisible with only the stall-fallback timer as a
+    // backstop. Deferring the from-state until playback truly starts means
+    // the CSS default (visible) holds until then: presence never depends on
+    // the animation succeeding, only its enhancement does.
     const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
     timeline
-      .set(below, { autoAlpha: 0, y: 24 })
       .fromTo(
         words,
         { yPercent: 112 },
-        { yPercent: 0, duration: 0.9, stagger: 0.1 },
+        { yPercent: 0, duration: 0.9, stagger: 0.1, immediateRender: false },
       )
-      .to(below, { autoAlpha: 1, y: 0, duration: 0.7 }, '-=0.35')
+      .from(below, { autoAlpha: 0, y: 24, duration: 0.7, immediateRender: false }, '-=0.35')
 
     const disarm = armStallFallback(2500, () => {
       timeline.kill()
@@ -352,10 +359,13 @@ export default function Book() {
     }
 
     transitionRef.current?.kill()
+    // immediateRender:false: see note above the hero entrance timeline — a
+    // step's content (calendar, contact form, confirmation) must never be
+    // gated on this tween actually completing.
     transitionRef.current = gsap.fromTo(
       panel,
       { autoAlpha: 0, y: 28 * directionRef.current },
-      { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out' },
+      { autoAlpha: 1, y: 0, duration: 0.42, ease: 'power3.out', immediateRender: false },
     )
     // Focus only once the panel is visible again: autoAlpha starts the panel
     // at visibility:hidden, and focusing a hidden element silently falls
@@ -375,7 +385,15 @@ export default function Book() {
       gsap.fromTo(
         items,
         { autoAlpha: 0, y: 16 },
-        { autoAlpha: 1, y: 0, duration: 0.38, ease: 'power2.out', stagger: 0.055, delay: 0.08 },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.38,
+          ease: 'power2.out',
+          stagger: 0.055,
+          delay: 0.08,
+          immediateRender: false,
+        },
       )
     }
 

@@ -581,7 +581,6 @@
   fill: none;
   stroke: var(--maui-gold);
   stroke-width: 2.5;
-  vector-effect: non-scaling-stroke;
 }
 
 .weekly-redesign__mobile-progress-line {

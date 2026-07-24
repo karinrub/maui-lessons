@@ -499,7 +499,7 @@ export default function WeeklyJourneySections() {
                     aria-label="Silent lesson footage"
                   />
                 </div>
-                <figcaption>Silent lesson footage</figcaption>
+                <figcaption>A lesson in progress</figcaption>
               </figure>
               <div className="weekly-redesign__contact-sheet">
                 <ImageFigure

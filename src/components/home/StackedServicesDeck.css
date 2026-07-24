@@ -156,7 +156,7 @@
 .stacked-services-deck__cards {
   position: relative;
   width: min(100%, 720px);
-  height: clamp(390px, 54svh, 540px);
+  height: clamp(420px, 58svh, 570px);
   overflow: visible;
   isolation: isolate;
   will-change: transform, opacity;
@@ -166,7 +166,7 @@
   position: absolute;
   inset: 0;
   display: grid;
-  grid-template-rows: minmax(150px, 42%) 1fr;
+  grid-template-rows: minmax(140px, 38%) 1fr;
   width: 100%;
   min-width: 0;
   overflow: hidden;
@@ -264,12 +264,13 @@
 .stacked-services-deck__description {
   display: -webkit-box;
   overflow: hidden;
+  flex-shrink: 0;
   max-width: 52ch;
   color: rgba(31, 29, 24, 0.68);
   font-size: clamp(0.92rem, 1.2vw, 1.05rem);
   line-height: 1.55;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 6;
 }
 
 .stacked-services-deck__cta {

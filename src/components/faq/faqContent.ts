@@ -128,7 +128,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'how-to-book',
         q: 'How do I book?',
-        a: 'The booking page lets you compare lesson options and choose a date and time. Aaron will confirm next steps directly once booking delivery is connected.',
+        a: 'The booking page lets you compare lesson options and choose a date and time. Aaron will confirm your lesson directly.',
       },
     ],
   },

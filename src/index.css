@@ -316,6 +316,12 @@ select {
   padding: 0;
 }
 
+/* FAQ ends on its ink finale, so the standard route bottom padding would
+   expose a cream seam after the footer. */
+.route-shell--faq {
+  padding-bottom: 0;
+}
+
 .page-transition {
   /* Opacity only, deliberately: a transform here would wrap every pinned
      ScrollTrigger scene in a containing block and degrade pinning. Each
@@ -597,6 +603,10 @@ select {
       20px
       clamp(16px, 5vw, 28px)
       28px;
+  }
+
+  .route-shell--faq {
+    padding-bottom: 0;
   }
 
   /* The home page's full-bleed opening sequence must stay edge-to-edge at

@@ -32,6 +32,7 @@ export default function SiteLayout() {
         'route-shell',
         hasAtmosphericBackground ? 'route-shell--atmospheric' : '',
         isCinematic ? 'route-shell--cinematic' : '',
+        isFaq ? 'route-shell--faq' : '',
       ]
         .filter(Boolean)
         .join(' ')

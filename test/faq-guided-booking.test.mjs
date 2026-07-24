@@ -91,9 +91,10 @@ test('ends FAQ with the identical shared home finale', () => {
   assert.doesNotMatch(tsx, /faq-close/)
   assert.doesNotMatch(css, /\.faq-close/)
   assert.match(css, /\.faq-page > \.home-finale \{[\s\S]*?width: 100vw;/)
-  assert.match(css, /\.faq-page > \.home-finale \{[\s\S]*?var\(--home-sage\)/)
-  assert.match(css, /\.faq-page > \.home-finale \.home-finale__arch \{[\s\S]*?var\(--home-sage\)/)
+  assert.match(css, /\.faq-page > \.home-finale \{[\s\S]*?#a7b98d/)
+  assert.match(css, /\.faq-page > \.home-finale \.home-finale__arch \{[\s\S]*?#a7b98d/)
   assert.match(layout, /const isFaq = pathname === '\/faq'/)
+  assert.match(layout, /isFaq \? 'route-shell--faq' : ''/)
   assert.match(layout, /isHome \|\| isWeeklyLessons \|\| isFaq \? null : <SiteFooter \/>/)
 })
 

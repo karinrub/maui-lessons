@@ -175,7 +175,16 @@ export default function AaronStorySections() {
           start: () => getSectionTop(),
           end: () =>
             getSectionTop() + getScrollDistance() * (isMobile ? MOBILE_TRAVEL_SCALE : 1),
-          scrub: 1,
+          /* Immediate, not a numeric smoothing value: Lenis already eases
+             every scroll position it produces (including the chapter-snap
+             glide below), so a second smoothing layer here only adds lag.
+             With a numeric scrub, that lag compounds with the snap glide —
+             the track can sit visibly off a chapter position for seconds
+             after the corrective glide finishes, reading as a stuck blank
+             frame. Immediate scrub keeps the track's position exactly in
+             sync with scroll at all times, so it can never rest anywhere
+             but where the containerAnimation math says it should. */
+          scrub: true,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             progressFillTo?.(self.progress)
@@ -203,6 +212,51 @@ export default function AaronStorySections() {
       let lastScroll = window.scrollY
       let scrollDirection = 1
 
+      /* Pure: given a scroll position + last travel direction, resolves the
+         chapter target the track should rest on. Shared by both the fast,
+         event-driven snap below and the idle watchdog, so both agree on
+         what "correct" means. */
+      const resolveNearestTarget = (scroll: number, direction: number) => {
+        const hst = horizontalTween.scrollTrigger
+
+        if (!hst) {
+          return null
+        }
+
+        const travel = hst.end - hst.start
+        const targets = [
+          hst.start,
+          hst.start + travel / 3,
+          hst.start + (travel * 2) / 3,
+          hst.end,
+          pinTrigger.end,
+        ]
+        /* Prefer targets ahead of the travel direction; fall back to the
+           plain nearest only when already past the last one that way. */
+        const ahead = targets.filter((t) => (direction > 0 ? t >= scroll : t <= scroll))
+        const pool = ahead.length > 0 ? ahead : targets
+        const nearest = pool.reduce((a, b) =>
+          Math.abs(b - scroll) < Math.abs(a - scroll) ? b : a,
+        )
+
+        return { nearest, distance: Math.abs(nearest - scroll) }
+      }
+
+      const glideTo = (nearest: number, distance: number) => {
+        /* Glide time scales with how far there is left to travel, so a
+           short settle doesn't take the same near-second as a full
+           chapter and the sequence stays responsive under the wheel. */
+        const hst = horizontalTween.scrollTrigger
+        const travel = hst ? hst.end - hst.start : distance
+        const chapterSpan = travel / 3
+        const durationScale = Math.min(Math.max(distance / chapterSpan, 0.35), 1)
+
+        lenis.scrollTo(nearest, {
+          duration: (isMobile ? 1.15 : 0.9) * durationScale,
+          easing: (t) => 1 - Math.pow(1 - t, 3),
+        })
+      }
+
       const scheduleSnap = () => {
         const current = window.scrollY
         if (current !== lastScroll) {
@@ -212,56 +266,61 @@ export default function AaronStorySections() {
 
         window.clearTimeout(snapTimer)
         snapTimer = window.setTimeout(() => {
-          const hst = horizontalTween.scrollTrigger
-
-          if (!hst) {
-            return
-          }
-
           const scroll = window.scrollY
 
           if (scroll <= pinTrigger.start || scroll >= pinTrigger.end) {
             return
           }
 
-          const travel = hst.end - hst.start
-          const targets = [
-            hst.start,
-            hst.start + travel / 3,
-            hst.start + (travel * 2) / 3,
-            hst.end,
-            pinTrigger.end,
-          ]
-          /* Prefer targets ahead of the travel direction; fall back to the
-             plain nearest only when already past the last one that way. */
-          const ahead = targets.filter((t) =>
-            scrollDirection > 0 ? t >= scroll : t <= scroll,
-          )
-          const pool = ahead.length > 0 ? ahead : targets
-          const nearest = pool.reduce((a, b) =>
-            Math.abs(b - scroll) < Math.abs(a - scroll) ? b : a,
-          )
+          const result = resolveNearestTarget(scroll, scrollDirection)
 
-          const distance = Math.abs(nearest - scroll)
-
-          if (distance < 2) {
+          if (!result || result.distance < 2) {
             return
           }
 
-          /* Glide time scales with how far there is left to travel, so a
-             short settle doesn't take the same near-second as a full
-             chapter and the sequence stays responsive under the wheel. */
-          const chapterSpan = travel / 3
-          const durationScale = Math.min(Math.max(distance / chapterSpan, 0.35), 1)
-
-          lenis.scrollTo(nearest, {
-            duration: (isMobile ? 1.15 : 0.9) * durationScale,
-            easing: (t) => 1 - Math.pow(1 - t, 3),
-          })
+          glideTo(result.nearest, result.distance)
         }, isMobile ? 300 : 180)
       }
 
       lenis.on('scroll', scheduleSnap)
+
+      /* Watchdog: the fast path above only fires off Lenis 'scroll' events,
+         so any gap in that chain (a bounced/aborted scroll, a dropped tick,
+         a reversed gesture that never re-fires 'scroll' once settled) can
+         leave the track parked at a non-chapter offset with nothing to
+         recover it — the original bug. This polls actual scroll position
+         directly via rAF instead of depending on events: once scrollY has
+         been stable for a few frames while pinned, it force-corrects to the
+         nearest chapter regardless of why the event-driven path didn't. */
+      let stableFrames = 0
+      let lastWatchedScroll = window.scrollY
+      const STABLE_FRAMES_THRESHOLD = 6
+
+      const watchdogTick = () => {
+        const scroll = window.scrollY
+
+        if (scroll === lastWatchedScroll) {
+          stableFrames += 1
+        } else {
+          stableFrames = 0
+          lastWatchedScroll = scroll
+        }
+
+        if (
+          stableFrames === STABLE_FRAMES_THRESHOLD &&
+          scroll > pinTrigger.start &&
+          scroll < pinTrigger.end
+        ) {
+          const result = resolveNearestTarget(scroll, scrollDirection)
+
+          if (result && result.distance >= 2) {
+            window.clearTimeout(snapTimer)
+            glideTo(result.nearest, result.distance)
+          }
+        }
+      }
+
+      gsap.ticker.add(watchdogTick)
 
       panels.forEach((panel, index) => {
         const revealTarget = panel.querySelector<HTMLElement>('.aaron-story__reveal')
@@ -386,6 +445,7 @@ export default function AaronStorySections() {
         root.removeEventListener('focusin', onFocusIn)
         window.clearTimeout(snapTimer)
         gsap.ticker.remove(tickLenis)
+        gsap.ticker.remove(watchdogTick)
         gsap.ticker.lagSmoothing(500, 33)
         lenis.destroy()
       }

@@ -744,6 +744,17 @@
     border-top: 1px solid var(--bw-hairline-soft);
   }
 
+  /* Comfortable touch-target floor for date cells: tighter gap buys back
+     the room a 44px minimum needs across the 7-column grid. */
+  .bwc-grid {
+    gap: 0.15rem;
+  }
+
+  .bwc-day {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
   .bw-summary-row {
     flex-wrap: wrap;
   }

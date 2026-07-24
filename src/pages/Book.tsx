@@ -48,7 +48,6 @@ const LESSON_TYPE_LABELS: Record<LessonType, string> = {
   ongoing: 'Ongoing Lessons',
 }
 
-// Placeholder-friendly line only — real business voice TBD.
 const ENTRANCE_HEADLINE = "let's set up your lesson"
 const BOOKING_STEPS: StepId[] = ['type', 'participants', 'datetime', 'contact', 'confirm']
 const PROGRESS_STEPS: Array<{ id: ProgressStepId; label: string }> = [

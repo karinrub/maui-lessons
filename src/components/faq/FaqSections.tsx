@@ -49,23 +49,71 @@ export default function FaqSections() {
 
     if (item) setOpen(item.id)
     let cancelled = false
-    const scrollToTarget = () => {
-      if (cancelled) return
-      const target = item
+    let animationFrameId = 0
+    const getTarget = () =>
+      item
         ? document.getElementById(`faq-question-${item.id}`)?.closest('.faq-row')
         : document.getElementById(`faq-category-${categoryId}`)
-      if (!target) return
+
+    const getFixedClearance = (target: Element) => {
+      const targetRect = target.getBoundingClientRect()
       const headerBottom =
         document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0
-      const top = target.getBoundingClientRect().top + window.scrollY - headerBottom - 24
+      const categoryNav = document.querySelector('.faq-category-nav')
+      if (!categoryNav) return headerBottom
+
+      const navRect = categoryNav.getBoundingClientRect()
+      const navStyle = getComputedStyle(categoryNav)
+      const navOverlapsTarget =
+        navStyle.position === 'sticky' &&
+        navStyle.visibility !== 'hidden' &&
+        navStyle.display !== 'none' &&
+        navRect.width > 0 &&
+        navRect.height > 0 &&
+        navRect.right > targetRect.left &&
+        navRect.left < targetRect.right
+
+      return Math.max(headerBottom, navOverlapsTarget ? navRect.bottom : 0)
+    }
+
+    const scrollToTarget = () => {
+      if (cancelled) return
+      const target = getTarget()
+      if (!target) return
+      const top =
+        target.getBoundingClientRect().top + window.scrollY - getFixedClearance(target) - 24
       window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' })
     }
+
+    const activateTargetReveal = () => {
+      getTarget()?.scrollIntoView({ behavior: 'auto', block: 'start' })
+    }
+
+    const scrollAfterRevealSettles = (framesRemaining = 180, framesElapsed = 0) => {
+      if (cancelled) return
+      const target = getTarget()
+      if (!target) return
+      const transform = getComputedStyle(target).transform
+      const translateY = transform === 'none' ? 0 : new DOMMatrixReadOnly(transform).m42
+      if ((framesElapsed >= 8 && Math.abs(translateY) < 0.5) || framesRemaining === 0) {
+        scrollToTarget()
+        return
+      }
+      animationFrameId = requestAnimationFrame(() =>
+        scrollAfterRevealSettles(framesRemaining - 1, framesElapsed + 1),
+      )
+    }
+
     requestAnimationFrame(() => {
-      scrollToTarget()
-      void document.fonts?.ready.then(() => requestAnimationFrame(scrollToTarget))
+      activateTargetReveal()
+      void document.fonts?.ready.then(() => {
+        activateTargetReveal()
+        animationFrameId = requestAnimationFrame(() => scrollAfterRevealSettles())
+      })
     })
     return () => {
       cancelled = true
+      cancelAnimationFrame(animationFrameId)
     }
   }, [])
 

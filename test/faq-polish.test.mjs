@@ -33,10 +33,12 @@ test('initializes a deep-linked answer before accordion transitions begin', () =
   assert.match(tsx, /useState<string \| null>\(getInitialOpenItem\)/)
 })
 
-test('repositions deep links after webfonts settle', () => {
-  assert.match(tsx, /document\.fonts\?\.ready\.then\(\(\) => requestAnimationFrame\(scrollToTarget\)\)/)
-  assert.match(tsx, /document\.querySelector\('\.site-header'\)/)
-  assert.match(tsx, /window\.scrollTo\(\{ top: Math\.max\(0, top\), left: 0, behavior: 'auto' \}\)/)
+test('repositions deep links after webfonts and entry reveals settle', () => {
+  assert.match(tsx, /document\.fonts\?\.ready\.then/)
+  assert.match(tsx, /scrollAfterRevealSettles/)
+  assert.match(tsx, /new DOMMatrixReadOnly\(transform\)\.m42/)
+  assert.match(tsx, /navStyle\.position === 'sticky'/)
+  assert.match(tsx, /navRect\.right > targetRect\.left/)
 })
 
 test('category nav scrolls smoothly and respects reduced motion', () => {

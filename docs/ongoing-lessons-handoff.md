@@ -28,6 +28,14 @@ Last verified: 2026-07-24, Pacific/Honolulu.
 > Still open: the P1 test-coverage items (rendered-behavior tests, duplicate
 > section-order assertion) and the alt/figcaption duplicate-announcement
 > decision. Physical-device smoke tests remain outstanding.
+>
+> **2026-07-24 re-verification:** commit `4248e52` landed a further mobile
+> polish pass touching `WeeklyJourneySections.tsx/.css` among other routes.
+> Re-ran `npm run build`/`lint`/`typecheck`, `node --test test/*.test.mjs`
+> (63/63 pass), and an emulated 375×812 pass of `/weekly-lessons` — Practice
+> Loop opening renders correctly, zero console errors, no overflow. The P1
+> items below (test coverage, alt/figcaption decision) were not addressed in
+> this pass and remain open.
 
 Route: `/weekly-lessons`
 

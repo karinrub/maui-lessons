@@ -227,7 +227,7 @@ export default function WeeklyJourneySections() {
           id: 'weekly-practice-loop',
           trigger: opening,
           start: 'top top',
-          end: () => `+=${window.innerHeight * (isMobile ? 1.25 : isShort ? 1.05 : 1.6)}`,
+          end: () => `+=${window.innerHeight * (isMobile ? 0.95 : isShort ? 1.05 : 1.6)}`,
           animation: loop,
           pin: openingStage,
           scrub: 1,
@@ -309,35 +309,60 @@ export default function WeeklyJourneySections() {
         }
 
         if (!isDesktop) {
+          const chart = q('.weekly-redesign__chart')[0] as HTMLElement
+          const dots = q('.weekly-redesign__progress-dot') as HTMLElement[]
+          const rail = q('.weekly-redesign__mobile-progress-line')[0] as HTMLElement
+          const activeDot = q('.weekly-redesign__progress-active-dot')[0] as HTMLElement
+
+          // Mirrors getVideoStart() above: the mobile layout stacks the
+          // milestones in normal flow instead of plotting them on the
+          // desktop's curve, so the rail and traveling dot are measured
+          // directly against the milestone dots' actual screen positions
+          // (re-measured on every ScrollTrigger refresh via
+          // invalidateOnRefresh) rather than an SVG path that has no
+          // relationship to them.
+          const measureDots = () => {
+            const chartRect = chart.getBoundingClientRect()
+            const centers = dots.map((dot) => {
+              const dotRect = dot.getBoundingClientRect()
+              return {
+                x: dotRect.left - chartRect.left + dotRect.width / 2,
+                y: dotRect.top - chartRect.top + dotRect.height / 2,
+              }
+            })
+            return { first: centers[0], last: centers[centers.length - 1] }
+          }
+
           gsap
             .timeline({
               defaults: { ease: 'none' },
               scrollTrigger: {
                 id: 'weekly-progress-mobile',
-                trigger: q('.weekly-redesign__chart')[0],
+                trigger: chart,
                 start: 'top 82%',
                 end: 'bottom 28%',
                 scrub: 0.8,
                 invalidateOnRefresh: true,
               },
             })
-            .fromTo(
-              q('.weekly-redesign__mobile-progress-line'),
-              { scaleY: 0 },
-              { scaleY: 1, transformOrigin: 'top' },
-              0,
-            )
-            .fromTo(
-              q('.weekly-redesign__progress-active-dot'),
-              { y: 0 },
-              { y: () => (q('.weekly-redesign__chart')[0] as HTMLElement).offsetHeight - 24 },
-              0,
-            )
+            .set(rail, {
+              top: () => measureDots().first.y,
+              left: () => measureDots().first.x,
+              height: () => measureDots().last.y - measureDots().first.y,
+              scaleY: 0,
+            })
+            .set(activeDot, {
+              top: () => measureDots().first.y - 8,
+              left: () => measureDots().first.x - 8,
+              autoAlpha: 1,
+            })
+            .to(rail, { scaleY: 1, duration: 0.82 }, 0.04)
+            .to(activeDot, { top: () => measureDots().last.y - 8, duration: 0.82 }, 0.04)
             .fromTo(
               q('.weekly-redesign__progress-milestone'),
-              { autoAlpha: 0.45, x: 20 },
-              { autoAlpha: 1, x: 0, stagger: 0.24 },
-              0,
+              { autoAlpha: 0.4, y: 28 },
+              { autoAlpha: 1, y: 0, stagger: 0.18 },
+              0.12,
             )
         }
 

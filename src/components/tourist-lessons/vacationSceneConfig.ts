@@ -65,6 +65,40 @@ function progressThroughRange(progress: number, start: number, end: number) {
   return clampProgress((progress - start) / (end - start))
 }
 
+// The static, non-scrubbing rest state (mobile, which never pins/scrolls the
+// scene; reduced-motion, which must not animate). getVacationSceneVisualState(1)
+// is deliberately NOT reused here — it's the raw end-of-scrub curve, and its
+// values overshoot past the intended "settled" look (headline scale 1.17,
+// frame scale 0.72) because on desktop that overshoot is a passing frame the
+// scrub immediately carries past, never a resting state. Rendered statically,
+// that overshoot reads as broken proportions instead of a composed hero.
+export function getVacationSceneSettledState(): VacationSceneVisualState {
+  return {
+    progress: 1,
+    compositionProgress: 1,
+    surfaceProgress: 1,
+    environmentProgress: 1,
+    // 1, not a further scale-down: the settled CSS layout (VacationCinematicScene.css
+    // .is-mobile-scene / .is-reduced-motion) already sizes the frame directly
+    // via width/height, in normal flow — an extra transform-scale here would
+    // shrink that correctly-sized frame again, leaving gutter around it.
+    frameScale: 1,
+    imageScale: 1.12,
+    frameRadius: 26,
+    stageBgProgress: 1,
+    headlineProgress: 1,
+    headlineScale: 1,
+    headlineOpacity: 1,
+    headlineX: 0,
+    headlineY: 0,
+    headlineTracking: 0,
+    headlineColorProgress: 1,
+    headlineColorR: 31,
+    headlineColorG: 29,
+    headlineColorB: 24,
+  }
+}
+
 export function getVacationSceneVisualState(progress: number): VacationSceneVisualState {
   const safeProgress = clampProgress(progress)
   const softenedProgress = smoothstep(safeProgress)

@@ -2,6 +2,7 @@ import { useLayoutEffect, type RefObject } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
+  getVacationSceneSettledState,
   getVacationSceneVisualState,
   vacationSceneScroll,
   type VacationSceneVisualState,
@@ -54,9 +55,16 @@ export function useVacationSceneProgress({
       return
     }
 
-    applyVisualState(scene, getVacationSceneVisualState(isDesktop && !prefersReducedMotion ? 0 : 1))
+    if (prefersReducedMotion) {
+      // Reduced motion must not pin or scrub, so apply the dedicated rest
+      // state instead of sampling a moving frame from the scrub curve.
+      applyVisualState(scene, getVacationSceneSettledState())
+      return
+    }
 
-    if (!pin || !isDesktop || prefersReducedMotion) {
+    applyVisualState(scene, getVacationSceneVisualState(0))
+
+    if (!pin) {
       return
     }
 

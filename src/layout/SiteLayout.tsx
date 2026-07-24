@@ -81,10 +81,11 @@ export default function SiteLayout() {
           </main>
         </PageTransition>
       </div>
-      {/* Home ends on HomeFinale and Ongoing on its weekly-close band — both
-          already carry this same footer content (nav links + copyright), so a
-          cream SiteFooter strip below would break their ink fields. */}
-      {isHome || isWeeklyLessons || isFaq ? null : <SiteFooter />}
+      {/* Home, Ongoing, and Vacation each end on their own ink-field closer
+          (HomeFinale / weekly-redesign__finale / vacation-story__finale) that
+          already carries this same footer content (nav links + copyright),
+          so a cream SiteFooter strip below would break their ink fields. */}
+      {isHome || isWeeklyLessons || isFaq || isTouristLessons ? null : <SiteFooter />}
     </div>
   )
 }

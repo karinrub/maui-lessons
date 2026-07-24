@@ -155,12 +155,13 @@
   will-change: transform, opacity;
 }
 
+/* Reduced-motion renders the composed end state in normal document flow. */
 .vacation-cinematic-scene.is-reduced-motion {
   --vac-progress: 1;
   --vac-composition-progress: 1;
   --vac-surface-progress: 1;
   --vac-environment-progress: 1;
-  --vac-frame-scale: 0.78;
+  --vac-frame-scale: 1;
   --vac-image-scale: 1.12;
   --vac-frame-radius: 26px;
   --vac-stage-bg-progress: 1;
@@ -214,17 +215,41 @@
   }
 
   .vacation-cinematic-scene__pin {
-    min-height: 540px;
+    min-height: 100svh;
   }
 
   .vacation-cinematic-scene__image-frame {
-    min-height: 540px;
+    min-height: 100svh;
   }
 
   .vacation-cinematic-scene__headline {
-    max-width: 94vw;
-    font-size: clamp(1rem, 4.55vw, 2.2rem);
-    text-shadow: 0 1px 14px rgba(6, 17, 12, 0.16);
+    width: min(11.5ch, 86vw);
+    max-width: 86vw;
+    font-size: clamp(2.45rem, 12.8vw, 4.6rem);
+    letter-spacing: 0;
+    line-height: 0.9;
+    text-shadow:
+      0 1px 14px rgba(6, 17, 12, 0.22),
+      0 2px 28px rgba(6, 17, 12, 0.2);
+    transform: translate3d(calc(-50% + var(--vac-headline-x)), calc(-50% + var(--vac-headline-y)), 0);
+    white-space: normal;
+  }
+
+  .vacation-cinematic-scene.is-reduced-motion .vacation-cinematic-scene__pin {
+    min-height: 100svh;
+    padding:
+      clamp(88px, 12svh, 118px)
+      clamp(18px, 5vw, 28px)
+      clamp(32px, 7svh, 56px);
+  }
+
+  .vacation-cinematic-scene.is-reduced-motion .vacation-cinematic-scene__image-layer {
+    min-height: min(70svh, 680px);
+  }
+
+  .vacation-cinematic-scene.is-reduced-motion .vacation-cinematic-scene__image-frame {
+    height: min(70svh, 680px);
+    min-height: 520px;
   }
 }
 

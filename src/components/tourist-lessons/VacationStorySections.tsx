@@ -414,8 +414,12 @@ export default function VacationStorySections() {
         </section>
       ) : null}
 
-      {/* ── Finale CTA ── */}
-      <section className="vacation-story__finale" aria-label="Book a vacation lesson">
+      {/* ── Finale CTA + footer: same ink-arch treatment as Ongoing Lessons'
+          closer, carrying the standard sitewide footer nav + copyright
+          inside the dark band instead of a separate cream SiteFooter below
+          it (SiteLayout excludes this route from SiteFooter accordingly). */}
+      <footer className="vacation-story__finale" aria-label="Book a vacation lesson">
+        <div className="vacation-story__finale-arch" aria-hidden="true" />
         <div className="vacation-story__finale-inner" data-vacation-reveal data-vacation-reveal-group>
           <p className="vacation-story__finale-line">Long after the tan fades, the music stays.</p>
           <p className="vacation-story__finale-note">
@@ -431,9 +435,16 @@ export default function VacationStorySections() {
           <p className="vacation-story__finale-aside">
             Questions first? <Link to="/faq">Read the FAQ</Link>
           </p>
+          <nav className="vacation-story__finale-links" aria-label="Footer navigation">
+            <Link to="/">Home</Link>
+            <Link to="/weekly-lessons">Ongoing Lessons</Link>
+            <Link to="/about">About</Link>
+            <Link to="/faq">FAQ</Link>
+          </nav>
+          <p className="vacation-story__finale-copyright">© {new Date().getFullYear()} Maui Lessons</p>
         </div>
         <div className="vacation-story__finale-grain" aria-hidden="true" />
-      </section>
+      </footer>
     </div>
   )
 }

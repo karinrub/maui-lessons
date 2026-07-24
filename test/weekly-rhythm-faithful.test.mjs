@@ -259,8 +259,27 @@ test('builds a rising graph with one active travelling dot', () => {
 test('does not pin the graph on mobile or short-height screens', () => {
   assert.match(tsx, /if \(isDesktop\)/)
   assert.match(tsx, /weekly-progress-mobile/)
-  assert.match(css, /padding:\s*0 4px 0 40px/)
+  assert.match(css, /@media \(max-width: 760px\), \(min-width: 761px\) and \(max-height: 679px\) \{[\s\S]*?\.weekly-redesign__chart \{[\s\S]*?padding:\s*0;/)
   assert.doesNotMatch(css, /@media \(max-width: 760px\)[\s\S]*position:\s*sticky/)
+})
+
+test('keeps the mobile graph measured from the stacked milestone dots', () => {
+  const mobileBranchStart = tsx.indexOf('if (!isDesktop)')
+  const mobileBranchEnd = tsx.indexOf("gsap\n          .timeline({", mobileBranchStart + 1)
+  const mobileBranch = tsx.slice(mobileBranchStart, mobileBranchEnd)
+
+  assert.ok(mobileBranchStart >= 0)
+  assert.match(mobileBranch, /const dots = q\('\.weekly-redesign__progress-dot'\)/)
+  assert.match(mobileBranch, /const rail = q\('\.weekly-redesign__mobile-progress-line'\)/)
+  assert.match(mobileBranch, /const measureDots = \(\) =>/)
+  assert.match(mobileBranch, /height: \(\) => measureDots\(\)\.last\.y - measureDots\(\)\.first\.y/)
+  assert.match(mobileBranch, /top: \(\) => measureDots\(\)\.last\.y - 8/)
+  assert.doesNotMatch(mobileBranch, /motionPath: \{ path, align: path/)
+  assert.doesNotMatch(mobileBranch, /offsetHeight - 24/)
+  assert.match(
+    css,
+    /@media \(max-width: 760px\), \(min-width: 761px\) and \(max-height: 679px\) \{[\s\S]*?\.weekly-redesign__mobile-progress-line \{[\s\S]*?display:\s*block;/,
+  )
 })
 
 test('keeps milestone headings contained in the narrow pinned graph', () => {

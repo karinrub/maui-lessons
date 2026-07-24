@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Allison&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Beth+Ellen&display=swap");
 
 /* Backgrounds stay transparent so the fixed ambient WebGL layer shows
    through while the landscape loads and again as it dissolves at handoff. */
@@ -139,12 +139,12 @@
   margin: 0;
   padding: 0 clamp(22px, 5.5vw, 88px);
   color: rgb(250, 245, 238);
-  font-family: "Allison", "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  font-size: clamp(3.2rem, 6vw, 6.1rem);
+  font-family: "Beth Ellen", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(3.4rem, 6.4vw, 6.4rem);
   font-style: normal;
   font-weight: 400;
   letter-spacing: 0;
-  line-height: 1.08;
+  line-height: 1.3;
   text-align: center;
   /* Soft ink halo instead of a scrim: keeps the cream script readable over
      the photo's bright sky/sand band without dimming the image itself.
@@ -159,7 +159,12 @@
 .tagline-word {
   display: inline;
   margin-right: 0.25em;
-  will-change: color;
+  /* Color stays fixed; the scroll reveal fades opacity instead (see
+     OpeningScene.tsx). Fading opacity dims the fill and its text-shadow
+     halo together, so unlit words read as a soft, uniform ghost instead of
+     the shadow showing through as dark ink while the fill washes out. */
+  color: rgb(250, 245, 238);
+  will-change: opacity;
   transition: none;
 }
 
@@ -294,7 +299,8 @@
   }
 
   .opening-scene__tagline-text {
-    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    font-size: clamp(1.7rem, 6.5vw, 2.4rem);
+    line-height: 1.35;
   }
 
   /* Narrower viewports need a much wider-than-tall dome so the curve stays

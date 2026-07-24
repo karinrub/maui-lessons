@@ -616,6 +616,10 @@ select {
     padding-bottom: 0;
   }
 
+  .route-shell--cinematic {
+    padding: 0;
+  }
+
   /* The home page's full-bleed opening sequence must stay edge-to-edge at
      every breakpoint — without this, the rule above (equal specificity,
      later in source) wins over .home-hero--opening's padding: 0 and the
@@ -632,6 +636,10 @@ select {
 
   .page-main {
     margin-top: clamp(58px, 9svh, 86px);
+  }
+
+  .page-main--cinematic {
+    margin-top: 0;
   }
 
   .fullscreen-nav {

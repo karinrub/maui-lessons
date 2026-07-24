@@ -707,9 +707,12 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
 
     gsap.set(media, { visibility: 'visible' })
     gsap.set(tagline, { opacity: 0 })
-    // 0.22 (was 0.12): unlit words stay faintly present instead of vanishing
-    // into the bright stretch of the beach photo mid-scrub.
-    gsap.set(words, { color: 'rgba(250,245,238,0.22)' })
+    // Fade opacity rather than color: color was rgba-alpha'd toward
+    // transparent while the CSS text-shadow halo stayed at full strength,
+    // so unlit words read as dark ink floating in front of the white
+    // reveal instead of a soft ghost. Opacity dims the fill and its
+    // shadow together for a uniform, legible dim state.
+    gsap.set(words, { opacity: 0.28 })
     gsap.set(arch, { scaleY: 0.32, opacity: 0, transformOrigin: 'center bottom' })
     // Dramatic entrance: the title starts below full size and drops in
     // with a punchy overshoot past 100%. Range tightened (0.5/50 → 0.72/30)
@@ -754,7 +757,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
           .to(video, { opacity: 0, duration: 0.16, ease: 'none' })
           .to(frame, { opacity: 0, duration: 0.14, ease: 'none' }, '<+=0.10')
           .to(tagline, { opacity: 1, duration: 0.06, ease: 'none' })
-          .to(words, { color: 'rgb(250,245,238)', duration: 0.04, stagger: 0.028, ease: 'none' })
+          .to(words, { opacity: 1, duration: 0.04, stagger: 0.028, ease: 'none' })
           .to({}, { duration: 0.06 })
           // Handoff: the tagline dissolves as the sage arch grows in from the
           // hero's bottom edge, its title dropping in with a big, punchy

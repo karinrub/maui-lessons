@@ -348,11 +348,35 @@
 .vacation-story__finale {
   position: relative;
   overflow: hidden;
-  background: #0d2018;
-  padding:
-    clamp(72px, 11svh, 128px)
-    clamp(22px, 6vw, 96px)
-    clamp(80px, 11svh, 136px);
+  margin-top: -2px;
+  padding: 0 clamp(22px, 6vw, 96px) clamp(40px, 6svh, 72px);
+  background: linear-gradient(180deg, #fbf7ee 0 3px, #0d2018 3px);
+  color: #f8f4eb;
+}
+
+/* Same cream-dome-into-ink transition as Ongoing Lessons' closer
+   (weekly-redesign__finale-arch) — the two routes' page-ending treatment
+   should read as one shared pattern, not two different closers. */
+.vacation-story__finale-arch {
+  position: relative;
+  left: 50%;
+  width: 145vw;
+  height: clamp(120px, 18svh, 230px);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  background: #fbf7ee;
+  transform: translateX(-50%);
+}
+
+.vacation-story__finale-arch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--grain-url);
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .vacation-story__finale-inner {
@@ -362,8 +386,8 @@
   flex-direction: column;
   align-items: center;
   gap: clamp(1.4rem, 3.4svh, 2.2rem);
-  max-width: 1080px;
-  margin: 0 auto;
+  width: min(94vw, 1080px);
+  margin: clamp(48px, 8svh, 96px) auto 0;
   text-align: center;
 }
 
@@ -455,6 +479,44 @@
   outline-offset: 0.3rem;
 }
 
+/* Footer nav + copyright, styled identically to Ongoing Lessons' closer
+   (weekly-redesign__finale-links/-copyright) — same sitewide footer content
+   as every other route's SiteFooter, carried inside this ink band instead. */
+.vacation-story__finale-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  margin-top: clamp(0.6rem, 2svh, 1.2rem);
+}
+
+.vacation-story__finale-links a {
+  color: rgba(250, 245, 238, 0.6);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.22s ease;
+}
+
+.vacation-story__finale-links a:hover,
+.vacation-story__finale-links a:focus-visible {
+  color: #faf5ee;
+}
+
+.vacation-story__finale-links a:focus-visible {
+  outline: 1px solid rgba(250, 245, 238, 0.78);
+  outline-offset: 0.3rem;
+}
+
+.vacation-story__finale-copyright {
+  margin: 0;
+  color: rgba(250, 245, 238, 0.35);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
 .vacation-story__finale-grain {
   position: absolute;
   inset: 0;
@@ -469,24 +531,56 @@
 /* ── Mobile ── */
 
 @media (max-width: 760px) {
+  .vacation-statement {
+    padding:
+      clamp(52px, 8svh, 76px)
+      clamp(18px, 6vw, 28px)
+      clamp(34px, 6svh, 52px);
+  }
+
+  .vacation-statement__eyebrow {
+    margin-bottom: clamp(1rem, 2svh, 1.35rem);
+    font-size: 0.64rem;
+    letter-spacing: 0.16em;
+  }
+
   .vacation-statement__heading {
-    font-size: clamp(2.5rem, 12vw, 3.4rem);
+    max-width: 9.8ch;
+    font-size: clamp(2.35rem, 11.4vw, 3.25rem);
+    line-height: 0.95;
+  }
+
+  .vacation-statement__lede {
+    margin-top: clamp(1.25rem, 2.6svh, 1.75rem);
+    max-width: 32ch;
+    font-size: 0.96rem;
+    line-height: 1.58;
+  }
+
+  .vacation-collage {
+    padding:
+      clamp(28px, 5svh, 46px)
+      clamp(18px, 6vw, 28px)
+      clamp(64px, 10svh, 96px);
   }
 
   .vacation-collage__panel {
-    top: 12%;
-    bottom: 6%;
-    width: 78%;
+    top: 7%;
+    right: -18%;
+    bottom: 5%;
+    width: 94%;
+    opacity: 0.72;
   }
 
   .vacation-collage__ghost {
-    top: 38%;
-    font-size: clamp(7rem, 34vw, 10rem);
+    top: 31%;
+    left: -1.8rem;
+    font-size: clamp(6rem, 31vw, 9rem);
   }
 
   .vacation-collage__grid {
     grid-template-columns: 1fr;
-    row-gap: clamp(32px, 5svh, 48px);
+    row-gap: clamp(26px, 4.4svh, 42px);
   }
 
   .vacation-collage__figure--wide,
@@ -495,12 +589,17 @@
     grid-row: auto;
     grid-column: 1;
     justify-self: center;
-    width: min(100%, 420px);
+    width: min(100%, 390px);
     margin-top: 0;
   }
 
   .vacation-collage__figure--portrait {
-    width: min(100%, 340px);
+    width: min(86%, 330px);
+  }
+
+  .vacation-collage__frame {
+    border-radius: 18px;
+    box-shadow: 0 22px 46px -24px rgba(23, 53, 42, 0.44);
   }
 
   .vacation-collage__block--01,
@@ -510,6 +609,74 @@
     grid-column: 1;
     justify-self: center;
     max-width: 420px;
+  }
+
+  .vacation-collage__numeral {
+    margin-bottom: 0.35rem;
+    font-size: clamp(2.25rem, 12vw, 3rem);
+  }
+
+  .vacation-collage__title {
+    font-size: clamp(1.45rem, 7vw, 1.9rem);
+  }
+
+  .vacation-collage__body {
+    max-width: 31ch;
+    font-size: 0.94rem;
+    line-height: 1.58;
+  }
+
+  .vacation-quote {
+    padding:
+      clamp(72px, 12svh, 112px)
+      clamp(18px, 6vw, 28px);
+  }
+
+  .vacation-quote__text {
+    max-width: 11ch;
+    font-size: clamp(2.15rem, 11.5vw, 3.25rem);
+    line-height: 1.04;
+  }
+
+  .vacation-story__finale {
+    padding: 0 clamp(18px, 6vw, 28px) clamp(36px, 7svh, 58px);
+  }
+
+  .vacation-story__finale-arch {
+    width: 170vw;
+    height: clamp(96px, 14svh, 140px);
+  }
+
+  .vacation-story__finale-inner {
+    width: min(100%, 26rem);
+    margin-top: clamp(34px, 7svh, 56px);
+    gap: clamp(1.05rem, 2.6svh, 1.55rem);
+  }
+
+  .vacation-story__finale-line {
+    font-size: clamp(1.8rem, 9vw, 2.55rem);
+    line-height: 1.08;
+  }
+
+  .vacation-story__finale-note {
+    font-size: 0.9rem;
+  }
+
+  .vacation-story__finale-cta {
+    justify-content: center;
+    width: min(100%, 20rem);
+    padding: 0.95rem 1.35rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+  }
+
+  .vacation-story__finale-links {
+    gap: 0.85rem 1.1rem;
+  }
+
+  .vacation-story__finale-links a {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
   }
 }
 

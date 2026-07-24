@@ -15,6 +15,11 @@
   width: 100vw;
   margin-right: calc(50% - 50vw);
   margin-left: calc(50% - 50vw);
+  background: linear-gradient(180deg, var(--home-sage) 0 3px, #0d2018 3px);
+}
+
+.faq-page > .home-finale .home-finale__arch {
+  background: var(--home-sage);
 }
 
 .faq-intro {

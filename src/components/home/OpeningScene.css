@@ -51,8 +51,11 @@
   top: 54%;
   left: 50%;
   z-index: 2;
+  /* svh, not vh: on mobile browsers vh resolves to the *large* viewport, so
+     a vh-sized frame is taller than the visible area while the URL bar is
+     showing and its lower edge sits under the toolbar. */
   width: min(66vw, calc(62svh * 16 / 9));
-  height: 62vh;
+  height: 62svh;
   overflow: hidden;
   cursor: zoom-in;
   opacity: 0;
@@ -303,7 +306,7 @@
 
   .opening-scene__frame {
     width: min(90vw, calc(64svh * 16 / 9));
-    height: 64vh;
+    height: 64svh;
   }
 
   .opening-scene__tagline-text {

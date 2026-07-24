@@ -330,3 +330,35 @@
   }
 
 }
+
+/* Narrow phones: three side-by-side stat columns leave each label ~90px, so
+   "lessons shaped around you" broke into four ragged lines under its numeral.
+   Below 560px the trio becomes a stacked ledger — numeral left, label right,
+   hairline between — which reads as one list instead of three cramped
+   columns and keeps the numerals at their intended display size. */
+@media (max-width: 560px) {
+  .meet-aaron__details {
+    display: grid;
+    gap: 0;
+    margin-top: clamp(1.75rem, 6vw, 2.5rem);
+    border-top: 1px solid rgba(23, 53, 42, 0.16);
+  }
+
+  .meet-aaron__details div {
+    display: grid;
+    grid-template-columns: minmax(3.6rem, auto) 1fr;
+    align-items: baseline;
+    column-gap: 1rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgba(23, 53, 42, 0.16);
+  }
+
+  .meet-aaron__details strong {
+    font-size: 1.9rem;
+  }
+
+  .meet-aaron__details span {
+    max-width: none;
+    font-size: 0.72rem;
+  }
+}

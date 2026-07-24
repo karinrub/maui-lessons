@@ -370,7 +370,10 @@
   }
 
   .stacked-services-deck__description {
-    -webkit-line-clamp: 3;
+    /* 3 lines clipped the ukulele card's closing clause on narrow phones
+       (its copy runs longer than the guitar/family cards') — 4 gives every
+       card's description room to finish instead of ending in "…". */
+    -webkit-line-clamp: 4;
   }
 
   .stacked-services-deck__cta {

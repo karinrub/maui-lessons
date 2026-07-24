@@ -659,6 +659,7 @@ export default function WeeklyJourneySections() {
       </section>
 
       <section className="weekly-redesign__teacher" aria-labelledby="weekly-teacher-title">
+        <div className="weekly-redesign__grain" aria-hidden="true" />
         <div className="weekly-redesign__container weekly-redesign__teacher-layout">
           <div>
             <h2 id="weekly-teacher-title" className="weekly-redesign__eyebrow">

@@ -108,6 +108,20 @@
   background: var(--story-paper);
 }
 
+/* Same grain as the dusk chapter below — applies to every panel (paper and
+   sage included) so all four chapters read as one continuous material.
+   The dusk variant defines its own ::before with matching values, which
+   wins by source order for that chapter. */
+.aaron-story__panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--grain-url);
+  background-size: 160px 160px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
 .aaron-story__panel--sage {
   background: linear-gradient(164deg, #c2d0ab 0%, var(--home-sage) 48%, #a7b98d 100%);
   color: var(--home-sage-ink);

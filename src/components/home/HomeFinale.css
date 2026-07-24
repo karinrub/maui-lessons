@@ -28,6 +28,21 @@
   transform: translateX(-50%);
 }
 
+/* Same grain as the hero's opening arch (OpeningScene.css) — the closing
+   dome should read as the same material, tan or sage (see FaqSections.css
+   override), not a flat fill. */
+.home-finale__arch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
 .home-finale__inner {
   position: relative;
   z-index: 2;

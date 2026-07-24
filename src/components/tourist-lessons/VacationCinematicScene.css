@@ -28,12 +28,40 @@
   isolation: isolate;
 }
 
+/* Same grain material as the finale band (VacationStorySections.css
+   __finale-grain) — textures the cream margin around the pin. */
+.vacation-cinematic-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
 .vacation-cinematic-scene__pin {
   position: relative;
   height: 100svh;
   min-height: 620px;
   overflow: hidden;
   background: #06110c;
+}
+
+/* Cinematic film-grain over the pinned hero photo/headline, same material
+   and opacity as the rest of the page's grain treatment. */
+.vacation-cinematic-scene__pin::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 .vacation-cinematic-scene__editorial-surface {

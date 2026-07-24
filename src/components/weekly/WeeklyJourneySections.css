@@ -651,6 +651,7 @@
 }
 
 .weekly-redesign__teacher {
+  position: relative;
   padding: clamp(5rem, 9vw, 7rem) 0;
   border-top: 1px solid rgba(23, 53, 42, 0.14);
   background: var(--weekly-paper-deep);
@@ -728,6 +729,21 @@
   border-radius: 0 0 50% 50% / 0 0 100% 100%;
   background: #fbf7ee;
   transform: translateX(-50%);
+}
+
+/* Same grain material as the page's other .weekly-redesign__grain bands
+   (see .weekly-redesign__facts etc.), so the closing dome reads as the
+   same material as the rest of the page instead of a flat fill. */
+.weekly-redesign__finale-arch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--grain-url);
+  background-size: 160px 160px;
+  mix-blend-mode: multiply;
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .weekly-redesign__finale-inner {

@@ -12,6 +12,21 @@
   background: var(--home-sage);
 }
 
+/* Same grain material as the pin band's own ::after — covers the flat
+   sage that shows through in the scroll-driven space around the pin
+   before/after it engages, so that space reads as the same material. */
+.stacked-services-deck::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-image: var(--grain-url);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
 .stacked-services-deck__pin {
   position: relative;
   display: grid;

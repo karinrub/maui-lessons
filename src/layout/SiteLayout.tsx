@@ -20,6 +20,7 @@ export default function SiteLayout() {
   const pathname = location.pathname.replace(/\/+$/, '') || '/'
   const isHome = pathname === '/'
   const isWeeklyLessons = pathname === '/weekly-lessons'
+  const isFaq = pathname === '/faq'
   const isTouristLessons = pathname === '/tourist-lessons'
   const isAbout = pathname === '/about'
   const isCinematic = isTouristLessons || isAbout || isWeeklyLessons
@@ -82,7 +83,7 @@ export default function SiteLayout() {
       {/* Home ends on HomeFinale and Ongoing on its weekly-close band — both
           already carry this same footer content (nav links + copyright), so a
           cream SiteFooter strip below would break their ink fields. */}
-      {isHome || isWeeklyLessons ? null : <SiteFooter />}
+      {isHome || isWeeklyLessons || isFaq ? null : <SiteFooter />}
     </div>
   )
 }

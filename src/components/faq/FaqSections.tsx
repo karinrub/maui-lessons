@@ -2,6 +2,7 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState, type MouseEvent
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import HomeFinale from '../home/HomeFinale'
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion'
 import playIfInView from '../../utils/playIfInView'
 import {
@@ -340,25 +341,6 @@ export default function FaqSections() {
         )
       }
 
-      const closeSection = root.querySelector('.faq-close')
-      const closeTween = gsap.fromTo(
-        root.querySelector('.faq-close__inner'),
-        { autoAlpha: 0, y: 24 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: closeSection,
-            start: 'top 85%',
-            toggleActions: 'play none none none',
-          },
-        },
-      )
-      if (closeSection) {
-        playIfInView(closeTween, closeSection)
-      }
     }, root)
 
     return () => {
@@ -524,22 +506,10 @@ export default function FaqSections() {
               </Fragment>
             ))}
 
-            <section className="faq-close" aria-label="Book a lesson">
-              <div className="faq-close__inner">
-                <p className="faq-close__line">Still wondering about something?</p>
-                <p className="faq-close__promise">Bring the questions. Leave with a song.</p>
-                <Link to="/book" className="faq-close__cta">
-                  Explore lesson options
-                  <span className="faq-close__cta-arrow" aria-hidden="true">
-                    →
-                  </span>
-                </Link>
-                <p className="faq-close__note">Compare formats, choose a date, and plan your lesson.</p>
-              </div>
-            </section>
           </div>
         </div>
       </div>
+      <HomeFinale />
     </div>
   )
 }

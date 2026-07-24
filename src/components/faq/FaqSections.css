@@ -9,6 +9,14 @@
   margin: 0 auto;
 }
 
+/* The shared home finale must escape the FAQ content measure: its arch and
+   ink field intentionally meet the viewport edges, exactly as they do home. */
+.faq-page > .home-finale {
+  width: 100vw;
+  margin-right: calc(50% - 50vw);
+  margin-left: calc(50% - 50vw);
+}
+
 .faq-intro {
   position: relative;
   display: flex;
@@ -627,93 +635,6 @@
   object-position: 37% 63%;
 }
 
-.faq-close {
-  padding: clamp(3rem, 6vw, 5rem) 0 clamp(1.5rem, 3vw, 2.5rem);
-  border-top: 1px solid rgba(23, 53, 42, 0.2);
-  text-align: center;
-}
-
-.faq-close__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: clamp(1.1rem, 2.2vw, 1.5rem);
-}
-
-.faq-close__line {
-  margin: 0;
-  color: var(--home-sage-ink);
-  font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.5rem, 2.8vw, 2.2rem);
-  font-style: italic;
-  font-weight: 600;
-  line-height: 1.2;
-}
-
-.faq-close__promise {
-  max-width: 18ch;
-  margin: -0.6rem 0 0;
-  color: var(--home-sage-ink);
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-style: italic;
-  line-height: 0.98;
-}
-
-.faq-close__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: clamp(0.85rem, 1.5vw, 1.05rem) clamp(1.7rem, 3.2vw, 2.4rem);
-  border: 1px solid rgba(214, 158, 84, 0.42);
-  border-radius: 999px;
-  background:
-    linear-gradient(180deg, rgba(214, 158, 84, 0.12), rgba(214, 158, 84, 0)),
-    var(--home-sage-ink);
-  color: #fbf7ee;
-  font-size: 0.88rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-decoration: none;
-  text-transform: uppercase;
-  box-shadow:
-    0 18px 40px -20px rgba(13, 32, 24, 0.6),
-    inset 0 -2px 0 rgba(214, 158, 84, 0.18);
-  transition:
-    transform 0.24s ease,
-    box-shadow 0.24s ease;
-}
-
-.faq-close__cta:hover,
-.faq-close__cta:focus-visible {
-  transform: translateY(-2px);
-  box-shadow:
-    0 24px 48px -20px rgba(13, 32, 24, 0.7),
-    inset 0 -2px 0 rgba(214, 158, 84, 0.24);
-}
-
-.faq-close__cta:focus-visible {
-  outline: 1px solid rgba(23, 53, 42, 0.7);
-  outline-offset: 0.3rem;
-}
-
-.faq-close__cta-arrow {
-  /* Book-page gold (lighter cut for the ink button), foreshadowed sitewide. */
-  color: var(--maui-gold-light);
-  transition: transform 0.22s ease;
-}
-
-.faq-close__cta:hover .faq-close__cta-arrow {
-  transform: translateX(0.25rem);
-}
-
-.faq-close__note {
-  margin: -0.4rem 0 0;
-  color: rgba(23, 53, 42, 0.55);
-  font-size: 0.85rem;
-  letter-spacing: 0.02em;
-}
-
 @media (max-width: 760px) {
   .faq-page {
     width: 100%;
@@ -858,9 +779,6 @@
     opacity: 0.7;
   }
 
-  .faq-close__promise {
-    font-size: 2.3rem;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -870,9 +788,7 @@
   .faq-row__icon,
   .faq-row__question-text,
   .faq-category-nav__link,
-  .faq-category-nav__link::before,
-  .faq-close__cta,
-  .faq-close__cta-arrow {
+  .faq-category-nav__link::before {
     transition: none;
   }
 

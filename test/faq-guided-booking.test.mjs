@@ -19,6 +19,7 @@ const css = await readFile(
   new URL('../src/components/faq/FaqSections.css', import.meta.url),
   'utf8',
 )
+const layout = await readFile(new URL('../src/layout/SiteLayout.tsx', import.meta.url), 'utf8')
 
 test('defines visitor, ongoing, and booking routes for the FAQ guide', () => {
   assert.match(content, /label: 'Visiting Maui'/)
@@ -84,10 +85,14 @@ test('renders guide routes, visible facts, and one instructional proof image', (
   assert.doesNotMatch(tsx, /faq-break/)
 })
 
-test('uses a truthful FAQ booking action', () => {
-  assert.match(tsx, /Explore lesson options/)
-  assert.doesNotMatch(tsx, /Book a Lesson/)
-  assert.doesNotMatch(tsx, /Anything\s+else — just ask when you book\./)
+test('ends FAQ with the identical shared home finale', () => {
+  assert.match(tsx, /import HomeFinale from '..\/home\/HomeFinale'/)
+  assert.match(tsx, /<HomeFinale \/>/)
+  assert.doesNotMatch(tsx, /faq-close/)
+  assert.doesNotMatch(css, /\.faq-close/)
+  assert.match(css, /\.faq-page > \.home-finale \{[\s\S]*?width: 100vw;/)
+  assert.match(layout, /const isFaq = pathname === '\/faq'/)
+  assert.match(layout, /isHome \|\| isWeeklyLessons \|\| isFaq \? null : <SiteFooter \/>/)
 })
 
 test('uses open rails and one responsive proof composition instead of a decorative image break', () => {

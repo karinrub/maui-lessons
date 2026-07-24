@@ -1,6 +1,11 @@
 # Ongoing Lessons — Awwwards-Style Critique
 Maui Lessons · `/weekly-lessons` · reviewed 2026-07-20
 
+> **HISTORICAL REVIEW.** This critique covers the superseded pathway/month-
+> rhythm implementation. The Practice Loop redesign is now on `main` through
+> `43e4132`; current QA and open defects live in
+> `docs/ongoing-lessons-handoff.md`.
+
 ## What Works Well
 
 - **Headline hook.** "A rhythm, not a routine." is a strong, ownable line — it reframes recurring lessons as a lifestyle rather than a chore, and sets up the "rhythm" metaphor that recurs through the page (Month Rhythm spine, progress line). Good copywriting discipline.
@@ -40,4 +45,3 @@ Maui Lessons · `/weekly-lessons` · reviewed 2026-07-20
 - **Consider a filter/compare view for returning visitors.** A future iteration could let a visitor toggle between "New to lessons" and "Already a student" states, changing the CTA language and possibly skipping the Journey chapters entirely for returning students who don't need the "how it works" explainer again.
 
 Overall: this page already clears the bar the site's other pages set — a real signature interaction (the pinned three-chapter journey), a legitimate secondary feature (level self-selection), and a narrative close. The gap to "stunning and competitive" is less about adding polish and more about **editing**: cut the duplicate CTAs and the overlapping Pathways/Month-Rhythm intent, surface pricing where the purchase decision is actually made, and let the one adaptive idea (level-aware rhythm) replace two static ones.
-

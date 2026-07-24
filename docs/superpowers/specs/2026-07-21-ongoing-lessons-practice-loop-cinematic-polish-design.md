@@ -1,7 +1,14 @@
 # Ongoing Lessons Practice Loop Cinematic Polish
 
 Date: 2026-07-21
-Status: approved visual direction; implementation awaits written-spec review
+Status: implemented on `main` through `43e4132`; audited 2026-07-23
+
+> **CURRENT STATUS:** This is the approved design record, not an open
+> implementation request. The Practice Loop shipped in merge `af9a0d0` with
+> follow-up fixes through `43e4132`. Known exceptions to this spec's resilience
+> and accessibility requirements are tracked in
+> `docs/ongoing-lessons-handoff.md`; do not treat those exceptions as new
+> design direction.
 
 ## Goal
 

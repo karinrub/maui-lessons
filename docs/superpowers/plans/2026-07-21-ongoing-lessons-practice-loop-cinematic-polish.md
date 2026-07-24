@@ -1,5 +1,10 @@
 # Ongoing Lessons Practice Loop Cinematic Polish Implementation Plan
 
+> **IMPLEMENTED — DO NOT RE-EXECUTE.** The plan shipped on `main` in merge
+> `af9a0d0` with follow-up fixes through `43e4132`. The unchecked boxes below
+> are preserved as historical execution detail, not current work state. Use
+> `docs/ongoing-lessons-handoff.md` for current QA evidence and open defects.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn `/weekly-lessons` into a reversible cinematic scroll experience led by the approved Practice Loop, a polished rising graph, intentional media sizing, and a compact Home-style finale/footer.

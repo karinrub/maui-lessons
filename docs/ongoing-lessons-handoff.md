@@ -1,6 +1,33 @@
 # Ongoing Lessons Design Handoff
 
-Last verified: 2026-07-23, Pacific/Honolulu.
+Last verified: 2026-07-24, Pacific/Honolulu.
+
+> **2026-07-24 update:** The defects listed under "Current audit findings" were
+> fixed in the sitewide mobile polish pass and reverified via Playwright
+> emulation (not a physical device). Per-item status:
+>
+> - Prerendered no-JavaScript hidden output — **fixed** (`scripts/prerender.mjs`
+>   now snapshots with `reducedMotion: 'reduce'`, so every route serializes its
+>   static final composition; `dist/weekly-lessons/index.html` contains zero
+>   hidden inline styles after a fresh prerender).
+> - H1 omitted from the initial accessibility tree — **fixed** (opening
+>   timeline animates `opacity`, not `autoAlpha`, so `visibility` stays
+>   `visible` and the H1/lede remain exposed at scroll zero).
+> - Nested `main` landmarks — **fixed** (`WeeklyJourneySections` root is now a
+>   `<section>`; `SiteLayout`'s `main.page-main` is the only main landmark).
+> - Facts eyebrow spacing — **fixed** (eyebrow rule scoped as
+>   `.weekly-redesign .weekly-redesign__eyebrow` so the h2 margin reset can no
+>   longer zero it; computed `margin-bottom` is 28px again).
+> - Reduced-motion video autoplay — **fixed** (`autoPlay` gated on
+>   `usePrefersReducedMotion()` and the IntersectionObserver play path is
+>   skipped, video verified paused under emulated reduce).
+> - 320×568 resolve transition crossing the lede — **fixed** (resolved copy
+>   stacks above the media, so the travelling video frame passes behind the
+>   H1/lede).
+>
+> Still open: the P1 test-coverage items (rendered-behavior tests, duplicate
+> section-order assertion) and the alt/figcaption duplicate-announcement
+> decision. Physical-device smoke tests remain outstanding.
 
 Route: `/weekly-lessons`
 
@@ -163,9 +190,8 @@ Rules:
 - Pause the decorative video outside the opening through IntersectionObserver.
 - The video is muted and non-essential; captions describe the media.
 - Do not preload downstream photography.
-- Known accessibility gap: the video still has `autoPlay`, and its
-  IntersectionObserver calls `play()` even when
-  `prefers-reduced-motion: reduce` is active.
+- Fixed 2026-07-24: `autoPlay` is now gated on `usePrefersReducedMotion()` and
+  the IntersectionObserver play path is skipped under reduced motion.
 
 The untracked root images `weekly-hero.jpeg` and `weekly-hero2.jpeg` are not
 part of the approved implementation. Visual inspection on 2026-07-23 found
@@ -213,11 +239,10 @@ Static resilience:
 - Reduced motion disables pins, scrubs, orbiting, line drawing, clipping, and
   parallax.
 
-The current source satisfies the CSS/default-state portion of this contract,
-but the built no-JavaScript output does not. `scripts/prerender.mjs` visits the
-motion-enabled page at scroll position zero and serializes GSAP's inline
-`opacity: 0; visibility: hidden` opening state into
-`dist/weekly-lessons/index.html`.
+Fixed 2026-07-24: `scripts/prerender.mjs` now snapshots with
+`reducedMotion: 'reduce'`, so the built no-JavaScript output serializes the
+static final composition. A fresh prerender of `dist/weekly-lessons/index.html`
+contains zero hidden inline styles.
 
 ## Implementation state
 
@@ -247,6 +272,10 @@ mobile/short-height graph, intrinsic media dimensions, five photographs plus
 the lesson video, no cadence/day-picker, and its own Home-style footer.
 
 ### Current audit findings
+
+**All high- and medium-risk items below were fixed 2026-07-24 — see the update
+banner at the top of this file. They are preserved here as the historical
+record of the 2026-07-23 audit.**
 
 #### High risk
 
@@ -334,16 +363,19 @@ the resolved hero copy, video frame/caption, and contact sheet.
 
 ### P0 — implementation defects
 
-- [ ] Fix prerendering so no-JavaScript output preserves the readable final
-  composition rather than GSAP's scroll-start state.
-- [ ] Keep the real H1 in the accessibility tree during the decorative opening.
-- [ ] Remove the nested main landmark.
+- [x] Fix prerendering so no-JavaScript output preserves the readable final
+  composition rather than GSAP's scroll-start state. (2026-07-24)
+- [x] Keep the real H1 in the accessibility tree during the decorative opening.
+  (2026-07-24)
+- [x] Remove the nested main landmark. (2026-07-24)
 
 ### P1 — visual and motion accessibility
 
-- [ ] Restore the intended facts-eyebrow spacing.
-- [ ] Stop autoplay/observer playback when reduced motion is requested.
-- [ ] Prevent the 320×568 resolve transition from crossing the lede.
+- [x] Restore the intended facts-eyebrow spacing. (2026-07-24)
+- [x] Stop autoplay/observer playback when reduced motion is requested.
+  (2026-07-24)
+- [x] Prevent the 320×568 resolve transition from crossing the lede.
+  (2026-07-24)
 - [ ] Decide whether image alt text or figcaptions should carry each media
   description to avoid duplicate announcements.
 

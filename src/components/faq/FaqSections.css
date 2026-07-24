@@ -258,6 +258,14 @@
   transition: color 0.25s ease, transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+/* Invisible touch-target extension: rows render ~31px tall; kept within the
+   0.45rem list gap so adjacent rows' hit areas don't overlap. */
+.faq-category-nav__link::after {
+  content: '';
+  position: absolute;
+  inset: -3px 0;
+}
+
 .faq-category-nav__link::before {
   content: '';
   position: absolute;

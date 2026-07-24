@@ -106,11 +106,19 @@
   width: clamp(2.25rem, 3.5vw, 2.5rem);
   aspect-ratio: 1;
   padding: 0;
+  /* The visible control is 36px at narrow widths; the ::after below extends
+     the tappable area to ~44px without changing the rendered size. */
   border: 0;
   background: transparent;
   color: #fff;
   cursor: pointer;
   filter: drop-shadow(0 1px 4px rgba(31, 29, 24, 0.56));
+}
+
+.opening-scene__mute-button::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
 }
 
 .opening-scene__mute-button svg {

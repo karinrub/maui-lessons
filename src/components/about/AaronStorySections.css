@@ -365,7 +365,11 @@
      reduced, regardless of viewport width. */
   .aaron-story {
     height: auto;
-    overflow: visible;
+    /* Clip only horizontally: the oversized watermark numerals overhang the
+       panels and otherwise produce a sideways scrollbar in this static
+       fallback (24px at 390px-wide viewports). */
+    overflow-x: clip;
+    overflow-y: visible;
   }
 
   .aaron-story__progress {

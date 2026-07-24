@@ -12,7 +12,8 @@
      against the tan section above. Tan-behind-tan makes those slivers
      invisible; the arch fully covers this strip anyway. */
   background: linear-gradient(180deg, var(--home-tan) 0 3px, #0d2018 3px);
-  padding: 0 clamp(16px, 4vw, 56px) clamp(40px, 6svh, 72px);
+  padding: 0 clamp(16px, 4vw, 56px)
+    calc(clamp(40px, 6svh, 72px) + env(safe-area-inset-bottom, 0px));
 }
 
 /* Mirror of the hero arch: rectangle rounded along its bottom edge, so the
@@ -117,6 +118,7 @@
 }
 
 .home-finale__links a {
+  position: relative;
   color: rgba(250, 245, 238, 0.6);
   font-size: 0.78rem;
   font-weight: 600;
@@ -124,6 +126,13 @@
   text-decoration: none;
   text-transform: uppercase;
   transition: color 0.22s ease;
+}
+
+/* Invisible touch-target extension to ~44px for the small footer links. */
+.home-finale__links a::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
 }
 
 .home-finale__links a:hover,

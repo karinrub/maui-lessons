@@ -289,6 +289,7 @@
 }
 
 .stacked-services-deck__cta {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -303,6 +304,13 @@
   text-decoration: none;
   text-transform: uppercase;
   transition: border-color 0.22s ease, color 0.22s ease;
+}
+
+/* Invisible touch-target extension: the underlined CTA renders ~17px tall. */
+.stacked-services-deck__cta::after {
+  content: '';
+  position: absolute;
+  inset: -14px -10px;
 }
 
 .stacked-services-deck__cta:hover,

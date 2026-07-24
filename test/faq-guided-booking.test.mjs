@@ -95,7 +95,7 @@ test('ends FAQ with the identical shared home finale', () => {
   assert.match(css, /\.faq-page > \.home-finale \.home-finale__arch \{[\s\S]*?#a7b98d/)
   assert.match(layout, /const isFaq = pathname === '\/faq'/)
   assert.match(layout, /isFaq \? 'route-shell--faq' : ''/)
-  assert.match(layout, /isHome \|\| isWeeklyLessons \|\| isFaq \? null : <SiteFooter \/>/)
+  assert.match(layout, /isHome \|\| isWeeklyLessons \|\| isFaq \|\| isTouristLessons \? null : <SiteFooter \/>/)
 })
 
 test('uses open rails and one responsive proof composition instead of a decorative image break', () => {

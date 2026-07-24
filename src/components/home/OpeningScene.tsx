@@ -536,7 +536,9 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
       [landscapeRef.current, frameRef.current, videoRef.current, header, archRef.current, archTitleRef.current],
       { autoAlpha: 1, clearProps: 'transform' },
     )
-    restartHeroVideo()
+    /* Reduced motion: leave the video paused on its poster frame. Playback
+       stays available through the user's own focus-mode gesture. */
+    videoRef.current.pause()
     lenisRef.current?.start()
     setHeaderSuppressed(false)
     markVideoVisible()
@@ -546,7 +548,6 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
     markIntroComplete,
     markVideoVisible,
     prefersReducedMotion,
-    restartHeroVideo,
     setHeaderSuppressed,
     syncFocusAvailabilityFromFrame,
   ])
@@ -1047,7 +1048,7 @@ export default function OpeningScene({ scrollSequence }: OpeningSceneProps) {
               className="opening-scene__video"
               src={heroVideo}
               poster={landscapeImage}
-              autoPlay
+              autoPlay={!prefersReducedMotion}
               muted={isMuted}
               playsInline
               preload="auto"

@@ -349,7 +349,8 @@
   position: relative;
   overflow: hidden;
   margin-top: -2px;
-  padding: 0 clamp(22px, 6vw, 96px) clamp(40px, 6svh, 72px);
+  padding: 0 clamp(22px, 6vw, 96px)
+    calc(clamp(40px, 6svh, 72px) + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(180deg, #fbf7ee 0 3px, #0d2018 3px);
   color: #f8f4eb;
 }
@@ -463,10 +464,18 @@
 }
 
 .vacation-story__finale-aside a {
+  position: relative;
   color: rgba(250, 245, 238, 0.82);
   text-decoration: underline;
   text-underline-offset: 0.22em;
   transition: color 0.22s ease;
+}
+
+/* Invisible touch-target extension for the ~16px-tall inline link. */
+.vacation-story__finale-aside a::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
 }
 
 .vacation-story__finale-aside a:hover,
@@ -491,6 +500,7 @@
 }
 
 .vacation-story__finale-links a {
+  position: relative;
   color: rgba(250, 245, 238, 0.6);
   font-size: 0.78rem;
   font-weight: 600;
@@ -498,6 +508,13 @@
   text-decoration: none;
   text-transform: uppercase;
   transition: color 0.22s ease;
+}
+
+/* Invisible touch-target extension to ~44px for the small footer links. */
+.vacation-story__finale-links a::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
 }
 
 .vacation-story__finale-links a:hover,
@@ -639,7 +656,8 @@
   }
 
   .vacation-story__finale {
-    padding: 0 clamp(18px, 6vw, 28px) clamp(36px, 7svh, 58px);
+    padding: 0 clamp(18px, 6vw, 28px)
+      calc(clamp(36px, 7svh, 58px) + env(safe-area-inset-bottom, 0px));
   }
 
   .vacation-story__finale-arch {

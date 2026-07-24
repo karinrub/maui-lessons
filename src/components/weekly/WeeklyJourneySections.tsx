@@ -120,9 +120,11 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
 
   gsap.set(q('.weekly-redesign__loop-system'), { display: 'block' })
   gsap.set(q('.weekly-redesign__loop-begin, .weekly-redesign__loop-transition'), { display: 'block' })
+  /* opacity (not autoAlpha): visibility: hidden would drop the H1 and lede
+     from the accessibility tree until the user scrolls through the intro. */
   gsap.set(
     q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet, .weekly-redesign__hero-video-figure figcaption'),
-    { autoAlpha: 0 },
+    { opacity: 0 },
   )
   gsap.set(videoFrame, {
     clipPath: 'circle(38% at 50% 50%)',
@@ -137,7 +139,7 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
     .set(q('.weekly-redesign__loop-begin, .weekly-redesign__loop-transition'), { display: 'block' })
     .set(
       q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet, .weekly-redesign__hero-video-figure figcaption'),
-      { autoAlpha: 0 },
+      { opacity: 0 },
     )
     .set(q('.weekly-redesign__loop-transition'), { autoAlpha: 0, y: 24 })
     .set(
@@ -174,7 +176,7 @@ function buildPracticeLoopTimeline(root: HTMLElement) {
     .addLabel('progress', 0.72)
     .to(
       q('.weekly-redesign__resolved-copy, .weekly-redesign__contact-sheet, .weekly-redesign__hero-video-figure figcaption'),
-      { autoAlpha: 1, duration: 0.18 },
+      { opacity: 1, duration: 0.18 },
       0.72,
     )
     .to(
@@ -447,6 +449,11 @@ export default function WeeklyJourneySections() {
     const video = rootRef.current?.querySelector('.weekly-redesign__hero-video-frame video') as HTMLVideoElement
     if (!video) return
 
+    if (prefersReducedMotion) {
+      video.pause()
+      return
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -460,10 +467,10 @@ export default function WeeklyJourneySections() {
     observer.observe(video)
 
     return () => observer.disconnect()
-  }, [])
+  }, [prefersReducedMotion])
 
   return (
-    <main className="weekly-redesign" ref={rootRef}>
+    <section className="weekly-redesign" ref={rootRef}>
       <section className="weekly-redesign__opening" aria-labelledby="weekly-redesign-title">
         <div className="weekly-redesign__opening-stage">
           <span className="weekly-redesign__ghost-word weekly-redesign__ghost-word--practice" aria-hidden="true">
@@ -517,7 +524,7 @@ export default function WeeklyJourneySections() {
                     width={1920}
                     height={1080}
                     preload="metadata"
-                    autoPlay
+                    autoPlay={!prefersReducedMotion}
                     muted
                     loop
                     playsInline
@@ -742,6 +749,6 @@ export default function WeeklyJourneySections() {
         </div>
         <div className="weekly-redesign__grain" aria-hidden="true" />
       </footer>
-    </main>
+    </section>
   )
 }

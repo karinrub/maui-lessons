@@ -159,7 +159,10 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
               { x: 0, yPercent: stackPositions.exit.yPercent, duration: 1, ease: 'power2.inOut' },
               'swap1',
             )
-            .to(firstCard, { opacity: 0, duration: 0.3, ease: 'none' }, 'swap1+=0.7')
+            /* Fade starts mid-travel (not at 0.7): on short viewports the
+               exiting card is tall enough that its lower edge (the CTA) is
+               still inside the stage top — over the header — at 0.7. */
+            .to(firstCard, { opacity: 0, duration: 0.4, ease: 'none' }, 'swap1+=0.45')
             .to(
               secondCard,
               { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'power2.inOut' },
@@ -177,7 +180,7 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
               { x: 0, yPercent: stackPositions.exit.yPercent, duration: 1, ease: 'power2.inOut' },
               'swap2',
             )
-            .to(secondCard, { opacity: 0, duration: 0.3, ease: 'none' }, 'swap2+=0.7')
+            .to(secondCard, { opacity: 0, duration: 0.4, ease: 'none' }, 'swap2+=0.45')
             .to(
               thirdCard,
               { ...stackPositions.front, yPercent: 0, duration: 1, ease: 'power2.inOut' },

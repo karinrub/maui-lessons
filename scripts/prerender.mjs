@@ -26,7 +26,11 @@ async function main() {
   }
 
   const browser = await chromium.launch()
-  const page = await browser.newPage()
+  // Reduced motion makes every route render its static final composition
+  // (no GSAP scroll-start states), so the serialized HTML keeps all content
+  // visible for crawlers and no-JS readers instead of baking in a
+  // scroll-position-zero hidden opening state.
+  const page = await browser.newPage({ reducedMotion: 'reduce' })
 
   try {
     for (const route of ROUTES) {

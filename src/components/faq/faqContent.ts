@@ -116,12 +116,12 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'pricing',
         q: 'What does a lesson cost?',
-        a: 'Rates start at $35 for a 30-minute lesson. The exact rate depends on the lesson type and how often you’d like to meet. Aaron will confirm current pricing with you directly.',
+        a: 'Rates start at $35 for a 30-minute lesson. Compare the current lesson options on the booking page.',
       },
       {
         id: 'payment',
         q: 'How do I pay?',
-        a: 'Venmo or cash on the day of your lesson. Card payments through Square are coming soon.',
+        a: 'Venmo or cash on the day of your lesson.',
       },
       {
         id: 'how-to-book',

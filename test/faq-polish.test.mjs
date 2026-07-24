@@ -28,6 +28,17 @@ test('supports deep links that open a question from the URL hash', () => {
   assert.match(tsx, /setOpen\(item\.id\)/)
 })
 
+test('initializes a deep-linked answer before accordion transitions begin', () => {
+  assert.match(tsx, /const getInitialOpenItem/)
+  assert.match(tsx, /useState<string \| null>\(getInitialOpenItem\)/)
+})
+
+test('repositions deep links after webfonts settle', () => {
+  assert.match(tsx, /document\.fonts\?\.ready\.then\(\(\) => requestAnimationFrame\(scrollToTarget\)\)/)
+  assert.match(tsx, /document\.querySelector\('\.site-header'\)/)
+  assert.match(tsx, /window\.scrollTo\(\{ top: Math\.max\(0, top\), left: 0, behavior: 'auto' \}\)/)
+})
+
 test('category nav scrolls smoothly and respects reduced motion', () => {
   assert.match(tsx, /handleNavClick/)
   assert.match(tsx, /prefersReducedMotion \? 'auto' : 'smooth'/)

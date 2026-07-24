@@ -39,6 +39,11 @@ test('does not promise unfinished booking delivery or unconfirmed policies', () 
   assert.doesNotMatch(content, /cancellation|reschedul|weather|parking/i)
 })
 
+test('omits unconfirmed frequency pricing and future payment availability', () => {
+  assert.doesNotMatch(content, /depends on .*how often|frequency-based/i)
+  assert.doesNotMatch(content, /Square|coming soon/i)
+})
+
 test('renders guide routes, visible facts, and one instructional proof image', () => {
   assert.match(tsx, /faq-guide-routes/)
   assert.match(tsx, /faq-quick-facts/)

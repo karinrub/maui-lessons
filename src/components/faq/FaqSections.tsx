@@ -17,12 +17,21 @@ gsap.registerPlugin(ScrollTrigger)
 
 const allFaqItems = faqCategories.flatMap((category) => category.items)
 
+const getInitialOpenItem = () => {
+  if (typeof window === 'undefined') return 'experience'
+  const hash = window.location.hash.replace('#', '')
+  return (
+    allFaqItems.find((item) => item.id === hash || `faq-answer-${item.id}` === hash)?.id ??
+    'experience'
+  )
+}
+
 export default function FaqSections() {
   const prefersReducedMotion = usePrefersReducedMotion()
   const rootRef = useRef<HTMLDivElement>(null)
   const compassRef = useRef<HTMLDivElement>(null)
   const ghostRef = useRef<HTMLSpanElement>(null)
-  const [open, setOpen] = useState<string | null>('experience')
+  const [open, setOpen] = useState<string | null>(getInitialOpenItem)
   const [activeCategory, setActiveCategory] = useState<string>(faqCategories[0].id)
   const [ghostWord, setGhostWord] = useState(faqCategories[0].ghostWord)
 
@@ -39,12 +48,25 @@ export default function FaqSections() {
     if (!categoryId) return
 
     if (item) setOpen(item.id)
-    requestAnimationFrame(() => {
+    let cancelled = false
+    const scrollToTarget = () => {
+      if (cancelled) return
       const target = item
         ? document.getElementById(`faq-question-${item.id}`)?.closest('.faq-row')
         : document.getElementById(`faq-category-${categoryId}`)
-      target?.scrollIntoView({ behavior: 'auto', block: 'start' })
+      if (!target) return
+      const headerBottom =
+        document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0
+      const top = target.getBoundingClientRect().top + window.scrollY - headerBottom - 24
+      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' })
+    }
+    requestAnimationFrame(() => {
+      scrollToTarget()
+      void document.fonts?.ready.then(() => requestAnimationFrame(scrollToTarget))
     })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   // Ghost word crossfade: dip out, swap, ease back — the hard text cut was

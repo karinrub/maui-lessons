@@ -72,6 +72,48 @@ async function measureSettledHash({ hash, selector, viewport }) {
   return measurement
 }
 
+async function measureClickedCategory({ linkSelector, targetSelector, viewport }) {
+  const context = await browser.newContext({ viewport, reducedMotion: 'reduce' })
+  const page = await context.newPage()
+  await page.goto(`${baseUrl}/faq`, { waitUntil: 'networkidle' })
+  await page.locator(linkSelector).click()
+  await page.waitForTimeout(100)
+  const measurement = await page.evaluate((selector) => {
+    const target = document.querySelector(selector)
+    const header = document.querySelector('.site-header')
+    const nav = document.querySelector('.faq-category-nav')
+    assertElement(target, selector)
+    assertElement(header, '.site-header')
+
+    const targetRect = target.getBoundingClientRect()
+    const headerRect = header.getBoundingClientRect()
+    const navRect = nav?.getBoundingClientRect()
+    const navStyle = nav ? getComputedStyle(nav) : null
+    const navOverlapsTarget =
+      navRect &&
+      navStyle?.position === 'sticky' &&
+      navStyle.visibility !== 'hidden' &&
+      navStyle.display !== 'none' &&
+      navRect.right > targetRect.left &&
+      navRect.left < targetRect.right
+
+    return {
+      hash: window.location.hash,
+      requiredBottom: Math.max(
+        headerRect.bottom,
+        navOverlapsTarget ? navRect?.bottom ?? 0 : 0,
+      ),
+      targetTop: targetRect.top,
+    }
+
+    function assertElement(element, label) {
+      if (!element) throw new Error(`Missing ${label}`)
+    }
+  }, targetSelector)
+  await context.close()
+  return measurement
+}
+
 test('fresh desktop answer hash clears the fixed header after reveal', async () => {
   const result = await measureSettledHash({
     hash: '#pricing',
@@ -109,5 +151,31 @@ test('fresh mobile category hash clears the sticky category navigation', async (
   assert.ok(
     result.targetTop >= result.requiredBottom + 16,
     `target top ${result.targetTop}px lacks 16px after sticky clearance ${result.requiredBottom}px`,
+  )
+})
+
+test('desktop guide click clears the fixed header with the shared clearance behavior', async () => {
+  const result = await measureClickedCategory({
+    linkSelector: '.faq-guide-routes a[href="#faq-category-vacation"]',
+    targetSelector: '#faq-category-vacation',
+    viewport: { width: 1440, height: 900 },
+  })
+  assert.equal(result.hash, '#faq-category-vacation')
+  assert.ok(
+    result.targetTop >= result.requiredBottom + 16,
+    `clicked target top ${result.targetTop}px lacks 16px after fixed clearance ${result.requiredBottom}px`,
+  )
+})
+
+test('mobile category click clears both fixed header and sticky guide nav', async () => {
+  const result = await measureClickedCategory({
+    linkSelector: '.faq-category-nav a[href="#faq-category-pricing"]',
+    targetSelector: '#faq-category-pricing',
+    viewport: { width: 390, height: 844 },
+  })
+  assert.equal(result.hash, '#faq-category-pricing')
+  assert.ok(
+    result.targetTop >= result.requiredBottom + 16,
+    `clicked target top ${result.targetTop}px lacks 16px after sticky clearance ${result.requiredBottom}px`,
   )
 })

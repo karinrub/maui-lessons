@@ -17,6 +17,37 @@ gsap.registerPlugin(ScrollTrigger)
 
 const allFaqItems = faqCategories.flatMap((category) => category.items)
 
+function getFaqFixedClearance(target: Element) {
+  const targetRect = target.getBoundingClientRect()
+  const headerBottom =
+    document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0
+  const categoryNav = document.querySelector('.faq-category-nav')
+  if (!categoryNav) return headerBottom
+
+  const navRect = categoryNav.getBoundingClientRect()
+  const navStyle = getComputedStyle(categoryNav)
+  const navOverlapsTarget =
+    navStyle.position === 'sticky' &&
+    navStyle.visibility !== 'hidden' &&
+    navStyle.display !== 'none' &&
+    navRect.width > 0 &&
+    navRect.height > 0 &&
+    navRect.right > targetRect.left &&
+    navRect.left < targetRect.right
+
+  const stickyTop = Number.parseFloat(navStyle.top)
+  const stickyNavBottom =
+    navOverlapsTarget && Number.isFinite(stickyTop) ? stickyTop + navRect.height : 0
+
+  return Math.max(headerBottom, stickyNavBottom)
+}
+
+function scrollToFaqTarget(target: Element, behavior: ScrollBehavior) {
+  const top =
+    target.getBoundingClientRect().top + window.scrollY - getFaqFixedClearance(target) - 24
+  window.scrollTo({ top: Math.max(0, top), left: 0, behavior })
+}
+
 const getInitialOpenItem = () => {
   if (typeof window === 'undefined') return 'experience'
   const hash = window.location.hash.replace('#', '')
@@ -55,34 +86,11 @@ export default function FaqSections() {
         ? document.getElementById(`faq-question-${item.id}`)?.closest('.faq-row')
         : document.getElementById(`faq-category-${categoryId}`)
 
-    const getFixedClearance = (target: Element) => {
-      const targetRect = target.getBoundingClientRect()
-      const headerBottom =
-        document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0
-      const categoryNav = document.querySelector('.faq-category-nav')
-      if (!categoryNav) return headerBottom
-
-      const navRect = categoryNav.getBoundingClientRect()
-      const navStyle = getComputedStyle(categoryNav)
-      const navOverlapsTarget =
-        navStyle.position === 'sticky' &&
-        navStyle.visibility !== 'hidden' &&
-        navStyle.display !== 'none' &&
-        navRect.width > 0 &&
-        navRect.height > 0 &&
-        navRect.right > targetRect.left &&
-        navRect.left < targetRect.right
-
-      return Math.max(headerBottom, navOverlapsTarget ? navRect.bottom : 0)
-    }
-
     const scrollToTarget = () => {
       if (cancelled) return
       const target = getTarget()
       if (!target) return
-      const top =
-        target.getBoundingClientRect().top + window.scrollY - getFixedClearance(target) - 24
-      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' })
+      scrollToFaqTarget(target, 'auto')
     }
 
     const activateTargetReveal = () => {
@@ -362,10 +370,7 @@ export default function FaqSections() {
     event.preventDefault()
     const target = document.getElementById(`faq-category-${categoryId}`)
     if (!target) return
-    target.scrollIntoView({
-      behavior: prefersReducedMotion ? 'auto' : 'smooth',
-      block: 'start',
-    })
+    scrollToFaqTarget(target, prefersReducedMotion ? 'auto' : 'smooth')
     window.history.replaceState(null, '', `#faq-category-${categoryId}`)
   }
 
@@ -508,8 +513,8 @@ export default function FaqSections() {
                       <img
                         src={faqProof.imageSrc}
                         alt={faqProof.imageAlt}
-                        width={1920}
-                        height={1280}
+                        width={2400}
+                        height={1603}
                         loading="lazy"
                         decoding="async"
                       />

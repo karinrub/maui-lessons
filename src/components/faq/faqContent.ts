@@ -1,3 +1,5 @@
+import { STARTING_LESSON_PRICE } from '../../config/lessonOptions'
+
 export type FaqItem = { id: string; q: string; a: string }
 
 export type FaqCategory = {
@@ -11,7 +13,7 @@ export type FaqCategory = {
 export const faqGuideRoutes = [
   { label: 'Visiting Maui', detail: 'Vacation lessons', targetId: 'faq-category-vacation' },
   { label: 'Learning week to week', detail: 'Ongoing lessons', targetId: 'faq-category-ongoing' },
-  { label: 'Before you book', detail: 'Pricing and planning', targetId: 'faq-category-pricing' },
+  { label: 'Before you book', detail: 'Planning and pricing', targetId: 'faq-category-planning' },
 ] as const
 
 export const faqQuickFacts = [
@@ -19,7 +21,7 @@ export const faqQuickFacts = [
   'Ukulele or guitar',
   'Ukulele supplied',
   'South Maui and visitor accommodation',
-  'From $35 / 30 minutes',
+  `From $${STARTING_LESSON_PRICE} / 30 minutes`,
 ] as const
 
 export const faqProof = {
@@ -44,7 +46,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'experience',
         q: 'Do I need any experience?',
-        a: 'None at all. Most vacation students have never held a ukulele before — the hour moves at your pace, one chord at a time. If you already play, ongoing lessons pick up wherever you are, all the way to advanced technique.',
+        a: 'None at all. Most vacation students have never held a ukulele before — the lesson moves at your pace, one chord at a time. If you already play, ongoing lessons pick up wherever you are, all the way to advanced technique.',
       },
       {
         id: 'ages',
@@ -67,7 +69,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'vacation',
         q: 'What happens in a vacation lesson?',
-        a: 'One private hour on a Maui beach. You’ll learn your first chords, then a real song — one you keep long after the trip ends.',
+        a: 'A private 30-minute or one-hour lesson on a Maui beach. You’ll learn your first chords, then a real song — one you keep long after the trip ends.',
       },
       {
         id: 'group',
@@ -103,7 +105,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'bring-instrument',
         q: 'Do I need to bring my own instrument?',
-        a: 'No. Aaron brings a ukulele for every lesson, so there’s nothing to own or pack — just show up and play.',
+        a: 'For ukulele lessons, no. Aaron brings a ukulele, so there’s nothing to own or pack. For guitar lessons, ask Aaron about instrument needs before you arrive.',
       },
     ],
   },
@@ -116,7 +118,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'pricing',
         q: 'What does a lesson cost?',
-        a: 'Rates start at $35 for a 30-minute lesson. Compare the current lesson options on the booking page.',
+        a: `Rates start at $${STARTING_LESSON_PRICE} for a 30-minute lesson. Compare the current lesson options on the booking page.`,
       },
       {
         id: 'payment',

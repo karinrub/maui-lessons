@@ -41,6 +41,16 @@ test('repositions deep links after webfonts and entry reveals settle', () => {
   assert.match(tsx, /navRect\.right > targetRect\.left/)
 })
 
+test('hash routes and clicked category links share dynamic fixed clearance', () => {
+  assert.match(tsx, /function getFaqFixedClearance/)
+  assert.match(tsx, /function scrollToFaqTarget/)
+  assert.ok(
+    (tsx.match(/scrollToFaqTarget\(/g) ?? []).length >= 3,
+    'expected the helper definition plus hash and click call paths',
+  )
+  assert.match(tsx, /scrollToFaqTarget\(target, prefersReducedMotion \? 'auto' : 'smooth'\)/)
+})
+
 test('category nav scrolls smoothly and respects reduced motion', () => {
   assert.match(tsx, /handleNavClick/)
   assert.match(tsx, /prefersReducedMotion \? 'auto' : 'smooth'/)

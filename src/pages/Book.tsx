@@ -165,7 +165,6 @@ export default function Book() {
   const [searchParams] = useSearchParams()
   const [step, setStep] = useState<StepId>('type')
   const [data, setData] = useState<BookingData>(INITIAL_DATA)
-  const heroRef = useRef<HTMLElement>(null)
   const belowRef = useRef<HTMLDivElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const summaryCardRef = useRef<HTMLDivElement>(null)
@@ -182,103 +181,6 @@ export default function Book() {
   const stepIndex = steps.indexOf(step)
   const progressStep = progressStepFor(step)
   const progressIndex = PROGRESS_STEPS.findIndex(({ id }) => id === progressStep)
-
-  /*
-    Entrance: word-by-word headline reveal (OpeningScene tagline spirit), then
-    everything below the hero (progress rail, context line, step panel) rises
-    in as one block. Runs once on arrival; reduced-motion users get the
-    fully-visible static layout (CSS defaults) with no tween work.
-  */
-  useLayoutEffect(() => {
-    if (prefersReducedMotion) {
-      return
-    }
-    const words = heroRef.current?.querySelectorAll('.bw-hero-word-inner')
-    const below = belowRef.current
-    if (!words || words.length === 0 || !below) {
-      return
-    }
-
-    // immediateRender:false on both: a plain fromTo/from forces its hidden
-    // "from" state onto the DOM the instant it's created, regardless of
-    // whether the timeline ever finishes playing. If a tick never arrives
-    // (stalled rAF), the entire wizard below the hero — or the H1 itself —
-    // would otherwise stay invisible with only the stall-fallback timer as a
-    // backstop. Deferring the from-state until playback truly starts means
-    // the CSS default (visible) holds until then: presence never depends on
-    // the animation succeeding, only its enhancement does.
-    const timeline = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    timeline
-      .fromTo(
-        words,
-        { yPercent: 112 },
-        { yPercent: 0, duration: 0.9, stagger: 0.1, immediateRender: false },
-      )
-      .from(below, { autoAlpha: 0, y: 24, duration: 0.7, immediateRender: false }, '-=0.35')
-
-    const disarm = armStallFallback(2500, () => {
-      timeline.kill()
-      gsap.set(words, { yPercent: 0 })
-      gsap.set(below, { autoAlpha: 1, y: 0 })
-    })
-
-    return () => {
-      disarm()
-      timeline.kill()
-    }
-  }, [prefersReducedMotion])
-
-  /*
-    Type-step title card: the display title rises line-by-line out of overflow
-    masks before the choice rows arrive, so the step opens on its own beat.
-    On first arrival the timeline waits out the page entrance (hero words +
-    below-block rise) and holds the rows back until the title has landed; on
-    returns to this step it plays immediately alongside the panel fade, and
-    the shared step-change effect below keeps ownership of the rows.
-  */
-  useLayoutEffect(() => {
-    if (step !== 'type' || prefersReducedMotion) {
-      return
-    }
-    const panel = panelRef.current
-    const lines = panel?.querySelectorAll('.bw-step-title-line-inner')
-    if (!panel || !lines || lines.length === 0) {
-      return
-    }
-
-    const firstArrival = !hasMountedRef.current
-    const rows = firstArrival ? panel.querySelectorAll('.bw-rows [data-bw-item]') : null
-
-    // Pre-hide before the delayed timeline's first tick so nothing flashes
-    // while the entrance is still playing.
-    gsap.set(lines, { yPercent: 112 })
-    if (rows) {
-      gsap.set(rows, { autoAlpha: 0, y: 26 })
-    }
-
-    const timeline = gsap.timeline({ delay: firstArrival ? 1.2 : 0.1 })
-    timeline.to(lines, { yPercent: 0, duration: 0.85, ease: 'power4.out', stagger: 0.13 })
-    if (rows) {
-      timeline.to(
-        rows,
-        { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.09 },
-        '-=0.3',
-      )
-    }
-
-    const disarm = armStallFallback((firstArrival ? 1.2 : 0.1) * 1000 + 2500, () => {
-      timeline.kill()
-      gsap.set(lines, { yPercent: 0 })
-      if (rows) {
-        gsap.set(rows, { autoAlpha: 1, y: 0 })
-      }
-    })
-
-    return () => {
-      disarm()
-      timeline.kill()
-    }
-  }, [step, prefersReducedMotion])
 
   // Subtle scroll drift on the review summary while the contact step is up.
   useLayoutEffect(() => {
@@ -558,18 +460,9 @@ export default function Book() {
 
   return (
     <section className="bw" aria-label="Booking wizard">
-      <header ref={heroRef} className="bw-hero">
+      <header className="bw-hero">
         <p className="cp-section-label">Book a Lesson</p>
-        <h1 className="bw-hero-headline">
-          <span className="bw-sr-only">{ENTRANCE_HEADLINE}</span>
-          <span aria-hidden="true" className="bw-hero-words">
-            {ENTRANCE_HEADLINE.split(' ').map((word, index) => (
-              <span key={index} className="bw-hero-word">
-                <span className="bw-hero-word-inner">{word}</span>
-              </span>
-            ))}
-          </span>
-        </h1>
+        <h1 className="bw-hero-headline">{ENTRANCE_HEADLINE}</h1>
       </header>
 
       <div ref={belowRef} className="bw-below">

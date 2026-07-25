@@ -81,27 +81,9 @@
   color: rgba(23, 53, 42, 0.66);
 }
 
-.bw-hero-words {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 0.28em;
-}
-
-/* Overflow-hidden word masks so the entrance can slide each word up from
-   below its own baseline (OpeningScene tagline spirit). */
-.bw-hero-word {
-  display: inline-block;
-  overflow: hidden;
-  padding-bottom: 0.08em;
-}
-
-.bw-hero-word-inner {
-  display: inline-block;
-  will-change: transform;
-}
-
-/* Everything below the hero rises in as one block on arrival, and step
-   changes scroll back to it — keep it clear of the fixed header. */
+/* Step changes scroll back to the booking controls — keep them clear of the
+   fixed header. The opening title and first step remain visible from the
+   first paint, so page readiness never depends on a JavaScript animation. */
 .bw-below {
   scroll-margin-top: clamp(88px, 12svh, 132px);
 }
@@ -233,11 +215,10 @@
   display: block;
 }
 
-/* Overflow-hidden line masks: each line slides up from below its own
-   baseline during the reveal. */
+/* The two static lines retain the editorial hierarchy without a delayed
+   transform animation that could make the title jump during page loading. */
 .bw-step-title-line {
   display: block;
-  overflow: hidden;
   padding-bottom: 0.08em;
 }
 
@@ -250,7 +231,6 @@
   font-weight: 400;
   letter-spacing: 0.005em;
   line-height: 1.04;
-  will-change: transform;
 }
 
 .bw-step-title-line-inner--display {
@@ -853,8 +833,6 @@
 /* ── Reduced motion ── */
 
 @media (prefers-reduced-motion: reduce) {
-  .bw-hero-word-inner,
-  .bw-step-title-line-inner,
   .bw-panel,
   .bw-review,
   .bwc-grid {

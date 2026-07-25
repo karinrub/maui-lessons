@@ -470,9 +470,9 @@
 }
 
 /* aaron-tourists-1.jpg also appears full-color on the Vacation page; this
-   instance gets a warm editorial grade + higher crop so the two reads
-   register as different frames from the same shoot, not a reused asset. */
+   instance gets a warm editorial grade + subject-centered crop so the two
+   reads register as different frames from the same shoot, not a reused asset. */
 .stacked-services-deck__card[data-card-index='3'] .stacked-services-deck__media-image {
-  object-position: 50% 30%;
+  object-position: 50% 45%;
   filter: sepia(0.3) saturate(0.8) contrast(1.05);
 }

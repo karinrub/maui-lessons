@@ -15,6 +15,19 @@ npm run dev
 npm run build
 ```
 
+## Validation
+
+```sh
+npm run typecheck
+npm run lint
+npm run test:all
+npm run check:seo
+npm run test:launch
+```
+
+`test:launch` starts browser checks against a local preview server and may
+need local port access in restricted environments.
+
 ## GitHub Pages Deployment
 
 This project is connected to Git and is the deployment target for the `karinrub/maui-lessons` GitHub Pages site.
@@ -29,4 +42,5 @@ The Vite base path is derived from `GITHUB_REPOSITORY`, so the deployed project 
 
 This repo was uploaded from the local project path `/Users/karinrubin/Developer/maui-lessons`.
 
-See `docs/GIT_AND_DEPLOYMENT.md` for the current Git/deployment status.
+See [docs/README.md](docs/README.md) for current operating and historical
+documentation, including GitHub Pages deployment references.

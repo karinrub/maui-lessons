@@ -42,7 +42,7 @@ function assertCustomerFacingOngoingCopyIsDashFree(source) {
 
 test('keeps the dedicated Ongoing Lessons route', () => {
   assert.match(page, /<WeeklyJourneySections\s*\/>/)
-  assert.match(page, /Ongoing Lessons \| Maui Lessons/)
+  assert.match(page, /Guitar & Ukulele Teacher in Kihei & Wailea, Maui/)
 })
 
 test('renders the approved Practice Loop opening with one semantic hero title', () => {

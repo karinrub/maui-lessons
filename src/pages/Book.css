@@ -30,12 +30,18 @@
    alpha exactly at its own edges — no hard seam at any box boundary
    (horizontal radius 50% = the column edge; vertical extents live inside the
    bleed). Static CSS only — no scroll-linked opacity, no reduced-motion
-   branch needed. */
+   branch needed.
+
+   The bleed is upward only. A symmetric -34rem inset also bled *below* the
+   column, and that bottom bleed counted as real page content: every
+   viewport scrolled ~380px past the footer into nothing. The bottom
+   ellipse's own radius already brings it to zero alpha exactly at this
+   box's bottom edge, so ending the layer there costs no seam. */
 .bw::before {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: -34rem 0;
+  inset: -34rem 0 0;
   background:
     radial-gradient(50% 34rem at 50% 34rem, rgba(184, 200, 160, 0.3), transparent 100%),
     radial-gradient(50% 30rem at 50% calc(100% - 30rem), rgba(184, 200, 160, 0.18), transparent 100%);
@@ -719,6 +725,21 @@
 
 /* ── Mobile ── */
 
+/* Touch devices have no hover state, so the gold arrow — the only signal
+   that these editorial rows are selectable at all — never appeared on a
+   phone until a row was already chosen. Rest it at half strength there and
+   let selection bring it to full, the way hover does on a pointer device. */
+@media (hover: none) {
+  .bw-row-arrow {
+    opacity: 0.55;
+    transform: none;
+  }
+
+  .bw-row.is-selected .bw-row-arrow {
+    opacity: 1;
+  }
+}
+
 @media (max-width: 760px) {
   .bw-hero-headline {
     font-size: clamp(2.6rem, 13.5vw, 4.2rem);
@@ -770,14 +791,24 @@
     border-top: 1px solid var(--bw-hairline-soft);
   }
 
-  /* Comfortable touch-target floor for date cells: tighter gap buys back
-     the room a 44px minimum needs across the 7-column grid. */
+  .bw-datetime > * {
+    /* Grid items default to min-width:auto, so an over-wide calendar used to
+       stretch this column past the viewport and take the time slots with it
+       (they wrapped against the calendar's width, not the screen's). */
+    min-width: 0;
+  }
+
+  /* Touch-target floor for date cells, on the axis that has room for it.
+     A 2.75rem *min-width* floor made the week 322px wide, which overflowed
+     a 320px screen and clipped Saturday off the calendar entirely — the
+     column was unreachable, not just tight. Height carries the 44px floor
+     instead and the cells share the width evenly. */
   .bwc-grid {
     gap: 0.15rem;
   }
 
   .bwc-day {
-    min-width: 2.75rem;
+    min-width: 0;
     min-height: 2.75rem;
   }
 
@@ -787,6 +818,22 @@
 
   .bw-summary-row dt {
     flex-basis: 100%;
+  }
+}
+
+/* Narrow phones: the four progress labels can't sit on one line, and a
+   wrapped space-between row left "CONFIRMATION" alone and left-aligned
+   under three spread-out siblings. A 2×2 grid reads as a deliberate
+   two-line rail instead of a broken one. */
+@media (max-width: 560px) {
+  .bw-progress {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem 1rem;
+  }
+
+  .bw-progress-step:nth-child(even) {
+    text-align: right;
   }
 }
 

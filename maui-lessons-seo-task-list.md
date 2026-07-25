@@ -119,6 +119,16 @@
 
 ## Task 14 — Real-device mobile QA [Audit · P2 — requires a human, cannot be completed by an AI agent alone]
 
+> **2026-07-24 note (second pass):** A further route-by-route mobile review
+> shipped the same day — About switched to a vertical chapter flow below 761px,
+> the reduced-motion Home deck stopped hiding two of its three cards, the Book
+> calendar stopped clipping Saturday at 320px, the FAQ category rail became
+> navigable, the nav overlay stopped cutting off `Book a Lesson` in landscape,
+> and ~380px of phantom scroll was removed from `/book`. See the banner at the
+> top of `CLAUDE.md` for the full list and the verification matrix. Still
+> emulation — the acceptance criteria below are unchanged and still require a
+> human on a physical phone.
+>
 > **2026-07-24 note:** A full emulated mobile audit + polish pass was completed (Playwright/DevTools emulation at 390/375/320px, reduced-motion, video-stall): tap targets extended to ~44px sitewide, `env(safe-area-inset-*)` added to the fixed header and ink-band footers (with `viewport-fit=cover`), reduced-motion video autoplay stopped on Home and Ongoing, and the Ongoing page's documented defects fixed (see `docs/ongoing-lessons-handoff.md`). This does NOT satisfy the acceptance criteria below — a human on a physical phone is still required.
 
 **Objective:** True narrow-viewport (≤430px) behavior has been unverifiable by an AI agent across all audits to date (this testing environment cannot force a true small viewport — window resize succeeds but `window.innerWidth` doesn't follow). This caps the Mobile Responsiveness score regardless of code quality until someone confirms it on an actual phone.

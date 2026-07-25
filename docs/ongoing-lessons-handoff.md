@@ -29,6 +29,15 @@ Last verified: 2026-07-24, Pacific/Honolulu.
 > section-order assertion) and the alt/figcaption duplicate-announcement
 > decision. Physical-device smoke tests remain outstanding.
 >
+> **2026-07-24, second mobile pass:** the Practice Loop opening is now centred
+> in the viewport on phones (`.weekly-redesign__loop-system` /
+> `__loop-begin` top offsets under `@media (max-width: 760px)`). Anchored to
+> the header it left the lower 40-55% of a phone screen empty. The resolve
+> sequence is unchanged — its geometry is measured at runtime, not hard-coded.
+> Re-verified at 320x568 and 390x844 through the full opening, plus the 11
+> viewport x 6 route sweep recorded in `CLAUDE.md`; `node --test test/*.test.mjs`
+> 63/63.
+>
 > **2026-07-24 re-verification:** commit `4248e52` landed a further mobile
 > polish pass touching `WeeklyJourneySections.tsx/.css` among other routes.
 > Re-ran `npm run build`/`lint`/`typecheck`, `node --test test/*.test.mjs`

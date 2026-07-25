@@ -616,6 +616,7 @@
 }
 
 .faq-proof__copy a {
+  position: relative;
   display: inline-flex;
   gap: 0.45rem;
   align-items: center;
@@ -626,6 +627,13 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 0.3rem;
   text-transform: uppercase;
+}
+
+/* Invisible touch-target extension: the link renders ~15px tall. */
+.faq-proof__copy a::after {
+  content: '';
+  position: absolute;
+  inset: -15px -10px;
 }
 
 .faq-proof__copy a:focus-visible {

@@ -69,8 +69,11 @@ function progressThroughRange(progress: number, start: number, end: number) {
   return clampProgress((progress - start) / (end - start))
 }
 
-// The static, non-scrubbing rest state (mobile, which never pins/scrolls the
-// scene; reduced-motion, which must not animate). getVacationSceneVisualState(1)
+// The static, non-scrubbing rest state. Reduced motion only — the scene pins
+// and scrubs at every width, mobile included (see
+// test/vacation-mobile-cinematic.test.mjs, which pins that contract down; an
+// earlier version of this comment claimed mobile stayed static and was
+// wrong). getVacationSceneVisualState(1)
 // is deliberately NOT reused here — it's the raw end-of-scrub curve, and its
 // values overshoot past the intended "settled" look (headline scale 1.17,
 // frame scale 0.72) because on desktop that overshoot is a passing frame the

@@ -37,10 +37,12 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
   const prefersReducedMotion = usePrefersReducedMotion()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isHeadingCollision, setIsHeadingCollision] = useState(false)
   const [isMenuInteractive, setIsMenuInteractive] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const navRef = useRef<HTMLElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const playOpenTimelineRef = useRef<() => void>(() => undefined)
   const gradientOriginRef = useRef({ x: 0, y: 0 })
@@ -95,6 +97,91 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // The is-scrolled veil isn't enough against every heading/background
+  // combo (confirmed on real device emulation on FAQ at phone width and
+  // tablet landscape — docs/audit run 25.7). Rather than a heavier uniform
+  // veil, watch every heading/eyebrow in the document and fade the
+  // wordmark only while one is actually intersecting the header's own
+  // rect. The header is fixed, so its rect only moves on resize (its
+  // clamp()-based inset), not on scroll.
+  useEffect(() => {
+    const header = headerRef.current
+    if (!header) {
+      return
+    }
+
+    const collisionSelector = 'h1, h2, h3, [class*="__eyebrow"]'
+    const intersecting = new Set<Element>()
+    let observer: IntersectionObserver | null = null
+
+    function updateCollisionState() {
+      setIsHeadingCollision(intersecting.size > 0)
+    }
+
+    function handleIntersect(entries: IntersectionObserverEntry[]) {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          intersecting.add(entry.target)
+        } else {
+          intersecting.delete(entry.target)
+        }
+      }
+      updateCollisionState()
+    }
+
+    function observeHeadings() {
+      if (!observer) {
+        return
+      }
+      document.querySelectorAll(collisionSelector).forEach((element) => {
+        observer!.observe(element)
+      })
+    }
+
+    function rebuildObserver() {
+      observer?.disconnect()
+      intersecting.clear()
+
+      const rect = header!.getBoundingClientRect()
+      const rootMargin = [
+        `${-Math.round(rect.top)}px`,
+        `${-Math.round(window.innerWidth - rect.right)}px`,
+        `${-Math.round(window.innerHeight - rect.bottom)}px`,
+        `${-Math.round(rect.left)}px`,
+      ].join(' ')
+
+      observer = new IntersectionObserver(handleIntersect, { rootMargin })
+      observeHeadings()
+      updateCollisionState()
+    }
+
+    rebuildObserver()
+
+    const resizeObserver = new ResizeObserver(() => rebuildObserver())
+    resizeObserver.observe(header)
+
+    let rescanFrame: number | null = null
+    const mutationObserver = new MutationObserver(() => {
+      if (rescanFrame !== null) {
+        return
+      }
+      rescanFrame = window.requestAnimationFrame(() => {
+        rescanFrame = null
+        observeHeadings()
+      })
+    })
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
+
+    return () => {
+      observer?.disconnect()
+      resizeObserver.disconnect()
+      mutationObserver.disconnect()
+      if (rescanFrame !== null) {
+        window.cancelAnimationFrame(rescanFrame)
+      }
+    }
   }, [])
 
   function getMenuElements() {
@@ -357,11 +444,13 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
 
   return (
     <header
+      ref={headerRef}
       className={[
         'site-header',
         isSuppressed ? 'is-suppressed' : '',
         isMenuOpen ? 'is-menu-open' : '',
         isScrolled ? 'is-scrolled' : '',
+        isHeadingCollision && !isMenuOpen ? 'is-heading-collision' : '',
       ]
         .filter(Boolean)
         .join(' ')}

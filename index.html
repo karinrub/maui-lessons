@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -10,7 +11,20 @@
       rel="stylesheet"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Maui Lessons</title>
+    <meta name="theme-color" content="#f5f0e7" />
+    <!--
+      Static fallback for crawlers/previews that fetch raw HTML without
+      running JS. `src/hooks/useDocumentMeta.ts` overwrites both of these
+      with a page-specific version on every route once React mounts, and
+      `scripts/prerender.mjs` bakes that page-specific version into each
+      route's own static dist/**/index.html — this tag only matters as a
+      safety net before either of those run.
+    -->
+    <meta
+      name="description"
+      content="Private ukulele and guitar lessons on Maui with instructor Aaron Grzanich. Beginner-friendly beach lessons in Kihei and Wailea for visiting tourists and local students."
+    />
+    <title>Ukulele & Guitar Lessons in Maui, Hawaii | Maui Lessons</title>
   </head>
   <body>
     <div id="root"></div>

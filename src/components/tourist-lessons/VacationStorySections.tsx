@@ -423,7 +423,7 @@ export default function VacationStorySections() {
         <div className="vacation-story__finale-inner" data-vacation-reveal data-vacation-reveal-group>
           <p className="vacation-story__finale-line">Long after the tan fades, the music stays.</p>
           <p className="vacation-story__finale-note">
-            Lessons meet at Maipoina Beach Park and along the coast through Kihei and Wailea — or
+            Lessons meet at Maipoina Beach Park and along the coast through Kihei and Wailea, or
             Aaron will come to you, wherever you're staying.
           </p>
           <Link to="/book" className="vacation-story__finale-cta">

@@ -4,15 +4,13 @@ import MeetAaron from '../components/home/MeetAaron'
 import OpeningScene from '../components/home/OpeningScene'
 import StackedServicesDeck from '../components/home/StackedServicesDeck'
 import useDocumentMeta from '../hooks/useDocumentMeta'
-import useDocumentTitle from '../hooks/useDocumentTitle'
 import useHomeScrollSequence from '../hooks/useHomeScrollSequence'
 
 export default function Home() {
-  useDocumentTitle('Home | Maui Lessons')
   useDocumentMeta({
-    title: 'Maui Ukulele & Guitar Lessons | Maui Lessons',
+    title: 'Ukulele & Guitar Lessons in Maui, Hawaii | Maui Lessons',
     description:
-      "Learn your first ukulele song on one of the world's most beautiful beaches — private ukulele and guitar lessons on Maui with Aaron Grzanich.",
+      'Private, one-on-one ukulele and guitar lessons on Maui with instructor Aaron Grzanich. Beginner-friendly beach lessons in Kihei and Wailea for visiting tourists and local students.',
     path: '/',
   })
   const scrollSequence = useHomeScrollSequence()

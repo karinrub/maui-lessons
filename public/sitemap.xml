@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Manually maintained. If routes are ever added or renamed in src/App.tsx, update this file in the same PR. -->
+<!-- Manually maintained. If routes are ever added or renamed in src/App.tsx, update this file in the same PR.
+     lastmod values are updated on any content/SEO-relevant change to that route — not bumped automatically. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://karinrub.github.io/maui-lessons/</loc></url>
-  <url><loc>https://karinrub.github.io/maui-lessons/tourist-lessons</loc></url>
-  <url><loc>https://karinrub.github.io/maui-lessons/weekly-lessons</loc></url>
-  <url><loc>https://karinrub.github.io/maui-lessons/about</loc></url>
-  <url><loc>https://karinrub.github.io/maui-lessons/faq</loc></url>
-  <url><loc>https://karinrub.github.io/maui-lessons/book</loc></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/tourist-lessons</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/weekly-lessons</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/about</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/faq</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://karinrub.github.io/maui-lessons/book</loc><lastmod>2026-07-25</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

@@ -534,7 +534,7 @@ export default function FaqSections() {
                 {category.id === 'ongoing' && (
                   <aside className="faq-proof" aria-label="Why learn with Aaron">
                     <div className="faq-proof__copy">
-                      <p>{faqProof.eyebrow}</p>
+                      <p className="faq-proof__eyebrow">{faqProof.eyebrow}</p>
                       <h2>{faqProof.heading}</h2>
                       <ul>
                         {faqProof.points.map((point) => (

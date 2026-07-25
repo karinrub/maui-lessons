@@ -1,13 +1,11 @@
 import useDocumentMeta from '../hooks/useDocumentMeta'
-import useDocumentTitle from '../hooks/useDocumentTitle'
 import AaronStorySections from '../components/about/AaronStorySections'
 
 export default function About() {
-  useDocumentTitle('About Aaron | Maui Lessons')
   useDocumentMeta({
-    title: 'About Aaron | Maui Lessons',
+    title: 'Meet Aaron Grzanich | Maui Ukulele & Guitar Teacher',
     description:
-      'Meet Aaron Grzanich — twenty-two years chasing music, with a patient, no-pressure approach focused on the joy of playing ukulele on Maui.',
+      "Meet Aaron Grzanich, a Maui-based ukulele and guitar instructor with 22 years in music. A patient, no-pressure teaching style for tourists and local students alike.",
     path: '/about',
   })
 

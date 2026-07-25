@@ -46,7 +46,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'experience',
         q: 'Do I need any experience?',
-        a: 'None at all. Most vacation students have never held a ukulele before — the lesson moves at your pace, one chord at a time. If you already play, ongoing lessons pick up wherever you are, all the way to advanced technique.',
+        a: 'None at all. Most vacation students have never held a ukulele before, and the lesson moves at your pace, one chord at a time. If you already play, ongoing lessons pick up wherever you are, all the way to advanced technique.',
       },
       {
         id: 'ages',
@@ -57,6 +57,11 @@ export const faqCategories: FaqCategory[] = [
         id: 'instruments',
         q: 'Ukulele or guitar?',
         a: 'Both. The ukulele has been Aaron’s focus for the last eight years; guitar lessons come with the same one-on-one attention.',
+      },
+      {
+        id: 'locals-or-tourists',
+        q: 'Do you teach locals, or just visitors?',
+        a: 'Both. Vacation lessons are built for visitors fitting music into a Maui trip. Ongoing lessons are for Kihei and Wailea locals who want to keep building the skill week after week, at any level.',
       },
     ],
   },
@@ -69,12 +74,22 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'vacation',
         q: 'What happens in a vacation lesson?',
-        a: 'A private 30-minute or one-hour lesson on a Maui beach. You’ll learn your first chords, then a real song — one you keep long after the trip ends.',
+        a: 'A private 30-minute or one-hour lesson on a Maui beach. You’ll learn your first chords, then a real song, one you keep long after the trip ends.',
       },
       {
         id: 'group',
         q: 'Can we book as a group or family?',
-        a: 'Yes. The group experience is made for families and friends traveling together — everyone learns the same song, side by side.',
+        a: 'Yes. The group experience is made for families and friends traveling together, everyone learning the same song, side by side.',
+      },
+      {
+        id: 'things-to-do',
+        q: 'Is this a good thing to do in Kihei or Wailea?',
+        a: 'It’s one of the more memorable, low-key activities in South Maui — no crowds, no gear to rent, just a beach, a ukulele, and a song you actually leave with. A nice alternative to another beach day when you want an experience instead of just an activity.',
+      },
+      {
+        id: 'date-idea',
+        q: 'Is a lesson a good Maui date idea or family activity?',
+        a: 'Both, depending on who you bring. Couples often book it as a relaxed, unusual date; families like that everyone, kids included, learns the same song side by side rather than watching from the sand.',
       },
     ],
   },
@@ -87,7 +102,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'ongoing',
         q: 'How do ongoing lessons work?',
-        a: 'They become a regular part of your week. Each lesson picks up exactly where the last left off — from first chords, through reading music, to refining your own style.',
+        a: 'They become a regular part of your week. Each lesson picks up exactly where the last left off, from first chords, through reading music, to refining your own style.',
       },
     ],
   },
@@ -100,7 +115,7 @@ export const faqCategories: FaqCategory[] = [
       {
         id: 'where',
         q: 'Where do lessons happen?',
-        a: 'Around South Maui. Vacation lessons usually meet at Maipoina Beach Park or along the coast through Kihei and Wailea — and if it’s easier, Aaron will come to you, whether you’re staying at a hotel or an Airbnb. Ongoing students meet across Kihei and Wailea, and at Maipoina Beach Park.',
+        a: 'Around South Maui. Vacation lessons usually meet at Maipoina Beach Park or along the coast through Kihei and Wailea, and if it’s easier, Aaron will come to you, whether you’re staying at a hotel or an Airbnb. Ongoing students meet across Kihei and Wailea, and at Maipoina Beach Park.',
       },
       {
         id: 'bring-instrument',

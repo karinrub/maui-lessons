@@ -1,13 +1,11 @@
 import useDocumentMeta from '../hooks/useDocumentMeta'
-import useDocumentTitle from '../hooks/useDocumentTitle'
 import FaqSections from '../components/faq/FaqSections'
 
 export default function FAQ() {
-  useDocumentTitle('FAQ | Maui Lessons')
   useDocumentMeta({
-    title: 'FAQ | Maui Lessons',
+    title: 'Ukulele & Guitar Lesson FAQ | Maui Lessons',
     description:
-      'Everything you might want to know before picking up an instrument with Aaron — lesson locations, pricing, and what to expect on Maui.',
+      'Pricing, lesson locations in Kihei and Wailea, what to expect, and how vacation and ongoing lessons work with Maui ukulele and guitar instructor Aaron Grzanich.',
     path: '/faq',
   })
 

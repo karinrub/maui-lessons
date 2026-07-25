@@ -22,7 +22,7 @@ gsap.registerPlugin(ScrollTrigger)
 const landscapeImage = new URL('../../../assets/images/aaron-beach-1.jpg', import.meta.url).href
 const heroVideo = new URL('../../../assets/videos/aaron-ukelele-vid.MP4', import.meta.url).href
 
-const TAGLINE_WORDS = "Learn your first ukulele song on one of the world's most beautiful beaches.".split(' ')
+const TAGLINE_WORDS = "Learn your first ukulele or guitar song on one of Maui's most beautiful beaches.".split(' ')
 const ARCH_TITLE_TEXT = 'Choose your experience'
 // Shallow smile arc echoing the dome's own curvature (a wide, flat ellipse
 // arc), so the title's baseline follows the same line the arch's top edge

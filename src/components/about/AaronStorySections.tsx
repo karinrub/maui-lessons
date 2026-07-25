@@ -16,7 +16,7 @@ const journeyBeats = [
     id: 'illinois',
     numeral: '01',
     title: 'Illinois State University, 1999',
-    body: 'Aaron picks up the guitar, enrolls in musical studies, and starts his first band — the beginning of a lifelong love of live performance.',
+    body: 'Aaron picks up the guitar, enrolls in musical studies, and starts his first band, the beginning of a lifelong love of live performance.',
   },
   {
     id: 'asheville',
@@ -28,7 +28,7 @@ const journeyBeats = [
     id: 'california',
     numeral: '03',
     title: 'College of San Mateo, California',
-    body: 'At 24, he studies sound creation — sampling and synthesis, electronic music, and Afro-Latin percussion ensemble.',
+    body: 'At 24, he studies sound creation: sampling and synthesis, electronic music, and Afro-Latin percussion ensemble.',
   },
 ] as const
 
@@ -606,7 +606,7 @@ export default function AaronStorySections() {
             </h2>
             <p className="aaron-story__body">
               His goal is to help students feel comfortable with the ukulele, with a no-pressure
-              approach — patient, unhurried, and focused on the joy of playing.
+              approach: patient, unhurried, and focused on the joy of playing.
             </p>
           </div>
         </article>
@@ -656,7 +656,7 @@ export default function AaronStorySections() {
             />
           </div>
           <div className="aaron-story__panel-copy aaron-story__reveal">
-            <p className="aaron-story__eyebrow">Fort Collins, Colorado — age 35</p>
+            <p className="aaron-story__eyebrow">Fort Collins, Colorado, age 35</p>
             <h2 className="aaron-story__heading">Then he found the ukulele</h2>
             <p className="aaron-story__body">
               He joins The Music District, a nonprofit music campus, working alongside industry
@@ -687,7 +687,7 @@ export default function AaronStorySections() {
             />
           </div>
           <div className="aaron-story__panel-copy aaron-story__reveal">
-            <p className="aaron-story__eyebrow">2023 — present</p>
+            <p className="aaron-story__eyebrow">2023 to present</p>
             <h2 className="aaron-story__heading">Home in Maui</h2>
             <p className="aaron-story__body">
               Aaron moves to Maui to devote himself to traditional Hawaiian style and other ukulele

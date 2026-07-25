@@ -1,13 +1,11 @@
 import VacationCinematicScene from '../components/tourist-lessons/VacationCinematicScene'
 import useDocumentMeta from '../hooks/useDocumentMeta'
-import useDocumentTitle from '../hooks/useDocumentTitle'
 
 export default function TouristLessons() {
-  useDocumentTitle('Vacation Lessons | Maui Lessons')
   useDocumentMeta({
-    title: 'Vacation Ukulele Lessons on Maui | Maui Lessons',
+    title: 'Ukulele Lessons for Maui Vacations | Kihei & Wailea',
     description:
-      'A private ukulele lesson taught by a local musician, made for complete beginners. Lessons meet at Maipoina Beach Park and along the coast through Kihei and Wailea — or Aaron will come to you.',
+      'A memorable Maui vacation activity: a private beach ukulele lesson for complete beginners. Meet at Maipoina Beach Park or along the coast through Kihei and Wailea, or Aaron comes to you.',
     path: '/tourist-lessons',
   })
 

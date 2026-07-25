@@ -8,7 +8,6 @@ import {
   VACATION_LESSON_OPTIONS,
 } from '../config/lessonOptions'
 import useDocumentMeta from '../hooks/useDocumentMeta'
-import useDocumentTitle from '../hooks/useDocumentTitle'
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion'
 import './Book.css'
 
@@ -100,7 +99,7 @@ function getLessonPrice(booking: BookingData) {
 }
 
 function formatPrice(price: number | null) {
-  return price === null ? '—' : `$${price}`
+  return price === null ? '' : `$${price}`
 }
 
 function formatBookingContext(booking: BookingData) {
@@ -152,11 +151,10 @@ const INITIAL_DATA: BookingData = {
 }
 
 export default function Book() {
-  useDocumentTitle('Book | Maui Lessons')
   useDocumentMeta({
-    title: 'Book a Lesson | Maui Lessons',
+    title: 'Book a Ukulele or Guitar Lesson on Maui | Maui Lessons',
     description:
-      "Book a private ukulele or guitar lesson with Aaron on Maui — choose a vacation lesson or an ongoing lesson, then pick your date and time.",
+      'Book a private ukulele or guitar lesson with Aaron on Maui. Choose a vacation lesson in Kihei or Wailea, or an ongoing lesson, then pick your date and time.',
     path: '/book',
   })
 
@@ -487,17 +485,17 @@ export default function Book() {
   const summaryRows: Array<{ label: string; value: string }> = [
     {
       label: 'Lesson',
-      value: data.lessonType ? LESSON_TYPE_LABELS[data.lessonType] : '—',
+      value: data.lessonType ? LESSON_TYPE_LABELS[data.lessonType] : '',
     },
     ...(data.lessonType === 'vacation'
       ? [
-          { label: 'Group size', value: data.participants ?? '—' },
-          { label: 'Duration', value: data.duration ?? '—' },
+          { label: 'Group size', value: data.participants ?? '' },
+          { label: 'Duration', value: data.duration ?? '' },
           { label: 'Price', value: formatPrice(quotedPrice) },
         ]
       : data.lessonType === 'ongoing'
         ? [
-            { label: 'Duration', value: data.duration ?? '—' },
+            { label: 'Duration', value: data.duration ?? '' },
             { label: 'Price', value: formatPrice(quotedPrice) },
           ]
       : []),
@@ -507,7 +505,7 @@ export default function Book() {
     },
     {
       label: 'Time',
-      value: TIME_SLOTS.find((slot) => slot.id === data.timeSlot)?.label ?? '—',
+      value: TIME_SLOTS.find((slot) => slot.id === data.timeSlot)?.label ?? '',
     },
   ]
 
@@ -725,7 +723,7 @@ export default function Book() {
           {step === 'contact' && (
             <>
               <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
-                Almost there — your details
+                Almost there, just your details
               </h2>
               <p className="bw-step-support">
                 A few details, then Aaron will take it from here.
@@ -844,11 +842,11 @@ export default function Book() {
                   ))}
                   <div className="bw-summary-row">
                     <dt>Name</dt>
-                    <dd>{data.name || '—'}</dd>
+                    <dd>{data.name}</dd>
                   </div>
                   <div className="bw-summary-row">
                     <dt>Email</dt>
-                    <dd>{data.email || '—'}</dd>
+                    <dd>{data.email}</dd>
                   </div>
                 </dl>
               </div>

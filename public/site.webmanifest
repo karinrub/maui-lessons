@@ -1,0 +1,17 @@
+{
+  "name": "Maui Lessons — Ukulele & Guitar Lessons with Aaron Grzanich",
+  "short_name": "Maui Lessons",
+  "description": "Private ukulele and guitar lessons on Maui for visiting tourists and local students in Kihei and Wailea.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f5f0e7",
+  "theme_color": "#f5f0e7",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

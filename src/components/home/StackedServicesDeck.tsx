@@ -17,7 +17,7 @@ const services = [
     title: 'Ukulele Lessons',
     eyebrow: 'One-on-one',
     description:
-      'A private ukulele lesson shaped entirely around you — your pace, your favorite songs, your ear. No classroom, no crowd, just the beach and the instrument.',
+      'A private ukulele lesson shaped entirely around you: your pace, your favorite songs, your ear. No classroom, no crowd, just the beach and the instrument.',
     image: playingImage,
     imageAlt: 'Aaron playing ukulele outdoors on Maui',
   },
@@ -25,15 +25,15 @@ const services = [
     title: 'Guitar Lessons',
     eyebrow: 'One-on-one',
     description:
-      'The same one-on-one attention, on guitar — for players starting from scratch or picking the instrument back up after years away.',
+      'The same one-on-one attention, on guitar, for players starting from scratch or picking the instrument back up after years away.',
     image: teachingImage,
-    imageAlt: 'Aaron teaching a one-on-one music lesson',
+    imageAlt: 'Aaron teaching a private guitar lesson on Maui',
   },
   {
     title: 'Group Experience',
     eyebrow: 'Small group',
     description:
-      'A shared session for families and friends traveling together — everyone learns the same song, side by side, on the sand.',
+      'A shared session for families and friends traveling together. Everyone learns the same song, side by side, on the sand.',
     image: touristsImage,
     imageAlt: 'Two visitors playing ukulele together during a beachside group lesson',
   },

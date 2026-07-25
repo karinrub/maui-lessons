@@ -204,6 +204,20 @@ select {
     0 2px 18px rgba(23, 53, 42, 0.5);
   text-transform: uppercase;
   white-space: nowrap;
+  transition: opacity 0.22s ease;
+}
+
+/* The veil above handles most heading/wordmark contrast, but some
+   heading/background combinations still overlap illegibly (confirmed on
+   real device emulation — see docs/audit run 25.7). GlobalNavigation
+   toggles this class via IntersectionObserver whenever a heading or
+   eyebrow's box actually intersects the header's own rect, so the wordmark
+   fades out only for the scroll band where it would collide, not on a
+   uniform scroll-distance trigger. Focus-visible keeps it available to
+   keyboard users even mid-collision. */
+.site-header.is-heading-collision .nav-mark:not(:focus-visible) {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Invisible touch-target extension: the rendered wordmark is ~13px tall,

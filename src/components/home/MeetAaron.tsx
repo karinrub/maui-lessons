@@ -249,8 +249,8 @@ export default function MeetAaron() {
                 <span className="meet-aaron__card-kicker">A note from Aaron</span>
                 <p className="meet-aaron__description">
                   Aaron teaches with patience, warmth, and a genuine love for helping people learn.
-                  The ukulele has been his focus for the last eight of his twenty-two years in music —
-                  most Thursday nights, you can catch him playing at Keolahou Church in Kihei.
+                  The ukulele has been his focus for the last eight of his twenty-two years in music.
+                  Most Thursday nights, you can catch him playing at Keolahou Church in Kihei.
                 </p>
                 <span className="meet-aaron__cta">
                   Get to know Aaron

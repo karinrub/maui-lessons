@@ -63,6 +63,7 @@ export default function FaqSections() {
   const rootRef = useRef<HTMLDivElement>(null)
   const compassRef = useRef<HTMLDivElement>(null)
   const ghostRef = useRef<HTMLSpanElement>(null)
+  const categoryNavRef = useRef<HTMLElement>(null)
   const [open, setOpen] = useState<string | null>(getInitialOpenItem)
   const [activeCategory, setActiveCategory] = useState<string>(faqCategories[0].id)
   const [ghostWord, setGhostWord] = useState(faqCategories[0].ghostWord)
@@ -185,6 +186,51 @@ export default function FaqSections() {
     categories.forEach((category) => observer.observe(category))
     return () => observer.disconnect()
   }, [])
+
+  /* The category rail is a five-item horizontal scroller on phones (it's a
+     vertical list from 761px up, where this is all inert). Two things keep
+     it honest there: the fade masks need to know which edge actually has
+     content behind it, and the chip for the section you're reading has to
+     come back into view on its own — otherwise the rail silently stops
+     matching the page after the second category. */
+  useEffect(() => {
+    const nav = categoryNavRef.current
+    if (!nav) return
+
+    const syncOverflowState = () => {
+      const scrollable = nav.scrollWidth - nav.clientWidth
+      nav.classList.toggle('has-overflow-start', nav.scrollLeft > 4)
+      nav.classList.toggle('has-overflow-end', scrollable > 4 && nav.scrollLeft < scrollable - 4)
+    }
+
+    syncOverflowState()
+    nav.addEventListener('scroll', syncOverflowState, { passive: true })
+    const resizeObserver = new ResizeObserver(syncOverflowState)
+    resizeObserver.observe(nav)
+
+    return () => {
+      nav.removeEventListener('scroll', syncOverflowState)
+      resizeObserver.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    const nav = categoryNavRef.current
+    if (!nav || nav.scrollWidth <= nav.clientWidth) return
+
+    const chip = nav.querySelector<HTMLElement>(`[href="#faq-category-${activeCategory}"]`)
+    if (!chip) return
+
+    // Only the rail scrolls — scrollIntoView() would also scroll the page.
+    const target = Math.max(
+      0,
+      Math.min(
+        chip.offsetLeft - (nav.clientWidth - chip.offsetWidth) / 2,
+        nav.scrollWidth - nav.clientWidth,
+      ),
+    )
+    nav.scrollTo({ left: target, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
+  }, [activeCategory, prefersReducedMotion])
 
   useLayoutEffect(() => {
     const root = rootRef.current
@@ -416,7 +462,7 @@ export default function FaqSections() {
           {ghostWord}
         </span>
         <div className="faq-shelf__layout">
-          <nav className="faq-category-nav" aria-label="FAQ categories">
+          <nav ref={categoryNavRef} className="faq-category-nav" aria-label="FAQ categories">
             <p className="faq-category-nav__eyebrow">In this guide</p>
             {faqCategories.map((category, index) => (
               <a

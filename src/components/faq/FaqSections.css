@@ -700,6 +700,12 @@
     display: block;
   }
 
+  /* Five categories can't fit across a phone, so the rail scrolls. Two
+     things make that legible rather than a strip that merely looks cut off:
+     the mask below fades the overflowing edge (and only the edge that has
+     something behind it, via the scroll-state classes the component sets),
+     and the component scrolls the active chip back into view as the reader
+     moves down the page. */
   .faq-category-nav {
     position: sticky;
     /* Pin below the fixed site header (same clearance as .page-main) so the
@@ -709,11 +715,42 @@
     flex-direction: row;
     gap: 0;
     margin: 0 -1rem 1.5rem;
-    padding: 0.8rem 1rem;
+    padding: 0.55rem 1rem;
     overflow-x: auto;
     background: rgba(184, 200, 160, 0.94);
     backdrop-filter: blur(12px);
     scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 1rem;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .faq-category-nav.has-overflow-end {
+    mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 2.5rem), transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 2.5rem), transparent 100%);
+  }
+
+  .faq-category-nav.has-overflow-start {
+    mask-image: linear-gradient(90deg, transparent 0, #000 2.5rem);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 2.5rem);
+  }
+
+  .faq-category-nav.has-overflow-start.has-overflow-end {
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 2.5rem,
+      #000 calc(100% - 2.5rem),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0,
+      #000 2.5rem,
+      #000 calc(100% - 2.5rem),
+      transparent 100%
+    );
   }
 
   .faq-category-nav::-webkit-scrollbar {
@@ -726,10 +763,26 @@
 
   .faq-category-nav__link {
     flex: 0 0 auto;
+    align-content: center;
     grid-template-columns: auto 1fr;
-    padding: 0.55rem 0.75rem;
+    /* ~44px tall including the ::after extension below — these are the
+       page's primary navigation on a phone. */
+    min-height: 2rem;
+    padding: 0.5rem 0.75rem;
     font-size: 0.68rem;
     white-space: nowrap;
+    scroll-snap-align: start;
+    transform: none;
+  }
+
+  .faq-category-nav__link:hover,
+  .faq-category-nav__link:focus-visible,
+  .faq-category-nav__link.is-active {
+    transform: none;
+  }
+
+  .faq-category-nav__link::after {
+    inset: -0.55rem 0;
   }
 
   .faq-category-nav__link::before {

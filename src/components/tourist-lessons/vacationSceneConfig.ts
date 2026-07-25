@@ -27,6 +27,10 @@ export type VacationSceneVisualState = {
 export const vacationSceneScroll = {
   desktopQuery: '(min-width: 761px)',
   scrollDistance: '+=250%',
+  /* A phone screen is roughly half as tall as a laptop's is wide, so 250%
+     of it bought the same handful of composition changes across what felt
+     like three screens of scrolling with nothing new arriving. */
+  mobileScrollDistance: '+=160%',
 } as const
 
 export const vacationSceneImageConfig = {
@@ -99,7 +103,21 @@ export function getVacationSceneSettledState(): VacationSceneVisualState {
   }
 }
 
-export function getVacationSceneVisualState(progress: number): VacationSceneVisualState {
+export type VacationSceneVisualOptions = {
+  /* Phones only. The headline crosses from cream-over-scrim to ink-over-
+     photo, and the readability scrim fades with it. Every point in between
+     is mid-grey type over a half-lifted scrim — fine as a passing frame on
+     a desktop scrub, but on a phone the headline is 12.8vw tall and the
+     crossing spanned ~460px of scroll, i.e. half a screen of headline you
+     could not read. Compressing it to a short band keeps both readable end
+     states and makes the change between them a moment rather than a phase. */
+  compactHeadlineColorTransition?: boolean
+}
+
+export function getVacationSceneVisualState(
+  progress: number,
+  options: VacationSceneVisualOptions = {},
+): VacationSceneVisualState {
   const safeProgress = clampProgress(progress)
   const softenedProgress = smoothstep(safeProgress)
   const surfaceProgress = smoothstep(progressThroughRange(safeProgress, 0.08, 0.82))
@@ -113,11 +131,12 @@ export function getVacationSceneVisualState(progress: number): VacationSceneVisu
   const headlineDominanceProgress = smoothstep(progressThroughRange(safeProgress, 0.4, 0.62))
   const headlineSettleProgress = smoothstep(progressThroughRange(safeProgress, 0.62, 0.85))
   const headlineProgress = smoothstep(progressThroughRange(safeProgress, 0.1, 0.62))
-  const headlineColorProgress =
-    0.04 +
-    headlineBuildProgress * 0.28 +
-    headlineDominanceProgress * 0.62 +
-    headlineSettleProgress * 0.06
+  const headlineColorProgress = options.compactHeadlineColorTransition
+    ? smoothstep(progressThroughRange(safeProgress, 0.48, 0.57))
+    : 0.04 +
+      headlineBuildProgress * 0.28 +
+      headlineDominanceProgress * 0.62 +
+      headlineSettleProgress * 0.06
 
   return {
     progress: safeProgress,

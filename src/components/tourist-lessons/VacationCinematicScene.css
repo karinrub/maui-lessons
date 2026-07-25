@@ -272,3 +272,17 @@
   opacity: calc(1 - var(--vac-surface-progress, 0));
   pointer-events: none;
 }
+
+/* Phones drive the scrim off the headline's own colour crossing instead of
+   the surface progress. The two run on different curves, and at phone type
+   sizes (12.8vw) that mismatch showed: the scrim was already half gone
+   while the headline was still light, so the biggest type on the page spent
+   a long stretch of the pin washed out against the sky. Tied to the colour
+   crossing — itself compressed to a short band on phones, see
+   vacationSceneConfig — the scrim lasts exactly as long as light type needs
+   it and is gone by the time that type is ink. */
+@media (max-width: 760px) {
+  .vacation-cinematic-scene__image-scrim {
+    opacity: calc(1 - var(--vac-headline-color-progress, 0));
+  }
+}

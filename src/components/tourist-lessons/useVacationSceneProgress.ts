@@ -55,6 +55,11 @@ export function useVacationSceneProgress({
       return
     }
 
+    /* Phones get a compressed headline colour crossing and a shorter pin —
+       see vacationSceneConfig for why both are width-dependent. */
+    const getSceneState = (value: number) =>
+      getVacationSceneVisualState(value, { compactHeadlineColorTransition: !isDesktop })
+
     if (prefersReducedMotion) {
       // Reduced motion must not pin or scrub, so apply the dedicated rest
       // state instead of sampling a moving frame from the scrub curve.
@@ -62,7 +67,7 @@ export function useVacationSceneProgress({
       return
     }
 
-    applyVisualState(scene, getVacationSceneVisualState(0))
+    applyVisualState(scene, getSceneState(0))
 
     if (!pin) {
       return
@@ -77,16 +82,18 @@ export function useVacationSceneProgress({
       ScrollTrigger.create({
         trigger: pin,
         start: 'top top',
-        end: vacationSceneScroll.scrollDistance,
+        end: isDesktop
+          ? vacationSceneScroll.scrollDistance
+          : vacationSceneScroll.mobileScrollDistance,
         scrub: 1,
         pin,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          applyVisualState(scene, getVacationSceneVisualState(self.progress))
+          applyVisualState(scene, getSceneState(self.progress))
         },
         onRefresh: (self) => {
-          applyVisualState(scene, getVacationSceneVisualState(self.progress))
+          applyVisualState(scene, getSceneState(self.progress))
         },
       })
 
@@ -108,7 +115,7 @@ export function useVacationSceneProgress({
       window.cancelAnimationFrame(refreshFrame)
       removeLoadListener?.()
       context.revert()
-      applyVisualState(scene, getVacationSceneVisualState(0))
+      applyVisualState(scene, getSceneState(0))
     }
   }, [isDesktop, pinRef, prefersReducedMotion, sceneRef])
 }

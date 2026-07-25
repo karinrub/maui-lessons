@@ -653,6 +653,19 @@
   max-width: 44rem;
 }
 
+.bw-submit-error {
+  margin: 1.1rem 0 0;
+  max-width: 42rem;
+  color: #8c2f22;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.bw .cp-button:disabled {
+  cursor: wait;
+  opacity: 0.66;
+}
+
 .bw .cp-form-label {
   color: rgba(31, 29, 24, 0.72);
   font-size: 0.8125rem;

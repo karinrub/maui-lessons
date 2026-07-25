@@ -45,6 +45,7 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
   const headerRef = useRef<HTMLElement>(null)
   const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const playOpenTimelineRef = useRef<() => void>(() => undefined)
+  const closeMenuRef = useRef<(restoreFocus?: boolean) => void>(() => undefined)
   const gradientOriginRef = useRef({ x: 0, y: 0 })
   const previousBodyOverflowRef = useRef<string | null>(null)
 
@@ -59,6 +60,26 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
     return () => {
       restoreBodyOverflow()
     }
+  }, [isMenuOpen])
+
+  // The focus trap normally receives Escape through the header's bubbling
+  // handler. Keep the expected close affordance available when focus moves
+  // outside that subtree (for example, with an external keyboard on mobile).
+  useEffect(() => {
+    if (!isMenuOpen) {
+      return
+    }
+
+    const onDocumentKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return
+      }
+      event.preventDefault()
+      closeMenuRef.current()
+    }
+
+    document.addEventListener('keydown', onDocumentKeyDown, true)
+    return () => document.removeEventListener('keydown', onDocumentKeyDown, true)
   }, [isMenuOpen])
 
   useEffect(() => {
@@ -102,17 +123,32 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
   // The is-scrolled veil isn't enough against every heading/background
   // combo (confirmed on real device emulation on FAQ at phone width and
   // tablet landscape — docs/audit run 25.7). Rather than a heavier uniform
-  // veil, watch every heading/eyebrow in the document and fade the
-  // wordmark only while one is actually intersecting the header's own
-  // rect. The header is fixed, so its rect only moves on resize (its
-  // clamp()-based inset), not on scroll.
+  // veil, watch semantic text-bearing content and controls in the document
+  // and fade the wordmark only while one is actually intersecting the
+  // header's own rect. The original headings-only list missed paragraphs,
+  // FAQ questions, and booking calendar buttons. The header is fixed, so
+  // its rect only moves on resize (its clamp()-based inset), not on scroll.
   useEffect(() => {
     const header = headerRef.current
     if (!header) {
       return
     }
 
-    const collisionSelector = 'h1, h2, h3, [class*="__eyebrow"]'
+    const collisionSelector = [
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'p',
+      'button',
+      'a',
+      'label',
+      '[class*="__eyebrow"]',
+      '[class*="__label"]',
+      '[class*="__descriptor"]',
+    ].join(', ')
     const intersecting = new Set<Element>()
     let observer: IntersectionObserver | null = null
 
@@ -136,7 +172,9 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
         return
       }
       document.querySelectorAll(collisionSelector).forEach((element) => {
-        observer!.observe(element)
+        if (!header!.contains(element) && element.textContent?.trim()) {
+          observer!.observe(element)
+        }
       })
     }
 
@@ -385,6 +423,8 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
     playCloseTimeline(restoreFocus)
   }
 
+  closeMenuRef.current = closeMenu
+
   function toggleMenu() {
     if (isMenuOpen) {
       closeMenu()
@@ -394,9 +434,18 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
     openMenu()
   }
 
+  function handleMenuButtonKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    if (isMenuOpen && event.key === 'Escape') {
+      event.preventDefault()
+      event.stopPropagation()
+      closeMenu()
+    }
+  }
+
   function handleOverlayKeyDown(event: KeyboardEvent<HTMLElement>) {
     if (event.key === 'Escape') {
       event.preventDefault()
+      event.stopPropagation()
       closeMenu()
       return
     }
@@ -466,6 +515,7 @@ export default function GlobalNavigation({ isSuppressed = false }: GlobalNavigat
         aria-controls="fullscreen-navigation"
         aria-expanded={isMenuOpen}
         onClick={toggleMenu}
+        onKeyDown={handleMenuButtonKeyDown}
       >
         <span aria-hidden="true" />
         <span aria-hidden="true" />

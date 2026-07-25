@@ -9,6 +9,7 @@ import {
 } from '../config/lessonOptions'
 import useDocumentMeta from '../hooks/useDocumentMeta'
 import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion'
+import { submitBookingRequest } from '../utils/submitBookingRequest.js'
 import './Book.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -48,6 +49,8 @@ const LESSON_TYPE_LABELS: Record<LessonType, string> = {
 }
 
 const ENTRANCE_HEADLINE = "let's set up your lesson"
+const BOOKING_ENDPOINT = import.meta.env.VITE_BOOKING_ENDPOINT?.trim() ?? ''
+const BOOKING_REQUEST_TIMEOUT_MS = 15_000
 const BOOKING_STEPS: StepId[] = ['type', 'participants', 'datetime', 'contact', 'confirm']
 const PROGRESS_STEPS: Array<{ id: ProgressStepId; label: string }> = [
   { id: 'lesson', label: 'Lesson Type' },
@@ -171,6 +174,9 @@ export default function Book() {
   const directionRef = useRef(1)
   const hasMountedRef = useRef(false)
   const lastAdvancedDatetimeRef = useRef<string | null>(null)
+  const submissionAbortRef = useRef<AbortController | null>(null)
+  const [submissionState, setSubmissionState] = useState<'idle' | 'submitting' | 'error'>('idle')
+  const [submissionError, setSubmissionError] = useState('')
 
   const steps = stepsFor()
   const stepIndex = steps.indexOf(step)
@@ -458,22 +464,52 @@ export default function Book() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    return () => submissionAbortRef.current?.abort()
+  }, [])
+
   function goBack() {
     if (stepIndex > 0) {
       goTo(steps[stepIndex - 1])
     }
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    /*
-      Formspree attach point — structure-only for now. When real submission is
-      wired up, POST this form here (action="https://formspree.io/f/{form_id}"
-      or a fetch() with new FormData(event.currentTarget)); the hidden
-      booking-context fields are already part of the form payload. Keep
-      goTo('confirm') as the success path once the request succeeds.
-    */
-    goTo('confirm')
+    if (submissionState === 'submitting') return
+
+    // A client-owned endpoint is intentionally attached after client review.
+    // Keep preview behavior truthful: show the completed request summary but
+    // never imply delivery happened when no endpoint exists.
+    if (!BOOKING_ENDPOINT) {
+      goTo('confirm')
+      return
+    }
+
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), BOOKING_REQUEST_TIMEOUT_MS)
+    submissionAbortRef.current = controller
+    setSubmissionError('')
+    setSubmissionState('submitting')
+
+    try {
+      await submitBookingRequest(BOOKING_ENDPOINT, new FormData(event.currentTarget), {
+        signal: controller.signal,
+      })
+      goTo('confirm')
+    } catch (error) {
+      setSubmissionError(
+        error instanceof Error ? error.message : 'Unable to send your request. Please try again.',
+      )
+      setSubmissionState('error')
+      return
+    } finally {
+      window.clearTimeout(timeout)
+      if (submissionAbortRef.current === controller) {
+        submissionAbortRef.current = null
+      }
+      setSubmissionState((current) => (current === 'submitting' ? 'idle' : current))
+    }
   }
 
   const quotedPrice = getLessonPrice(data)
@@ -742,6 +778,7 @@ export default function Book() {
                 aria-label="Contact details"
                 onSubmit={handleSubmit}
                 data-bw-item
+                aria-busy={submissionState === 'submitting'}
               >
                 {/* Full booking context rides along as hidden fields so a
                     future Formspree POST includes more than the raw contact
@@ -814,10 +851,19 @@ export default function Book() {
                   <button type="button" className="bw-back" onClick={goBack}>
                     ← Back
                   </button>
-                  <button type="submit" className="cp-button">
-                    Send booking request
+                  <button type="submit" className="cp-button" disabled={submissionState === 'submitting'}>
+                    {submissionState === 'submitting'
+                      ? 'Sending request…'
+                      : submissionState === 'error'
+                        ? 'Try sending again'
+                        : 'Send booking request'}
                   </button>
                 </div>
+                {submissionError && (
+                  <p className="bw-submit-error" role="alert">
+                    {submissionError}
+                  </p>
+                )}
               </form>
             </>
           )}
@@ -825,11 +871,12 @@ export default function Book() {
           {step === 'confirm' && (
             <>
               <h2 ref={headingRef} className="bw-step-heading" tabIndex={-1}>
-                Request received
+                {BOOKING_ENDPOINT ? 'Request received' : 'Request details ready'}
               </h2>
               <p className="bw-confirm-lede" data-bw-item>
-                Here’s your lesson request. Aaron will follow up by email to confirm the time and
-                next steps.
+                {BOOKING_ENDPOINT
+                  ? 'Here’s your lesson request. Aaron will follow up by email to confirm the time and next steps.'
+                  : 'Here’s your lesson request summary. Online delivery will be connected before public booking opens.'}
               </p>
               <div className="bw-review" data-bw-item>
                 <p className="bw-block-label">Your request</p>

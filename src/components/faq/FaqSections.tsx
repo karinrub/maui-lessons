@@ -237,13 +237,11 @@ export default function FaqSections() {
     if (!root || prefersReducedMotion) return
 
     const ctx = gsap.context(() => {
-      // Intro: title lines rise from clipped rows — the site's shared reveal
-      // grammar — then the lede fades up.
-      gsap.fromTo(
-        gsap.utils.toArray<HTMLElement>('.faq-intro__title-line', root),
-        { yPercent: 120 },
-        { yPercent: 0, duration: 0.85, ease: 'expo.out', stagger: 0.12, delay: 0.1 },
-      )
+      // The FAQ H1 is already in the first viewport. It must remain in its
+      // semantic, visually complete resting state from first paint; a
+      // fromTo reveal here previously translated it into its clipping mask
+      // until GSAP received a frame. Keep motion on supporting copy instead
+      // of making arrival content depend on animation timing.
       gsap.fromTo(
         root.querySelectorAll('.faq-intro__eyebrow, .faq-intro__lede, .faq-intro__reassurance'),
         { autoAlpha: 0, y: 16 },

@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "prerender": "node scripts/prerender.mjs",
-    "check:seo": "node scripts/check-seo.mjs"
+    "check:seo": "node scripts/check-seo.mjs",
+    "test:launch": "node scripts/check-launch-readiness.mjs",
+    "test": "node --test scripts/booking-submission.test.mjs",
+    "optimize:media": "node scripts/optimize-media.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

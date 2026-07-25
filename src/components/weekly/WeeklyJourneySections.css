@@ -888,13 +888,21 @@
     width: min(100% - 36px, 1240px);
   }
 
+  /* Centre the loop composition in the viewport rather than hanging it from
+     the header. Anchored near the top it left the lower 40-55% of a phone
+     screen empty, so the page's first impression was a small ring floating
+     above a large void. The max() keeps it clear of the fixed header on
+     short screens. */
   .weekly-redesign__loop-system {
-    top: max(76px, 9svh);
+    top: max(76px, calc(50svh - var(--weekly-loop-size) * 0.62));
   }
 
   .weekly-redesign__loop-begin,
   .weekly-redesign__loop-transition {
-    top: calc(max(76px, 9svh) + var(--weekly-loop-size) + clamp(20px, 3.2svh, 30px));
+    top: calc(
+      max(76px, calc(50svh - var(--weekly-loop-size) * 0.62)) + var(--weekly-loop-size) +
+        clamp(20px, 3.2svh, 30px)
+    );
     font-size: clamp(1.12rem, 5.4vw, 1.45rem);
   }
 

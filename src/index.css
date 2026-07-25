@@ -689,6 +689,36 @@ select {
   }
 }
 
+/* Short viewports — a phone held sideways, or a small desktop window. The
+   nav overlay's type is sized off width, so at 667x375 the five links stood
+   400px tall inside a 375px screen: the first link sat under the header and
+   "Book a Lesson" was cut off the bottom with no way to reach it. Size the
+   links off the available height here instead, and keep the overlay
+   scrollable as a floor for anything shorter still. */
+@media (max-height: 540px) {
+  .fullscreen-nav {
+    padding:
+      clamp(52px, 15vh, 84px)
+      clamp(18px, 5vw, 40px)
+      clamp(26px, 8vh, 48px);
+    overflow-y: auto;
+  }
+
+  .fullscreen-nav-inner {
+    gap: clamp(0.1rem, 0.6vh, 0.4rem);
+    margin: auto 0;
+  }
+
+  .fullscreen-nav-link {
+    font-size: clamp(1.5rem, 7.4vh, 3rem);
+    line-height: 1.08;
+  }
+
+  .fullscreen-nav-link.is-emphasized {
+    margin-top: clamp(0.5rem, 3.5vh, 1.4rem);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .site-shell,
   .page-transition {

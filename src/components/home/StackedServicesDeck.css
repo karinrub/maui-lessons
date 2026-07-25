@@ -350,6 +350,43 @@
   will-change: auto;
 }
 
+/* Reduced motion: the cards are absolutely stacked, and the scroll-driven
+   swap is what brings cards 2 and 3 to the front. With the swap removed
+   they stayed pinned behind card 1 — two of the three lesson experiences
+   were unreadable for anyone with reduce-motion on, which is a large share
+   of phone users. Lay the deck out as a normal-flow column instead, so all
+   three read in full. */
+.stacked-services-deck.is-reduced-motion .stacked-services-deck__cards {
+  display: grid;
+  gap: clamp(1.1rem, 3vw, 1.8rem);
+  width: min(100%, 720px);
+  height: auto;
+  isolation: auto;
+}
+
+.stacked-services-deck.is-reduced-motion .stacked-services-deck__card {
+  position: relative;
+  inset: auto;
+  grid-template-rows: auto auto;
+  height: auto;
+  transform: none;
+}
+
+.stacked-services-deck.is-reduced-motion .stacked-services-deck__media {
+  aspect-ratio: 16 / 10;
+}
+
+.stacked-services-deck.is-reduced-motion .stacked-services-deck__description {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: none;
+}
+
+/* A "01 / 03" counter means nothing once all three are on screen. */
+.stacked-services-deck.is-reduced-motion .stacked-services-deck__progress {
+  display: none;
+}
+
 @media (max-width: 760px) {
   .stacked-services-deck__stage {
     padding: clamp(20px, 4svh, 36px) 14px;

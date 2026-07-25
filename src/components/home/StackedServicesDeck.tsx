@@ -84,32 +84,23 @@ export default function StackedServicesDeck({ scrollSequence }: StackedServicesD
     let entranceContext: gsap.Context | null = null
     let unregisterDeck: (() => void) | null = null
 
-    stackContext = gsap.context(() => {
-      gsap.set(firstCard, {
-        ...stackPositions.front,
-        transformOrigin: 'center center',
-      })
-      // Back cards start hidden behind the front card and fan out on
-      // entrance; reduced motion skips straight to the stacked layout.
-      gsap.set(secondCard, {
-        ...(prefersReducedMotion ? stackPositions.second : stackPositions.front),
-        transformOrigin: 'center center',
-      })
-      gsap.set(thirdCard, {
-        ...(prefersReducedMotion ? stackPositions.third : stackPositions.front),
-        transformOrigin: 'center center',
-      })
+    // Reduced motion takes no inline transforms at all: the CSS lays the
+    // three cards out as a normal-flow column there (see the
+    // .is-reduced-motion rules in StackedServicesDeck.css), and a leftover
+    // stack offset would push the second and third card out of place.
+    if (!prefersReducedMotion) {
+      stackContext = gsap.context(() => {
+        // Back cards start hidden behind the front card and fan out on
+        // entrance.
+        gsap.set([firstCard, secondCard, thirdCard], {
+          ...stackPositions.front,
+          transformOrigin: 'center center',
+        })
 
-      gsap.set(cardsShellElement, {
-        y: prefersReducedMotion ? 0 : 48,
-        opacity: prefersReducedMotion ? 1 : 0,
-      })
-      gsap.set(canvas, {
-        y: prefersReducedMotion ? 0 : 24,
-        scale: prefersReducedMotion ? 1 : 0.97,
-        transformOrigin: 'center center',
-      })
-    }, sectionElement)
+        gsap.set(cardsShellElement, { y: 48, opacity: 0 })
+        gsap.set(canvas, { y: 24, scale: 0.97, transformOrigin: 'center center' })
+      }, sectionElement)
+    }
 
     if (!prefersReducedMotion) {
       // Not registered with the shared authority: this trigger is unpinned,
